@@ -2,15 +2,17 @@ import React from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
 import './App.css';
+import ResponsiveAppBar from './modules/nav_bar/nav_bar2';
 
 function App() {
   return (
     <div className="App">
+      <ResponsiveAppBar></ResponsiveAppBar>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <Counter />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          React is cool
         </p>
         <span>
           <span>Learn </span>
