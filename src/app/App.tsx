@@ -1,54 +1,20 @@
 import React from 'react';
 import './App.css';
-import ResponsiveAppBar from '../modules/nav_bar/nav_bar2';
+import Theme from './App.theme';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import ResponsiveAppBar from '../modules/shared/nav_bar/nav_bar2';
+import SplashPage from '../modules/pages/Splash';
+import Profile from '../modules/pages/Profile';
 
 function App() {
   return (
     <div className="App">
-      <ResponsiveAppBar></ResponsiveAppBar>
-      <header className="App-header">
-        <p>
-          React is cool
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <ThemeProvider theme={Theme}>
+        <CssBaseline />
+        <ResponsiveAppBar></ResponsiveAppBar>
+        <Profile username='janedoe1'></Profile>
+        {/* <SplashPage></SplashPage> */}
+      </ThemeProvider>
     </div>
   );
 }
