@@ -16,6 +16,15 @@ export default function Posts() {
 
   const [open, setOpen] = useState(false);
 
+  const [currentItem, setItem] = useState<postInfo | null>(null);
+
+  interface postInfo {
+    img: string;
+    title: string;
+    author: string;
+    ingredients: string[];
+  }
+
   function handler() {
 
     if (open) {
@@ -34,6 +43,7 @@ export default function Posts() {
             srcSet={`${item.img}?w=350&fit=crop&auto=format&dpr=2 2x`}
             src={`${item.img}?w=350&fit=crop&auto=format`}
             alt={item.title}
+            
             loading="lazy"
           />
           <ImageListItemBar
@@ -43,7 +53,9 @@ export default function Posts() {
               <IconButton
                 sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
                 aria-label={`info about ${item.title}`}
-                onClick={handler}
+              onClick={() => {
+                  handler(); 
+                  setItem(item)}}
               >
                 <InfoIcon />
               </IconButton>
@@ -60,13 +72,16 @@ export default function Posts() {
 
           >
             <Box>
-                <h2>{item.title}</h2>
+                <h2>{currentItem?.title}</h2>
                 <ul>
-                  {item.ingredients?.map((ingredient, index) => {
+                  {currentItem?.ingredients?.map((ingredient, index) => {
                     return <li key={index}>{ingredient}</li>
                   })}
                 </ul>
-              <ModalClose onClick={handler} variant="outlined"/>
+              <ModalClose onClick={() => {
+                handler();
+                setItem(null)
+              }} variant="outlined"/>
 
             </Box>
 
@@ -88,81 +103,72 @@ const itemData = [
     img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
     title: 'Breakfast',
     author: '@bkristastucchio',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
     title: 'Burger',
     author: '@rollelflex_graphy726',
     ingredients: ['salt', 'tomatoes'],
-    open: false
   },
   {
     img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
     title: 'Camera',
     author: '@helloimnik',
-    ingredients: ['water', 'milk', 'okra'],
-    open: false
+    ingredients: ['water', 'milk', 'okra']
   },
   {
     img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
     title: 'Coffee',
     author: '@nolanissac',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
     title: 'Hats',
     author: '@hjrc33',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
     title: 'Honey',
     author: '@arwinneil',
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
     title: 'Basketball',
     author: '@tjdragotta',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
     title: 'Fern',
     author: '@katie_wasserman',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
     title: 'Mushrooms',
     author: '@silverdalex',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
     title: 'Tomato basil',
     author: '@shelleypauls',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
     title: 'Sea star',
     author: '@peterlaster',
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
   {
     img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
     title: 'Bike',
     author: '@southside_customs',
-    ingredients: ['sugar', 'flour', 'eggs'],
-    open: false
+    ingredients: ['sugar', 'flour', 'eggs']
   },
 ];
