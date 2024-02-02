@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import ResponsiveAppBar from '../modules/nav_bar/nav_bar2';
+import Post from '../features/Post';
 
 function App() {
   return (

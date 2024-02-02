@@ -33,8 +33,8 @@ export default function Post() {
     return (
       
 <React.Fragment>
-  <Box sx = {{bgcolor: 'beige', margin: 5}}>
-<Box component="section" sx={{ p: 8, border: '2px solid black', bgcolor: '#606c38', margin: 10, marginLeft: 30, marginRight: 30}}>
+<Box sx = {{bgcolor: 'beige', height: '100vd', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+  <Box component="section" sx={{ p: 8, border: '2px solid black', bgcolor: '#606c38', margin: 10, marginLeft: 15, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
 <Grid container spacing={8} direction = "column" justifyContent = "space-between">
 <Typography
             variant="h6"
@@ -51,7 +51,7 @@ export default function Post() {
               textAlign: "center"
             }}
           >
-            Make A Post
+            Make A Post!
 </Typography>
   <Grid item xs={8} sm={6}>
     <TextField
