@@ -9,6 +9,11 @@ import Modal from '@mui/material/Modal';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 import ModalClose from '@mui/joy/ModalClose';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { Book } from '@mui/icons-material';
+import { current } from '@reduxjs/toolkit';
+import { start } from 'repl';
 
 
 export default function Posts() {
@@ -16,22 +21,35 @@ export default function Posts() {
 
   const [open, setOpen] = useState(false);
 
-  const [currentItem, setItem] = useState<postInfo | null>(null);
+  const [key, setKey] = useState<number>(1);
+
+  const starterItem = {
+    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
+    title: 'Breakfast',
+    author: '@bkristastucchio',
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
+  }
+
+
+  const [currentItem, setItem] = useState<postInfo>(starterItem);
 
   interface postInfo {
     img: string;
     title: string;
     author: string;
     ingredients: string[];
+    isBookmarked: boolean;
   }
 
   function handler() {
 
     if (open) {
-      setOpen(false) }
-      else {
-        setOpen(true)
-      }
+      setOpen(false)
+    }
+    else {
+      setOpen(true)
+    }
   }
 
 
@@ -43,7 +61,7 @@ export default function Posts() {
             srcSet={`${item.img}?w=350&fit=crop&auto=format&dpr=2 2x`}
             src={`${item.img}?w=350&fit=crop&auto=format`}
             alt={item.title}
-            
+
             loading="lazy"
           />
           <ImageListItemBar
@@ -53,9 +71,10 @@ export default function Posts() {
               <IconButton
                 sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
                 aria-label={`info about ${item.title}`}
-              onClick={() => {
-                  handler(); 
-                  setItem(item)}}
+                onClick={() => {
+                  handler();
+                  setItem(item)
+                }}
               >
                 <InfoIcon />
               </IconButton>
@@ -72,23 +91,63 @@ export default function Posts() {
 
           >
             <Box>
-                <h2>{currentItem?.title}</h2>
-                <ul>
-                  {currentItem?.ingredients?.map((ingredient, index) => {
-                    return <li key={index}>{ingredient}</li>
-                  })}
-                </ul>
+              <h2>{currentItem?.title}</h2>
+              <div key={key}>
+                <img
+                  srcSet={`${currentItem.img}?w=350&fit=crop&auto=format&dpr=2 2x`}
+                  src={`${currentItem.img}?w=350&fit=crop&auto=format`}
+                  alt={currentItem.title}
+
+                  loading="lazy"
+                />
+                <IconButton
+                  sx={{ color: 'black' }}
+                  aria-label={`info about ${item.title}`}
+                  onClick={() => {
+                    {
+                      currentItem.isBookmarked ? (
+                        currentItem.isBookmarked = false
+                      ) : (
+                        currentItem.isBookmarked = true
+                      )
+                    };
+                    {
+                      key > 10 ? (
+                        setKey(1)
+                      ) : (
+                        setKey(key + 1)
+                      )
+                    }
+                  }}
+                >
+                  {currentItem.isBookmarked ? (
+                    <BookmarkIcon />
+                  ) : (
+                    <BookmarkBorderIcon />
+                  )}
+
+
+                </IconButton>
+              </div>
+              <h4>Ingredients:</h4>
+              <ul>
+                {currentItem?.ingredients?.map((ingredient, index) => {
+                  return <li key={index}>{ingredient}</li>
+                })}
+              </ul>
+              <h4>Steps:</h4>
               <ModalClose onClick={() => {
                 handler();
-                setItem(null)
-              }} variant="outlined"/>
+                setItem(starterItem)
+              }} variant="outlined" />
 
             </Box>
 
           </Modal>
         </ImageListItem>
-      ))}
-    </ImageList>
+      ))
+      }
+    </ImageList >
   );
 }
 
@@ -103,72 +162,84 @@ const itemData = [
     img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
     title: 'Breakfast',
     author: '@bkristastucchio',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
     title: 'Burger',
     author: '@rollelflex_graphy726',
     ingredients: ['salt', 'tomatoes'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
     title: 'Camera',
     author: '@helloimnik',
-    ingredients: ['water', 'milk', 'okra']
+    ingredients: ['water', 'milk', 'okra'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
     title: 'Coffee',
     author: '@nolanissac',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
     title: 'Hats',
     author: '@hjrc33',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
     title: 'Honey',
     author: '@arwinneil',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
     title: 'Basketball',
     author: '@tjdragotta',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
     title: 'Fern',
     author: '@katie_wasserman',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
     title: 'Mushrooms',
     author: '@silverdalex',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
     title: 'Tomato basil',
     author: '@shelleypauls',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
     title: 'Sea star',
     author: '@peterlaster',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
   {
     img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
     title: 'Bike',
     author: '@southside_customs',
-    ingredients: ['sugar', 'flour', 'eggs']
+    ingredients: ['sugar', 'flour', 'eggs'],
+    isBookmarked: false
   },
 ];
