@@ -7,27 +7,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import { createTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      light: '#7f895f',
-      main: '#606c38',
-      dark: '#283618',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#ff7961',
-      main: '#f44336',
-      dark: '#ba000d',
-      contrastText: '#000',
-    },
-  },
-});
-
-
 
 export default function Post() {
     return (
