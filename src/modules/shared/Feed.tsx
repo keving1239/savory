@@ -175,7 +175,7 @@ export default function Posts() {
                                         </IconButton>
                                     </div>
                                     <div id="author">
-                                        <p>{currentItem.author}</p>
+                                        <a href="" >{currentItem.author}</a>
                                         <ul id="tags">
                                             {currentItem?.tags?.map((tag, index) => {
                                                 return <li key={index}><strong>#{tag}</strong></li>

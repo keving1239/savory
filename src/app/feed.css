@@ -40,6 +40,12 @@
   overflow: auto;
 }
 
+.modal a {
+  text-decoration: none;
+  color: #dda15e;
+  font-weight: bold;
+}
+
 .modal #modal1 {
   margin-left: 3vw;
   margin-right: 10vw;
@@ -51,7 +57,7 @@
 }
 
 .modal #author {
-  margin-top: -3vh;
+  margin-top: 0vh;
   margin-left: 3vw;
   margin-bottom: vh;
   display: flex;
@@ -95,7 +101,7 @@ li {
   font-size: small;
   margin-bottom: 1vh;
   padding: 0px;
-  margin-top: 15px;
+  margin-top: 0px;
   text-align: center;
   vertical-align: auto;
 }
