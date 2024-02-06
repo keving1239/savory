@@ -13,6 +13,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { red } from '@mui/material/colors';
 import ImageList from '@mui/material/ImageList';
+import Theme from '../../app/App.theme';
 
 export default function Posts() {
 
