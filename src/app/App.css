@@ -10,16 +10,28 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   height: 100%;
+  width: 100%;
+  padding-bottom: 2vw;
 }
 
+#card #header {
+  width: 90%;
+}
+
+#search {
+  margin-right: 3vw;
+}
+
+
 .modal {
-  height: 80vh;
-  width: 70vw;
+  height: 70vh;
+  width: 60vw;
+  max-width: 800px;
   margin-top: 15vh;
   margin-bottom: 17.5vh;
-  margin-left: 15vw;
-  margin-right: 15vw;
-  background-color: #fefae0;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
   border: 3px solid black;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
   opacity: 1;
@@ -30,17 +42,26 @@
 
 .modal #modal1 {
   margin-left: 3vw;
-  margin-right: 5vw;
-  width: 62vw;
+  margin-right: 10vw;
+  width: 52vw;
+  max-width: 700px;
   display: flex;
   justify-content: space-between;
 
 }
 
+.modal #author {
+  margin-top: -3vh;
+  margin-left: 3vw;
+  margin-bottom: vh;
+  display: flex;
+}
+
 .modal img {
   width: 25vw;
   height: fit-content;
-  margin-top: -3vh;;
+  margin-top: 2vh;
+  max-width: 300px;
 }
 
 .modal ul {
@@ -72,10 +93,15 @@ li {
   list-style-type: none;
   display: flex;
   font-size: small;
+  margin-bottom: 1vh;
+  padding: 0px;
+  margin-top: 15px;
+  text-align: center;
+  vertical-align: auto;
 }
 
 .modal #tags li {
   margin-left: 1vw;
-  margin-top: 2.5vh;
+  margin-top: 2px;
   color: #bc6c25;
 }
