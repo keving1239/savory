@@ -1,7 +1,7 @@
 import React from 'react';
-import './App.css';
 import ResponsiveAppBar from '../modules/shared/Navbar';
 import Posts from '../modules/shared/Feed';
+import './feed.css'
 
 function App() {
   return (
