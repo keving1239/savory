@@ -1,22 +1,17 @@
 import React from 'react';
-import './App.css';
-import Theme from './App.theme';
-import { ThemeProvider, CssBaseline } from '@mui/material';
 import ResponsiveAppBar from '../modules/shared/Navbar';
-import SplashPage from '../modules/pages/Splash';
-import Profile from '../modules/pages/Profile/Profile';
-import Post from '../modules/shared/Post.create';
+import Posts from '../modules/shared/Feed';
+import './feed.css'
 
 function App() {
   return (
     <div className="App">
-      <ThemeProvider theme={Theme}>
-        <CssBaseline />
-        {/* REPLACE BELOW WITH ROUTER*/}
-        <ResponsiveAppBar></ResponsiveAppBar>
-        {/* <SplashPage></SplashPage> */}
-        <Profile username='janedoe1'></Profile>
-      </ThemeProvider>
+      <ResponsiveAppBar></ResponsiveAppBar>
+      <div className="App-posts">
+        <Posts></Posts>
+
+      
+      </div>
     </div>
   );
 }
