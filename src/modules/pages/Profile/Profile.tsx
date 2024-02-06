@@ -5,9 +5,9 @@ import {Edit, Share, Group} from '@mui/icons-material'
 import ProfileTile from './Profile.tile';
 import Feed from '../../shared/Feed';
 
-const Profile = ({username}: {username: string}) => {
+const Profile = () => {
     // To be retrieved by REST API and use state *******************************
-    const tile = {name: username, imgSrc: '', bio: 'hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! '};  
+    const tile = {name: 'Jane Doe', imgSrc: '', bio: 'hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! hello world! '};  
     const stats = {likes: 189, followers: 18, following: 42};
     const isOwner = false;
     const [ownerOptions, setOwnerOptions] = useState(isOwner) // Will need to raise level to change on logout/login/session user
@@ -29,7 +29,7 @@ const Profile = ({username}: {username: string}) => {
             sx={{
                 p: 2,
                 margin: 'auto',
-                maxWidth: '50vw',
+                maxWidth: '55vw',
                 flexGrow: 1,
                 backgroundColor: 'primary.light'}}
             ><Grid container direction={'row'} columnSpacing={3} justifyContent={'center'} alignItems={'flex-start'}>
