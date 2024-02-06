@@ -1,19 +1,16 @@
-import React from 'react';
-import ResponsiveAppBar from '../modules/shared/Navbar';
-import Posts from '../modules/shared/Feed';
 import './feed.css'
-
+import './App.css';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import StandardLayoutRouter from '../modules/pages/router';
+ 
 function App() {
   return (
     <div className="App">
-      <ResponsiveAppBar></ResponsiveAppBar>
-      <div className="App-posts">
-        <Posts></Posts>
-
-      
-      </div>
+        <CssBaseline />
+        <StandardLayoutRouter></StandardLayoutRouter>
     </div>
   );
 }
-
+ 
 export default App;
+ 
