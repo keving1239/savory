@@ -1,3 +1,5 @@
+
+
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -78,14 +80,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const navMenuOptions = [
-  { to: '/feed', text: 'Home' },
   { to: '/bookmarks', text: 'Bookmarks' },
   { to: '/post', text: 'Make Post' },
   { to: '/', text: 'About' }
 ];
 
-const pages = ['Bookmarks', 'My Posts'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const dropDown = [
+  { to: '/profile', text: 'Profile' },
+  { to: '/login', text: 'Logout' },
+];
+
+const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -111,23 +116,22 @@ function ResponsiveAppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Link to="/feed">
-          <Typography
-            variant="h6"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+          <Link to="/feed" style={{ textDecoration: 'none', color: 'white' }}>
+            <Typography
+              variant="h6"
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              LOGO
+            </Typography>
           </Link>
-
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -162,27 +166,9 @@ function ResponsiveAppBar() {
               </MenuItem>
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Link to="/feed">
-            <Typography
-              variant="h5"
-              sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              LOGO
-            </Typography>
-          </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {navMenuOptions.map((page) => (
-              <Link to={page.to}>
+              <Link to={page.to} style={{ textDecoration: 'none', color: 'white' }}>
                 <Button
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: 'white', display: 'block' }}
@@ -228,9 +214,11 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {dropDown.map((setting) => (
+                <MenuItem key={setting.text} onClick={handleCloseUserMenu}>
+                  <Link to={setting.to} style={{textDecoration:'none', color:'black'}}>
+                    <Typography textAlign="center">{setting.text}</Typography>
+                  </Link>
                 </MenuItem>
               ))}
             </Menu>

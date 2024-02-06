@@ -17,7 +17,7 @@ export const StandardLayoutRouter = () => (
       as children via the <Outlet /> element */}
             <Route path="/" element={<StandardLayout></StandardLayout>}>
                 <Route index element={<SplashPage></SplashPage>}></Route>
-                <Route path="profile" element={<Profile username="kevin"></Profile>}>
+                <Route path="profile" element={<Profile></Profile>}>
                 </Route>
                 <Route path="bookmarks" element={<BookmarkedPosts></BookmarkedPosts>}>
                 </Route>
