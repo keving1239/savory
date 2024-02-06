@@ -7,14 +7,54 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import { createTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+import { Input } from '@mui/material';
 
-export default function Post() {
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#7f895f',
+      main: '#606c38',
+      dark: '#283618',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#ff7961',
+      main: '#f44336',
+      dark: '#ba000d',
+      contrastText: '#000',
+    },
+  },
+});
+
+
+
+export default function Post() 
+{
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      setSelectedFile(file || null)
+    };
+
+    const handleUpload = () => {
+      if (selectedFile){
+        console.log('Uploading file', selectedFile)
+      }
+      else
+      {
+        console.log('No file selected.')
+      }
+
+    };
     return (
       
 <React.Fragment>
-<Box sx = {{bgcolor: 'beige', height: '100vd', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-  <Box component="section" sx={{ p: 8, border: '2px solid black', bgcolor: '#606c38', margin: 10, marginLeft: 15, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
+<Box sx = {{height: '100vd', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+<Box component="section" sx={{ p: 8, border: '2px solid black', bgcolor: '#606c38', margin: 10, marginLeft: 15, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
 <Grid container spacing={8} direction = "column" justifyContent = "space-between">
 <Typography
             variant="h6"
@@ -64,11 +104,12 @@ export default function Post() {
       margin='dense'
     />
   </Grid>
+  <Input type='file' inputProps={{ accept: 'image/*'}} onChange={handleFileChange} style={{margin: '30px'}} />
 </Grid>
 <Button variant="contained" color="success" size = "small">
         Post
 </Button>
-    </Box>
+</Box>
 </Box>
 </React.Fragment>
     );
