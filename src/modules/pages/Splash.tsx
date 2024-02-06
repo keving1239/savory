@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Grid, Button, Stack, Card, CardContent, CardMedia, Container } from '@mui/material';
-import ProfileTile from '../shared/Profile.tile';
+import ProfileTile from './Profile/Profile.tile';
 
 const SplashPage = () => {
     const teamMembers = [
