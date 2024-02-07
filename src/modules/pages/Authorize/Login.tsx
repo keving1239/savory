@@ -38,13 +38,15 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit" variant="contained" color="primary">
+          <Link to='/feed'><Button type="submit" variant="contained" color="primary">
             Login
-          </Button>
+          </Button></Link>
         </form>
-        <p>
+        <br></br>
+        <Typography>New User? <Link to='/register'>Register here.</Link></Typography>
+        <Typography>
         Forgot your password? <Link to="/forgot-password">Reset it here</Link>.
-        </p>
+        </Typography>
       </CardContent>
     </Card>
   );

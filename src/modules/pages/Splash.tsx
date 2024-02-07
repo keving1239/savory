@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Typography, Grid, Button, Stack, Card, CardContent, CardMedia, Container } from '@mui/material';
 import ProfileTile from './Profile/Profile.tile';
 
@@ -23,7 +24,9 @@ const SplashPage = () => {
                     {teamMembers.map((member) => (<ProfileTile {...member}/>))}
                 </Stack>
             </Grid>
-            <Grid item><Button variant='contained' color='primary'>Continue</Button></Grid>
+            <Grid item>
+                <Link to='/login'><Button variant='contained' color='primary'>Continue</Button></Link>
+            </Grid>
             </Grid>
        );
 };

@@ -11,6 +11,7 @@ import { createTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { Input } from '@mui/material';
+import { Link } from 'react-router-dom'
 
 const theme = createTheme({
   palette: {
@@ -31,7 +32,7 @@ const theme = createTheme({
 
 
 
-export default function Post() 
+export default function PostCreate() 
 {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
@@ -106,9 +107,9 @@ export default function Post()
   </Grid>
   <Input type='file' inputProps={{ accept: 'image/*'}} onChange={handleFileChange} style={{margin: '30px'}} />
 </Grid>
-<Button variant="contained" color="success" size = "small">
+<Link to='/feed'><Button variant="contained" color="success" size = "small">
         Post
-</Button>
+</Button></Link>
 </Box>
 </Box>
 </React.Fragment>

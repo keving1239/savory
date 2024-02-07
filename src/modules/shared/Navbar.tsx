@@ -1,3 +1,51 @@
+// KG SEARCH BAR CODE
+
+/*const Search = () => {
+  const navigate = useNavigate();
+function setSearchQuery(query: string) {
+  navigate(`/feed/${query}`);
+}
+  return (
+  <form
+  onSubmit={(e) => {
+    setSearchQuery((e.currentTarget.elements[0] as HTMLFormElement).value);
+  }}
+    >
+    <TextField
+      id="search-bar"
+      className="text"
+      variant="outlined"
+      placeholder="Search"
+      size="small"
+      InputProps={{
+        sx: {
+          ".css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+            border: "1px solid #fefae0",
+          },
+          "&:hover": {
+            ".css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+              border: "1px solid #fefae0",
+            },
+          },
+          input: {
+            color: '#fefae0'
+          },
+        },
+      }}
+    />
+    <IconButton type="submit" aria-label="search">
+      <SearchIcon style={{ fill: "#fefae0" }} />
+    </IconButton>
+  </form>
+);}
+
+<Search></Search>
+*/
+
+
+
+
+
 
 
 import * as React from 'react';
@@ -80,13 +128,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const navMenuOptions = [
-  { to: '/bookmarks', text: 'Bookmarks' },
-  { to: '/post', text: 'Make Post' },
+  { to: '/feed/bookmarks', text: 'Bookmarks' },
+  { to: '/post/new', text: 'Make Post' },
   { to: '/', text: 'About' }
 ];
 
 const dropDown = [
   { to: '/profile', text: 'Profile' },
+  { to: '/settings', text: 'Settings' },
   { to: '/login', text: 'Logout' },
 ];
 

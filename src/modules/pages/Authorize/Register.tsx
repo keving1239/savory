@@ -1,5 +1,6 @@
 // Registration.tsx
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography, TextField, Button } from '@mui/material';
 
 function Register() {
@@ -68,9 +69,9 @@ function Register() {
             error={!!passwordError}
             helperText={passwordError}
           />
-          <Button type="submit" variant="contained" color="primary">
+          <Link to='/profile/edit'><Button type="submit" variant="contained" color="primary">
             Register
-          </Button>
+          </Button></Link>
         </form>
       </CardContent>
     </Card>
