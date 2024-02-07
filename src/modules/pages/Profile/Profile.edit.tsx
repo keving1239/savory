@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Typography, Grid, Button, TextField, Card, CardContent, CardMedia, Container } from '@mui/material';
 
 const ProfileEdit = () => {
@@ -43,7 +44,9 @@ const ProfileEdit = () => {
                 onChange={(e) => {setBlogBio(e.target.value)}}/>    
             </form>
             </CardContent>
+            <Link to={`/profile/${blogName}`}>
             <Button type="submit" variant="contained" color="primary" onClick={handleProfileEdits}>Update</Button>
+            </Link>
         </Card>
     );
 }
