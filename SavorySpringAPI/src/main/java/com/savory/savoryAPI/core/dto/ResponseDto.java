@@ -1,3 +1,5 @@
+package com.savory.savoryAPI.core.dto;
+
 import lombok.Builder;
 import lombok.Value;
 
