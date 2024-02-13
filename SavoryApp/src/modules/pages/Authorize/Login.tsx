@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent, Typography, TextField, Button } from '@mui/material';
-import { Link } from 'react-router-dom'
 
 
-function Login() {
+const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     // Implement your authentication logic here
     console.log('Username:', username);
     console.log('Password:', password);
+    navigate('/feed');
     // Example: You can send a request to your backend for authentication
   };
 
@@ -20,7 +23,7 @@ function Login() {
         <Typography variant="h5" component="h2" gutterBottom>
           Login
         </Typography>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={(e) => {handleLogin(e)}}>
           <TextField
             label="Username"
             variant="outlined"
@@ -38,9 +41,9 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Link to='/feed'><Button type="submit" variant="contained" color="primary">
+          <Button type="submit" variant="contained">
             Login
-          </Button></Link>
+          </Button>
         </form>
         <br></br>
         <Typography>New User? <Link to='/register'>Register here.</Link></Typography>
