@@ -31,7 +31,7 @@ public class PostService
     }
 
     public List<Posts> findPosts(List<Long> ids) {
-        return postRepository.findAllByIdIn(ids);
+        return postRepository.findAllByPost_idIn(ids);
     }
 
 //    public SuperPowerDto updateSuperPort(SuperPowerDto superPowerDto, Long superPowerKey) {
@@ -45,10 +45,10 @@ public class PostService
 //        return SuperPowerUtil.buildSuperPowerDto(savedPower);
 //    }
 
-    public PostsDto updatePostPort(PostsDto postsDto, Integer id)
+    public PostsDto updatePostPort(PostsDto postsDto, Long post_id)
     {
-        var existingPost = postRepository.findById(id).orElseThrow(() -> {
-                    log.warn("Unable to find super power with id {} while trying to update", id);
+        var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
+                    log.warn("Unable to find super power with id {} while trying to update", post_id);
                     return null;
                 });
 
@@ -73,10 +73,10 @@ public class PostService
         target.setUserID(postsDto.getUserID());
         target.setIngredients(postsDto.getIngredients());
         target.setRecipe(postsDto.getRecipe());
-        target.setPictureURL(postsDto.getPictureURL());
+        target.setImg(postsDto.getImg());
         target.setTag1(postsDto.getTag1());
         target.setTag2(postsDto.getTag2());
-        target.setDate(postsDto.getDate());
+        target.setPostdate(postsDto.getPostdate());
 
         return target;
     }

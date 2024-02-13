@@ -22,6 +22,7 @@
 package com.savory.savoryAPI.post.util;
 import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.dto.PostsDto;
+import com.savory.savoryAPI.person.*;
 
 // public class PostsDto {
 //     int id;
@@ -44,12 +45,12 @@ public class PostsUtil
    public static PostsDto buildPostDto(Posts post)
    {
        return PostsDto.builder()
-       .id(post.getId())
+       .post_id(post.getPost_id())
        .userID(post.getUserID())
        .headline(post.getHeadline())
        .ingredients(post.getIngredients())
        .recipe(post.getRecipe())
-       .pictureURL(post.getPictureURL())
+       .img(post.getImg())
        .tag1(post.getTag1())
        .tag2(post.getTag2())
        .build();

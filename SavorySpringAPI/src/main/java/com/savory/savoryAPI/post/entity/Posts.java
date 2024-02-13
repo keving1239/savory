@@ -56,6 +56,7 @@
 package com.savory.savoryAPI.post.entity;
 
 
+import com.savory.savoryAPI.person.entity.Person;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -66,44 +67,38 @@ import lombok.*;
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "POSTS")
+@Table(name = "Posts")
 public class Posts {
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   @Column(name = "ID", nullable = false)
-   @Builder.Default
-   Integer id = 0;
+   @Column(name = "postId", nullable = false)
+   private long post_id;
 
-   @Column(name = "USER_ID", nullable = false)
-   @Builder.Default
-   Integer userID = 0;
+   @Column(name = "userId", nullable = false)
+   private long userID;
+//   @ManyToOne(targetEntity = Person.class)
+//   @JoinColumn(name = "userId", nullable = false)
+//   private Person user;
 
-   @Column(name = "HEADLINE", nullable = false)
-   @Builder.Default
-   String headline = "";
+   @Column(name = "Headline", nullable = false)
+   private String headline;
 
-   @Column(name = "INGREDIENTS", nullable = false)
-   @Builder.Default
-   String ingredients = "";
+   @Column(name = "Ingredients", nullable = false)
+   private String ingredients;
 
-   @Column(name = "RECIPE", nullable = false)
-   @Builder.Default
-   String recipe = "";
+   @Column(name = "Recipe", nullable = false)
+   private String recipe;
 
-   @Column(name = "PICTURE_URL", nullable = false)
-   @Builder.Default
-   String pictureURL = "";
+   @Column(name = "Img", nullable = false)
+   private String img;
 
-   @Column(name = "TAG1", nullable = false)
-   @Builder.Default
-   String tag1 = "";
+   @Column(name = "Tag1", nullable = false)
+   private String tag1;
 
-   @Column(name = "TAG2", nullable = false)
-   @Builder.Default
-   String tag2 = "";
+   @Column(name = "Tag2", nullable = false)
+   private String tag2;
 
-   @Column(name = "DATE", nullable = false)
-   @Builder.Default
-   String date = "";
+   @Column(name = "PostDate", nullable = false)
+   private String postdate;
 }

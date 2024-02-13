@@ -55,9 +55,9 @@ public class PostController {
 //                .body(superPower);
 //    }
     @PutMapping
-    public ResponseEntity<PostsDto> updatePost(@RequestBody PostsDto postsDto, @RequestParam(value = "id") Integer id)
+    public ResponseEntity<PostsDto> updatePost(@RequestBody PostsDto postsDto, @RequestParam(value = "postId") Long post_id)
     {
-        var post = postService.updatePostPort(postsDto, id);
+        var post = postService.updatePostPort(postsDto, post_id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 }
