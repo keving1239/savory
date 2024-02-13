@@ -1,342 +1,206 @@
-import Card from '@mui/material/Card';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { Box, Grid, Tooltip, Typography, Card, 
+    CardMedia, Avatar, IconButton, Modal } from '@mui/material';
+import { CropFree, Share, Bookmark, BookmarkBorder, 
+    Favorite, ChatBubbleOutline, FavoriteBorder, Close } from '@mui/icons-material';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import { useState } from 'react';
-import InfoIcon from '@mui/icons-material/Info';
-import { Container, Tooltip, useMediaQuery } from '@mui/material';
-import Modal from '@mui/material/Modal';
-import { Box } from '@mui/material';
-import ModalClose from '@mui/joy/ModalClose';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { red } from '@mui/material/colors';
-import ImageList from '@mui/material/ImageList';
-import Theme from '../../app/App.theme';
+import CircularProgress from '@mui/material/CircularProgress';
+import Post from '../pages/Post/Post';
+import { Recipes } from '../../Recipes';
 
-export default function Posts() {
-
-    const can_fit = useMediaQuery('(min-width: 1200px)');
-
-    interface postInfo {
-        img: string;
-        title: string;
-        author: string;
-        ingredients: string[];
-        isBookmarked: boolean;
-        tags: string[];
-        date: Date;
+export default function Feed({id}: {id?: string}) {
+    // State
+    const { filters } = useParams();
+    const { state } = useLocation();
+    const [filteredRecipes, setFilteredRecipes] = useState(Recipes);
+    const [open, setOpen] = useState(Boolean(id) && state?.fromTag);
+    const [currentPost, setcurrentPost] = useState(id || '');
+    useEffect(() => {
+        setOpen(state?.fromTag)
+    }, [state]);
+    // Handlers
+    const openHandler = (id: string) => {
+        setcurrentPost(id);
+        setOpen(true);
     }
-
-
-    const [open, setOpen] = useState(false);
-
-    const [key, setKey] = useState<number>(1);
-
-
-    const starterItem = {
-        img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-        title: 'Breakfast',
-        author: '@bkristastucchio',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
+    const closeHandler = () => {
+        setcurrentPost('');
+        setOpen(false);
     }
-
-    const [currentItem, setItem] = useState<postInfo>(starterItem);
-
-    function handler() {
-
-        if (open) {
-            setOpen(false)
+    // filter
+    function parseFilters() {
+        if(!filters) return Recipes;
+        let filterBookmarks = false;
+        let filterLikes = false;
+        let filterTagGroup = ''
+        const spaceRemoved = filters?.split(' ');
+        const lowerCased = spaceRemoved?.map(f => f.toLowerCase());
+        lowerCased?.forEach(filter => {
+            if(filter === 'bookmarks' || filter === 'bookmark' || filter === 'bookmarked'){
+                filterBookmarks = true;
+            } else if(filter === 'likes' || filter === 'like' || filter === 'liked') {
+                filterLikes = true;
+            } else {
+                filterTagGroup += filter + ''
+            }
+        });
+        const filterWords = filterTagGroup.split(',');
+        const applyFilters = ({title, tags, ingredients, isBookmarked, isLiked}: 
+            {title: string, tags: string[], ingredients: string[], isBookmarked: boolean, isLiked: boolean}) => {
+            if ((filterBookmarks && isBookmarked) || (filterLikes && isLiked)) return true;
+            for(const tag of tags){
+                if(filterWords.includes(tag.toLowerCase())) return true;
+            }
+            const titleWords = title.split(' ');
+            for(const word of titleWords){
+                if(filterWords.includes(word.toLowerCase())) return true;
+            }
+            for(const ingredient of ingredients){
+                const ingredientWords = ingredient.toLowerCase().replace(/[^a-z ]/g, '').split(' ')
+                console.log(ingredientWords)
+                for(const word of ingredientWords){
+                    if(filterWords.includes(word)) return true;
+                }
+            }
+            return false;
         }
-        else {
-            setOpen(true)
-        }
+        return Recipes.filter(recipe => {
+            return applyFilters({title:recipe.title, tags: recipe.tags, ingredients: recipe.ingredients,
+                isBookmarked: recipe.isBookmarked, isLiked: recipe.isLiked});
+        });
     }
-
-    function setBookmark() {
-
-
-        currentItem.isBookmarked ? (
-            currentItem.isBookmarked = false
-        ) : (
-            currentItem.isBookmarked = true
-        )
-            ;
-        {
-            key > 10 ? (
-                setKey(1)
-            ) : (
-                setKey(key + 1)
-            )
-        }
-    }
-
-    function setBookmark2(item: postInfo) {
-
-
-        item.isBookmarked ? (
-            item.isBookmarked = false
-        ) : (
-            item.isBookmarked = true
-        )
-            ;
-        {
-            key > 10 ? (
-                setKey(1)
-            ) : (
-                setKey(key + 1)
-            )
-        }
-    }
-
+    useEffect(() => {
+        setFilteredRecipes(parseFilters());
+    }, [filters]);
 
     return (
-            <ImageList cols={can_fit ? 3 : 2}>
-                {itemData.map((item) => (
-                    <div id="card">
-                        <Card key={key} sx={{ marginTop: 5, marginLeft: "1vw", marginRight: "1vw", width: "45vw", maxWidth: "400px", maxHeight: "400px" }}>
-                            <div id="header">
-                                <CardHeader
-                                    avatar={
-                                        <Tooltip title={item.author}>
-                                            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                                                {item.author.charAt(1).toUpperCase()}
-                                            </Avatar>
-                                        </Tooltip>
-                                    }
-                                    titleTypographyProps={{ variant: 'h6' }}
-                                    title={item.title}
-                                    subheader={item.date.toDateString()}
-                                />
-                            </div>
-                            <img
-                                srcSet={`${item.img}?w=250&h=166.5&fit=crop&auto=format&dpr=2 2x`}
-                                src={`${item.img}?w=250&h=166.5&fit=crop&auto=format`}
-                                alt={item.title}
-
-                                loading="lazy"
-                            />
-                            <CardActions disableSpacing>
-                                <Tooltip title={`View details of ${item.title}`}>
-                                    <IconButton
-                                        sx={{ color: 'rgba(10, 10, 10, 0.4)' }}
-                                        aria-label={`info about ${item.title}`}
-                                        onClick={() => {
-                                            handler();
-                                            setItem(item)
-                                        }}
-                                    >
-                                        <InfoIcon />
-                                    </IconButton>
-                                </Tooltip>
-                                <IconButton
-                                    sx={{ color: 'black' }}
-                                    aria-label={`info about ${item.title}`}
-                                    onClick={() => {
-                                        setBookmark2(item);
-                                    }
-                                    }
-                                >
-                                    {item.isBookmarked ? (
-                                        <BookmarkIcon />
-                                    ) : (
-                                        <BookmarkBorderIcon />
-                                    )}
-
-
-                                </IconButton>
-                            </CardActions>
-                            <Modal
-                                aria-labelledby="transition-modal-title"
-                                aria-describedby="transition-modal-description"
-                                sx={{ '& .MuiBackdrop-root': { backgroundColor: 'transparent' } }}
-                                className="modal"
-                                open={open}
-
-                            >
-                                <Box>
-                                    <div id="titleIcon" key={key}>
-                                        <h1>{currentItem.title}</h1>
-                                        <IconButton
-                                            sx={{ color: 'black' }}
-                                            aria-label={`info about ${item.title}`}
-                                            onClick={setBookmark}
-                                        >
-                                            {currentItem.isBookmarked ? (
-                                                <BookmarkIcon />
-                                            ) : (
-                                                <BookmarkBorderIcon />
-                                            )}
-
-
-                                        </IconButton>
-                                    </div>
-                                    <div id="author">
-                                        <a href="" >{currentItem.author}</a>
-                                        <ul id="tags">
-                                            {currentItem?.tags?.map((tag, index) => {
-                                                return <li key={index}><strong>#{tag}</strong></li>
-                                            })}
-                                        </ul>
-                                    </div>
-                                    <div id='modal1'>
-                                        <div id='ingredients'>
-                                            <h4>Ingredients:</h4>
-                                            <ul>
-                                                {currentItem?.ingredients?.map((ingredient, index) => {
-                                                    return <li key={index}>{ingredient}</li>
-                                                })}
-                                            </ul>
-                                        </div>
-                                        <img
-                                            srcSet={`${currentItem.img}?w=350&fit=crop&auto=format&dpr=2 2x`}
-                                            src={`${currentItem.img}?w=350&fit=crop&auto=format`}
-                                            alt={currentItem.title}
-
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                    <div id="steps">
-                                        <h4>Steps:</h4>
-                                        <ol>
-                                            {currentItem?.ingredients?.map((ingredient, index) => {
-                                                return <li key={index}>{ingredient}</li>
-                                            })}
-                                        </ol>
-                                        <ModalClose onClick={() => {
-                                            handler();
-                                            setItem(starterItem)
-                                        }} variant="outlined" />
-                                    </div>
-                                </Box>
-
-                            </Modal>
-                        </Card>
-                    </div>
-                ))
-                }
-            </ImageList>
+            <Box>
+                <RecipePopup {...{open, id: currentPost, closeHandler}}/>
+                <Grid container rowGap={5} justifyContent={'space-around'}>
+                    {filteredRecipes.map((recipe) => (
+                    <RecipeItem {...{id: recipe.id, key: recipe.title, openHandler}}/>
+                    ))}
+                </Grid>
+                <CircularProgress sx={{mt: '2vh'}}/>
+            </Box>
     );
 }
 
+const RecipeAvatar = ({author}: {author: string}) => {
+    return(
+    <Tooltip title={author}>
+            <Link to={`/profile/${author}`}><IconButton>
+            <Avatar aria-label="recipe" src=''>
+                {author.charAt(1).toUpperCase()}
+            </Avatar></IconButton></Link>
+    </Tooltip>
+    );
+}
 
+const RecipeExpandButton = ({id, openHandler}: {id: string, openHandler: (id: string) => void}) => {
+    return (
+    <Tooltip title='Expand Post'>
+            <IconButton onClick={() => {openHandler(id)}}>
+                <CropFree/>
+            </IconButton>
+    </Tooltip>
+    );
+}
 
+const RecipeItem = ({id, openHandler}: {id: string, openHandler: (id: string) => void}) => {
+    // Get from REST API
+    const recipe = Recipes[+id];
+    // Recipe State 
+    const [bookmark, setBookmark] = useState(recipe.isBookmarked);
+    const [like, setLike] = useState(recipe.isLiked);
+    const [copySuccess, setCopySuccess] = useState('');
+    useEffect(() => {
+        copySuccess && console.log(copySuccess);
+    }, [copySuccess]);
+    // Handlers
+    const likeHandler = () => {
+        setLike(!like);
+        console.log(like ?  `Unliked: ${id}` : `Liked: ${id}`);
+        // Notification Alert
+    }
+    const commentHandler = (comment: string) => {
+        // NOTE: NOT TO BE IMPLEMENTED
+        // REST API comment
+        console.log(`Commented: ${comment} on ${id}`);
+    }
+    const shareHandler = async () => {
+        try {
+            const location = window.location.href;
+            const profile = location.search('/profile');
+            const feed = profile > 0 ? profile : location.search('/feed'); 
+            const url = profile > 0 ? location : location.substring(0, feed) + '/profile/' + recipe.author;
+            await navigator.clipboard.writeText(url + '/' + id);
+            setCopySuccess('Copy Link Successful: ' + id);
+        } catch (err) {setCopySuccess('Copy Link Failed: ' + id);}
+    }
+    const bookmarkHandler = () => {
+        setBookmark(!bookmark);
+        console.log(bookmark ?  `Unbookmarked: ${id}` : `Bookmarked: ${id}`);
+        // Notification Alert
+    }
+    // Recipe Card
+    return(
+        <Grid item xs={9} sm={5.75} md={3.5} key={id}>
+            <Card elevation={4}>
+                <CardHeader
+                    title={
+                        <Grid container justifyContent='space-between' alignItems='center'>
+                            <Grid item><RecipeAvatar author={recipe.author}/></Grid>
+                            <Grid item xs={8}><Typography variant='h5' noWrap>{recipe.title}</Typography></Grid>
+                            <Grid item><RecipeExpandButton {...{id, openHandler}}/></Grid>
+                        </Grid>
+                    }
+                    style={{ height: '6.5vh', padding: '.5vh', display: 'block'}}
+                    />
+                <CardMedia
+                    component="img"
+                    loading="lazy"
+                    image={recipe.img}
+                    alt={recipe.title}
+                    style={{height: '30vh'}}
+                    sx={{ objectFit: "cover"}}/>    
+                <CardActions disableSpacing style={{ height: '5vh' }}>
+                    <Grid container justifyContent={'space-between'}>
+                        <Grid item><Grid container>
+                            <Grid item><IconButton onClick={likeHandler}>
+                                {like ? <Favorite color='error'/> : <FavoriteBorder/>}
+                            </IconButton></Grid>
+                            <Grid item><IconButton onClick={() => commentHandler('')}>
+                                <ChatBubbleOutline/>
+                            </IconButton></Grid>
+                            <Grid item><IconButton onClick={shareHandler}>
+                                <Share/>
+                            </IconButton></Grid>
+                        </Grid></Grid>
+                        <Grid item><IconButton onClick={bookmarkHandler}>
+                                {bookmark ? <Bookmark color='secondary'/> : <BookmarkBorder/>}
+                        </IconButton></Grid>
+                    </Grid> 
+                </CardActions>
+            </Card>
+        </Grid>
+    );
+}
 
-
-
-
-
-const itemData = [
-    {
-        img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-        title: 'Breakfast',
-        author: '@bkristastucchio',
-        ingredients: ['sugarahsfdaahjfklashkjfhaskjfjnaofnoweoifiuebiufbiuwrbeuifiuwenfiuhwiehgfoihweoihgoihdaohgldaongaofneuafiuqeiuwfiubwiuebfviuoi', 'flour', 'eggs', 'a', 'b', 'c', 'c', 'd', 'w', 'flour', 'eggs', 'a', 'b', 'c', 'c', 'd', 'w'],
-        isBookmarked: false,
-        tags: ['protein', 'healthy'],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-        title: 'Burger',
-        author: '@rollelflex_graphy726',
-        ingredients: ['salt', 'tomatoes'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-        title: 'Camera',
-        author: '@helloimnik',
-        ingredients: ['water', 'milk', 'okra'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-        title: 'Coffee',
-        author: '@nolanissac',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-        title: 'Hats',
-        author: '@hjrc33',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-        title: 'Honey',
-        author: '@arwinneil',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-        title: 'Basketball',
-        author: '@tjdragotta',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-        title: 'Fern',
-        author: '@katie_wasserman',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-        title: 'Mushrooms',
-        author: '@silverdalex',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
-        title: 'Tomato basil',
-        author: '@shelleypauls',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
-        title: 'Sea star',
-        author: '@peterlaster',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-    {
-        img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
-        title: 'Bike',
-        author: '@southside_customs',
-        ingredients: ['sugar', 'flour', 'eggs'],
-        isBookmarked: false,
-        tags: [],
-        date: new Date()
-    },
-];
+const RecipePopup = ({open, id, closeHandler}: {open: boolean, id: string, closeHandler: () => void}) => {                               
+    return(
+        <Modal
+        open={open}
+        onClose={closeHandler}
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <div style={{position: 'relative', outline: 'none', border: 'none'}}>
+                <IconButton onClick={closeHandler} style={{position: 'absolute', top: 0, right: 5}}>
+                    <Close/>
+                </IconButton>    
+                <Post id={id}/>
+            </div>
+        </Modal>
+    );
+}

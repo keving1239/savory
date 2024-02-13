@@ -1,9 +1,9 @@
-// Registration.tsx
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, TextField, Button } from '@mui/material';
 
-function Register() {
+const Register = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,6 +31,7 @@ function Register() {
       }
     // Handle registration logic
     console.log('Registering with:', username, email, password);
+    navigate(`/profile/${username}/edit`);
   };
 
   return (
@@ -69,9 +70,9 @@ function Register() {
             error={!!passwordError}
             helperText={passwordError}
           />
-          <Link to='/profile/edit'><Button type="submit" variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary">
             Register
-          </Button></Link>
+          </Button>
         </form>
       </CardContent>
     </Card>
