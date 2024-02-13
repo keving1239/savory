@@ -30,8 +30,15 @@ const Register = () => {
         return;
       }
     // Handle registration logic
-    console.log('Registering with:', username, email, password);
-    navigate(`/profile/${username}/edit`);
+    const person = {username: username, email: email, password: password, img: [], bio: '', admin: false}
+    fetch('http://localhost:8080/api/person/new', {
+      method: 'POST',
+      headers: {'Content-type':'application/json'},
+      body: JSON.stringify(person)
+    }).then(() => {
+      console.log('Registered ' + username);
+      navigate(`/profile/${username}/edit`);
+    });
   };
 
   return (

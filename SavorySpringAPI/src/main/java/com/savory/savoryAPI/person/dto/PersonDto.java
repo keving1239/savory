@@ -6,11 +6,11 @@ import lombok.Value;
 @Builder
 @Value
 public class PersonDto {
-    long id;
+    int id;
     String username;
     String email;
     String password;
-    String img;
+    byte[] img;
     String bio;
     boolean isAdmin;
 }

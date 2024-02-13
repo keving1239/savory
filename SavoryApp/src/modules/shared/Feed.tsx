@@ -15,10 +15,10 @@ export default function Feed({id}: {id?: string}) {
     const { filters } = useParams();
     const { state } = useLocation();
     const [filteredRecipes, setFilteredRecipes] = useState(Recipes);
-    const [open, setOpen] = useState(Boolean(id) && state?.fromTag);
+    const [open, setOpen] = useState(Boolean(id) && Boolean(state?.fromTag));
     const [currentPost, setcurrentPost] = useState(id || '');
     useEffect(() => {
-        setOpen(state?.fromTag)
+        setOpen(Boolean(state?.fromTag))
     }, [state]);
     // Handlers
     const openHandler = (id: string) => {
@@ -43,10 +43,10 @@ export default function Feed({id}: {id?: string}) {
             } else if(filter === 'likes' || filter === 'like' || filter === 'liked') {
                 filterLikes = true;
             } else {
-                filterTagGroup += filter + ''
+                filterTagGroup += filter + ','
             }
         });
-        const filterWords = filterTagGroup.split(',');
+        const filterWords = filterTagGroup.split(',').slice(0, -1);
         const applyFilters = ({title, tags, ingredients, isBookmarked, isLiked}: 
             {title: string, tags: string[], ingredients: string[], isBookmarked: boolean, isLiked: boolean}) => {
             if ((filterBookmarks && isBookmarked) || (filterLikes && isLiked)) return true;
@@ -59,7 +59,6 @@ export default function Feed({id}: {id?: string}) {
             }
             for(const ingredient of ingredients){
                 const ingredientWords = ingredient.toLowerCase().replace(/[^a-z ]/g, '').split(' ')
-                console.log(ingredientWords)
                 for(const word of ingredientWords){
                     if(filterWords.includes(word)) return true;
                 }
