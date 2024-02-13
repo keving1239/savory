@@ -51,8 +51,7 @@ public class PostsUtil
        .ingredients(post.getIngredients())
        .recipe(post.getRecipe())
        .img(post.getImg())
-       .tag1(post.getTag1())
-       .tag2(post.getTag2())
+       .tags(post.getTags())
        .build();
    }
 }

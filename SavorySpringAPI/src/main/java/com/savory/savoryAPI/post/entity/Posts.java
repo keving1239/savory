@@ -77,9 +77,6 @@ public class Posts {
 
    @Column(name = "userId", nullable = false)
    private long userID;
-//   @ManyToOne(targetEntity = Person.class)
-//   @JoinColumn(name = "userId", nullable = false)
-//   private Person user;
 
    @Column(name = "Headline", nullable = false)
    private String headline;
@@ -91,13 +88,13 @@ public class Posts {
    private String recipe;
 
    @Column(name = "Img", nullable = false)
-   private String img;
+   private byte[] img;
 
-   @Column(name = "Tag1", nullable = false)
-   private String tag1;
+   @Column(name = "Tags", nullable = false)
+   private String tags;
 
-   @Column(name = "Tag2", nullable = false)
-   private String tag2;
+//   @Column(name = "Tag2", nullable = false)
+//   private String tag2;
 
    @Column(name = "PostDate", nullable = false)
    private String postdate;

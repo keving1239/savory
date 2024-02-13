@@ -74,8 +74,7 @@ public class PostService
         target.setIngredients(postsDto.getIngredients());
         target.setRecipe(postsDto.getRecipe());
         target.setImg(postsDto.getImg());
-        target.setTag1(postsDto.getTag1());
-        target.setTag2(postsDto.getTag2());
+        target.setTags(postsDto.getTags());
         target.setPostdate(postsDto.getPostdate());
 
         return target;

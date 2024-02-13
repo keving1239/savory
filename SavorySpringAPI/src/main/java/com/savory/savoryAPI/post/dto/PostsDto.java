@@ -15,9 +15,8 @@ public class PostsDto {
     String headline;
     String ingredients;
     String recipe;
-    String img;
-    String tag1;
-    String tag2;
+    byte[] img;
+    String tags;
     String postdate;
 
 
