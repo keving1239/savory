@@ -1,39 +1,16 @@
-import './feed.css'
-import './App.css';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import StandardLayoutRouter from '../modules/Router';
-
 import Theme from './App.theme';
+import StandardLayoutRouter from '../modules/Router';
  
-function App() {
+const App = () => {
   return (
-    <div className="App">
+    <div style={{height: '100%', textAlign: 'center'}}>
       <ThemeProvider theme={Theme}>
         <CssBaseline />
-        <StandardLayoutRouter></StandardLayoutRouter>
-        </ThemeProvider>
+        <StandardLayoutRouter/>
+      </ThemeProvider>
     </div>
   );
 }
  
 export default App;
- 
-/*
-IF THEME PROVIDER/CSS BASELINE THROWING ERROR
-import './feed.css'
-import './App.css';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import StandardLayoutRouter from '../modules/pages/router';
- 
-function App() {
-  return (
-    <div className="App">
-        <CssBaseline />
-        <StandardLayoutRouter></StandardLayoutRouter>
-    </div>
-  );
-}
- 
-export default App;
- 
-*/

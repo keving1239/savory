@@ -1,53 +1,56 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Typography, Grid, Button, TextField, Card, CardContent, CardMedia, Container } from '@mui/material';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Grid, Button, TextField, Card, CardContent } from '@mui/material';
+import ProfileTile from './Profile.tile';
 
 const ProfileEdit = () => {
-    const tile = {name: 'Johe Doe', imgSrc: '', bio: 'ajl;fdkja;lsdfkjas;ldfksjal;sdkfjal;skdfjl;aksfdj;lakdfjsl;aksdjfl;afkdjl;afsdjkjfadlk;ajdfkl;ajdfkaoldf;jfads'};
-    const [blogName, setBlogName] = useState(tile.name);
-    const [blogImg, setBlogImg] = useState(tile.imgSrc);
+    const tile = {img: '', bio: 'Welcome to my food blog!'}
+    const {username} = useParams(); 
+    const navigate = useNavigate();
+    const [blogImg, setBlogImg] = useState(tile.img);
     const [blogBio, setBlogBio] = useState(tile.bio);
-    const handleProfileEdits = () => {
-        tile.name = blogName;
-        tile.imgSrc = blogImg;
-        tile.bio = blogBio;
-        console.log(tile);
+
+    const handleProfileEdits = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(`Set profile picture to ${blogImg}`);
+        console.log(`Set profile bio to ${blogBio}`);
+        navigate(`/profile/${username}`);
     }
 
-
     return (
-        <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: 50, marginBottom: 50, padding: 10 }}>
-            <CardContent>
-            <form onSubmit={handleProfileEdits}>
-            <TextField 
-                type="file"
-                label="Blog Image"
-                variant='outlined'
-                fullWidth
-                margin='normal'
-                InputLabelProps={{ shrink: true }}  
-                onChange={(e) => {setBlogImg(e.target.value)}}
-            />
-            <TextField
-                label="Blog Name"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={blogName}
-                onChange={(e) => {setBlogName(e.target.value)}}/>
-            <TextField
-                label="Blog Bio"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={blogBio}
-                onChange={(e) => {setBlogBio(e.target.value)}}/>    
-            </form>
-            </CardContent>
-            <Link to={`/profile/${blogName}`}>
-            <Button type="submit" variant="contained" color="primary" onClick={handleProfileEdits}>Update</Button>
-            </Link>
-        </Card>
+        <Grid container justifyContent='center' alignItems='stretch' >
+        <Grid container item xs={4} sx={{bgcolor: '#acb493'}} alignItems='center' justifyContent='center'>
+            <ProfileTile {...{username: username || '', img: tile.img, bio: tile.bio}}/>
+        </Grid>
+        <Grid item xs={5} sx={{bgcolor: '#acb493'}}>
+            <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: 50, marginBottom: 50, padding: 10 }}>
+                <CardContent>
+                    <form onSubmit={(e) => handleProfileEdits(e)}>
+                    <TextField 
+                        type="file"
+                        label="Blog Image"
+                        variant='outlined'
+                        fullWidth
+                        margin='normal'
+                        InputLabelProps={{ shrink: true }}  
+                        onChange={(e) => {setBlogImg(e.target.value)}}
+                    />
+                    <TextField
+                        label="Blog Bio"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        minRows={5}
+                        maxRows={5}
+                        margin="normal"
+                        value={blogBio}
+                        onChange={(e) => {setBlogBio(e.target.value)}}/>    
+                    <Button type="submit" variant="contained" color="primary">Update</Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </Grid>
+        </Grid>
     );
 }
 
