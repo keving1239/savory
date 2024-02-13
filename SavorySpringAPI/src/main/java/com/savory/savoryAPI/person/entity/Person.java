@@ -2,6 +2,7 @@ package com.savory.savoryAPI.person.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.*;
 
 @Getter
 @Setter
@@ -15,25 +16,19 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", nullable = false)
-    private long id;
+    private int id;
     @Column(name = "Username", nullable = false)
     private String username;
     @Column(name = "Email", nullable = false)
     private String email;
     @Column(name = "Password", nullable = false)
     private String password;
-    @Column (name = "Img", nullable = true)
-    private String img;
-    @Column (name = "Bio", nullable = true)
+    @Column (name = "Img")
+    private byte[] img;
+    @Column (name = "Bio")
     private String bio;
     @Column (name = "Role", nullable = false)
     private boolean isAdmin;
-
-//    @OneToMany
-//    @JoinTable(
-//            name = "USER_TO_POST",
-//            joinColumns = @JoinColumn(name = "USER_ID"),
-//            inverseJoinColumns = @JoinColumn(name = "POST_ID"))
-//    @ToString.Exclude
-//    List<Person> userList;
+//    @OneToMany(cascade=CascadeType.ALL, mappedBy="userId")
+//    private List<Post> postList;
 }

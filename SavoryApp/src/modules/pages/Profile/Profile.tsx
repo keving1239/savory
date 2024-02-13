@@ -21,7 +21,7 @@ export const ProfileOverview = ({username}: {username: string}) => {
     // To be retrieved by REST API and use state *******************************
     const tile = {username: username, img: '', bio: 'Welcome to my food blog!'};  
     const stats = {likes: 189, followers: 18, following: 42};
-    const isOwner = false;
+    const isOwner = true;
     const [ownerOptions, setOwnerOptions] = useState(isOwner) // Will need to raise level to change on logout/login/session user
     // *************************************************************************
     // LOGIC FROM NAVBAR - TO CHANGE *******************************************

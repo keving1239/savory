@@ -4,12 +4,11 @@ import lombok.Value;
 
 @Builder
 @Value
-public class CreatePersonRequest {
-    long id;
+public class BuildPersonRequest {
     String username;
     String email;
     String password;
-    String img;
+    byte[] img;
     String bio;
     boolean isAdmin;
 }
