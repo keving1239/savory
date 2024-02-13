@@ -12,9 +12,21 @@ const ProfileEdit = () => {
 
     const handleProfileEdits = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(`Set profile picture to ${blogImg}`);
-        console.log(`Set profile bio to ${blogBio}`);
-        navigate(`/profile/${username}`);
+        fetch(`http://localhost:8080/api/person/${username}/edit/img`, {
+          method: 'PUT',
+          headers: {'Content-type':'application/json'},
+          body: JSON.stringify(blogImg)
+        }).then(() => {
+            console.log('Updated ' + username + "'s image.");
+            fetch(`http://localhost:8080/api/person/${username}/edit/bio`, {
+              method: 'PUT',
+              headers: {'Content-type':'application/json'},
+              body: JSON.stringify(blogBio)
+            }).then(() => {
+              console.log('Updated ' + username + "'s bio.");
+              navigate(`/profile/${username}`);
+            });
+        });
     }
 
     return (
