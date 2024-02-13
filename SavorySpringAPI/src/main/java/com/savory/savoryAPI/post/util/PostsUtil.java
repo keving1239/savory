@@ -38,6 +38,7 @@ import com.savory.savoryAPI.person.*;
 
 // }
 
+import java.util.Base64;
 import java.util.stream.Collectors;
 
 public class PostsUtil

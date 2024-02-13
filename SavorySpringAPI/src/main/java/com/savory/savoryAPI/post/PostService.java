@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +33,31 @@ public class PostService
 
     public List<Posts> findPosts(List<Long> ids) {
         return postRepository.findAllByPost_idIn(ids);
+    }
+
+    public List<PostsDto> findPostByUserID(Long userID)
+    {
+        List<Posts> posts = postRepository.findByUserID(userID);
+        return posts.stream()
+                .map(PostsUtil::buildPostDto)
+                .collect(Collectors.toList());
+    }
+
+    public void deletePostByPId(Long post_id)
+    {
+        postRepository.deleteByPost_id(post_id);
+
+    }
+
+
+    public PostsDto findPostbyPostID(Long post_id)
+    {
+        var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
+            log.warn("Unable to find super power with id {} while trying to update", post_id);
+            return null;
+        });
+        return PostsUtil.buildPostDto(existingPost);
+
     }
 
 //    public SuperPowerDto updateSuperPort(SuperPowerDto superPowerDto, Long superPowerKey) {

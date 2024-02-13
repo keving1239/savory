@@ -4,15 +4,10 @@ import com.savory.savoryAPI.post.dto.PostsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/posts")
@@ -35,7 +30,27 @@ public class PostController {
         return postService.findAllPosts();
     }
 
-//    @PostMapping
+    @GetMapping("/byUserId")
+    public List<PostsDto> getUserPosts(Long userID)
+    {
+        return postService.findPostByUserID(userID);
+    }
+
+    @GetMapping("/postID")
+    public PostsDto getPostbyPostID(Long post_id)
+    {
+        return postService.findPostbyPostID(post_id);
+    }
+
+    @DeleteMapping("/byPostID")
+    public void deletePostbyPostID(Long post_id)
+    {
+        postService.deletePostByPId(post_id);
+    }
+
+
+
+    //    @PostMapping
 //    public ResponseEntity<SuperPowerDto> createSuperPower(@RequestBody SuperPowerDto superPowerDto) {
 //        var superPower = superPowerService.createSuperPower(superPowerDto);
 //        return ResponseEntity.status(HttpStatus.CREATED)
