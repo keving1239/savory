@@ -5,6 +5,7 @@ import ProfileTile from './Profile.tile';
 
 const ProfileEdit = () => {
     const tile = {img: '', bio: 'Welcome to my food blog!'}
+    const id = '1';                                         // HARDCODED ID FOR NOW
     const {username} = useParams(); 
     const navigate = useNavigate();
     const [blogImg, setBlogImg] = useState(tile.img);
@@ -12,16 +13,16 @@ const ProfileEdit = () => {
 
     const handleProfileEdits = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        fetch(`http://localhost:8080/api/person/${username}/edit/img`, {
+        fetch(`http://localhost:8080/api/person/${id}/edit/img`, {
           method: 'PUT',
           headers: {'Content-type':'application/json'},
-          body: JSON.stringify(blogImg)
+          body: blogImg
         }).then(() => {
             console.log('Updated ' + username + "'s image.");
-            fetch(`http://localhost:8080/api/person/${username}/edit/bio`, {
+            fetch(`http://localhost:8080/api/person/${id}/edit/bio`, {
               method: 'PUT',
               headers: {'Content-type':'application/json'},
-              body: JSON.stringify(blogBio)
+              body: blogBio
             }).then(() => {
               console.log('Updated ' + username + "'s bio.");
               navigate(`/profile/${username}`);
