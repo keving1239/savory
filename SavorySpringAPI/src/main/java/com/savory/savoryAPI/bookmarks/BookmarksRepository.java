@@ -37,4 +37,8 @@ public interface BookmarksRepository extends JpaRepository<Bookmarks, Integer> {
 
     @Query("SELECT b FROM Bookmarks b WHERE b.userId = :userId")
     List<Bookmarks> findByUserId(int userId);
+
+    @Query("SELECT COUNT(*) FROM Bookmarks b WHERE b.postId = :postId")
+    Integer getBookmarksCount(int postId);
+
 }
