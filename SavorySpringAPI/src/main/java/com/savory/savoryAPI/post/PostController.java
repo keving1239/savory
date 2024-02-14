@@ -63,6 +63,13 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
+    @PostMapping("/userID")
+    public ResponseEntity<PostsDto>createPostByUserID(@RequestBody PostsDto postsDto, Long userID)
+    {
+        var post = postService.createPostbyUserID(postsDto, userID);
+        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    }
+
 //    @PutMapping
 //    public ResponseEntity<SuperPowerDto> updateSuperPower(@RequestBody SuperPowerDto superPowerDto, @RequestParam(value = "key") Long key) {
 //        var superPower = superPowerService.updateSuperPort(superPowerDto, key);

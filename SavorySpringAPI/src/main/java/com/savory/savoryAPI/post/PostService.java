@@ -90,6 +90,14 @@ public class PostService
         return PostsUtil.buildPostDto(savedPost);
     }
 
+    public PostsDto createPostbyUserID(PostsDto postsDto, Long userID) {
+        var post = reifyByUserID(postsDto, new Posts(), userID);
+        var savedPost = postRepository.save(post);
+        return PostsUtil.buildPostDto(savedPost);
+    }
+
+
+
 
 
 
@@ -104,6 +112,20 @@ public class PostService
         target.setPostdate(postsDto.getPostdate());
 
         return target;
+    }
+
+    private Posts reifyByUserID(PostsDto postsDto, Posts target, Long userID)
+    {
+        target.setHeadline(postsDto.getHeadline());
+        target.setUserID(userID);
+        target.setIngredients(postsDto.getIngredients());
+        target.setRecipe(postsDto.getRecipe());
+        target.setImg(postsDto.getImg());
+        target.setTags(postsDto.getTags());
+        target.setPostdate(postsDto.getPostdate());
+
+        return target;
+
     }
 
 
