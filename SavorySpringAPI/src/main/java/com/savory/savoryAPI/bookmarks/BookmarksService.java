@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.savory.savoryAPI.bookmarks.dto.BookmarksDto;
+import com.savory.savoryAPI.bookmarks.dto.BuildBookmarksRequest;
 import com.savory.savoryAPI.bookmarks.entity.Bookmarks;
 import com.savory.savoryAPI.bookmarks.util.BookmarksUtil;
 import com.savory.savoryAPI.core.exception.BookmarkException;
@@ -27,25 +28,14 @@ public class BookmarksService {
         this.bookmarksRepository = bookmarksRepository;
     }
 
-    public BookmarksDto updateBookmark(BookmarksDto bookmarksDto, int id, int postId, int userId) {
-        var bookmark = bookmarksRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Could not find bookmark for post {} from user {}", postId, userId);
-                    return new BookmarkException("Could not find bookmark with id " + id, HttpStatus.BAD_REQUEST);
-                });
-        var updatedBookmark = reify(bookmarksDto, bookmark);
-        var savedBookmark = bookmarksRepository.save(updatedBookmark);
-        return BookmarksUtil.buildBookmarksDto(savedBookmark);
-    }
-
-    public BookmarksDto createBookmark(BookmarksDto bookmarkDto) {
+    public BookmarksDto createBookmark(BuildBookmarksRequest bookmarkDto) {
         var bookmark = reify(bookmarkDto, new Bookmarks());
         var savedBookmark = bookmarksRepository.save(bookmark);
 
         return BookmarksUtil.buildBookmarksDto(savedBookmark);
     }
 
-    private Bookmarks reify(BookmarksDto bookmarkDto, Bookmarks target) {
+    private Bookmarks reify(BuildBookmarksRequest bookmarkDto, Bookmarks target) {
         target.setPostId(bookmarkDto.getPostId());
         target.setUserId(bookmarkDto.getUserId());
         return bookmarksRepository.save(target);
@@ -54,12 +44,6 @@ public class BookmarksService {
     public void deleteBookmarkById(int bookmarkId)
     {
         bookmarksRepository.deleteByBookmarkId(bookmarkId);
-
-    }
-
-    public void deleteBookmarkByUserId(int userId)
-    {
-        bookmarksRepository.deleteByBookmarkId(userId);
 
     }
 
@@ -74,5 +58,16 @@ public class BookmarksService {
                 .stream()
                 .map(BookmarksUtil::buildBookmarksDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<BookmarksDto> findBookmarksByUser(int userId) {
+        return bookmarksRepository.findByUserId(userId)
+                .stream()
+                .map(BookmarksUtil::buildBookmarksDto)
+                .collect(Collectors.toList());
+    }
+
+    public Integer getBookmarksCount(int postId) {
+        return bookmarksRepository.getBookmarksCount(postId);
     }
 }

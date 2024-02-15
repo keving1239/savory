@@ -1,6 +1,7 @@
 package com.savory.savoryAPI.bookmarks;
 
 import com.savory.savoryAPI.bookmarks.dto.BookmarksDto;
+import com.savory.savoryAPI.bookmarks.dto.BuildBookmarksRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bookmarks")
+@RequestMapping("/api/bookmarks")
 public class BookmarksController {
 
     private final BookmarksService bookmarksService;
@@ -28,8 +29,18 @@ public class BookmarksController {
         return bookmarksService.findAllBookmarks();
     }
 
+    @GetMapping("/users/{userId}")
+    public List<BookmarksDto> getBookmarksById(@PathVariable int userId) {
+        return bookmarksService.findBookmarksByUser(userId);
+    }
+
+    @GetMapping("/posts/{postId}")
+    public Integer getBookmarkCount(@PathVariable int postId) {
+        return bookmarksService.getBookmarksCount(postId);
+    }
+
     @PostMapping("/postBookmark")
-    public BookmarksDto createBookmark(@RequestBody BookmarksDto bookmarkDto) {
+    public BookmarksDto createBookmark(@RequestBody BuildBookmarksRequest bookmarkDto) {
         return bookmarksService.createBookmark(bookmarkDto);
     }
 
