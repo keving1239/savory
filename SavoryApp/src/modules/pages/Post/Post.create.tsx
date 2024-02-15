@@ -31,13 +31,14 @@ const PostCreate = () => {
     field.fieldProps['fullWidth']=true;
   }));
 
-  //Handle Form Submit
-  const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newRecipe = [title, img, ingredients, recipe, tags];
-    console.log(`Recipe has been created! ${newRecipe}`);
-    navigate('/feed');
-  }
+
+    //Handle Form Submit
+    const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const newRecipe = [title, img, ingredients, recipe, tags];
+      console.log(`Recipe has been created! ${newRecipe}`);
+      navigate('/feed');
+    }
 
   return (      
     <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>

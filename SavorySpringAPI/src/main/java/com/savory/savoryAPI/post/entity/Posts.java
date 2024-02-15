@@ -73,10 +73,10 @@ public class Posts {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    @Column(name = "postId", nullable = false)
-   private long post_id;
+   private int post_id;
 
    @Column(name = "userId", nullable = false)
-   private long userID;
+   private int userID;
 
    @Column(name = "Headline", nullable = false)
    private String headline;
