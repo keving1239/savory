@@ -8,9 +8,13 @@ import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
-import { Recipes } from '../../Recipes';
+import { Recipes } from '../../recipes';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 export default function Feed({id}: {id?: string}) {
+    const user = useSelector((state: RootState) => state.user.user);
+    console.log('This is the feed for '+user?.username);
     // State
     const { filters } = useParams();
     const { state } = useLocation();

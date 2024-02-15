@@ -1,14 +1,11 @@
 package com.savory.savoryAPI.person;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.savory.savoryAPI.person.dto.BuildPersonRequest;
 import com.savory.savoryAPI.person.dto.PersonDto;
 
 import java.util.List;
 
-import com.savory.savoryAPI.person.util.PersonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +25,9 @@ public class PersonController {
     public List<PersonDto> getAllPersons() {
         return personService.findAll();
     }
-    @GetMapping("/api/person/{username}/{password}/id")
-    public String getPersonID(@PathVariable("username") String username, @PathVariable("password") String password) {
-        return personService.getPersonID(username, password).toString();
+    @GetMapping("/api/person/email/{email}")
+    public PersonDto getPersonByEmail(@PathVariable("email") String email) {
+        return personService.getPersonByEmail(email);
     }
     @PostMapping("api/person/new")
     public PersonDto createPerson(@RequestBody BuildPersonRequest personDTO) {
@@ -38,9 +35,7 @@ public class PersonController {
     }
     @GetMapping("api/person/{id}")
     public PersonDto getPerson(@PathVariable("id") Integer id) {
-        var person = personService.getPerson(id);
-        if(person == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        return PersonUtil.buildPersonDto(person);
+        return personService.getPerson(id);
     }
 
     @PutMapping("api/person/{id}/edit")

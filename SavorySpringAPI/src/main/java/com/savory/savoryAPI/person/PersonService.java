@@ -5,7 +5,9 @@ import com.savory.savoryAPI.person.dto.PersonDto;
 import com.savory.savoryAPI.person.entity.Person;
 import com.savory.savoryAPI.person.util.PersonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -28,12 +30,17 @@ public class PersonService {
         return PersonUtil.buildPersonDto(savedPerson);
     }
 
-    public Person getPerson(Integer id) {
-        return personRepository.findById(id).orElse(null);
+    public PersonDto getPerson(Integer id) {
+        var person = personRepository.findById(id).orElse(null);
+        if(person == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Resource with id " + id + " not found");
+        return PersonUtil.buildPersonDto(person);
     }
-    public Integer getPersonID(String username, String password) {
-        var person = personRepository.findByUsernameAndPassword(username, password).orElse(null);
-        return person == null ? -1 : person.getId();
+    public PersonDto getPersonByEmail(String email) {
+        var person = personRepository.findByEmail(email).orElse(null);
+        if(person == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Resource with email " + email + " not found");
+        return PersonUtil.buildPersonDto(person);
     }
     public PersonDto updatePerson(BuildPersonRequest personDto, Integer id) {
         var oldPerson = personRepository.findById(id).orElse(new Person());
