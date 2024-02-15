@@ -3,8 +3,24 @@ import { Link, useNavigate } from 'react-router-dom';
 import {Menu, Typography, IconButton, AppBar, Toolbar, Box,
   Avatar, Button, Tooltip, MenuItem, TextField, Grid } from '@mui/material';
 import {LocalDining, Search } from '@mui/icons-material'
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../redux/store';
+import { removeUser } from '../../redux/User/user-slice';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
+  const user = useSelector((state: RootState) => state.user.user);
+  const { logout } = useAuth0();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const logoutHandler = async () => {
+    try {
+      await logout();
+      dispatch(removeUser());
+      navigate('/');
+    } catch(error) {console.log("Error logging out: "+error);}
+  }
+
   const username = 'Savory';    // CHECK IF LOGGED IN
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null); 
   const openProfileOptions = (event: React.MouseEvent<HTMLElement>) => {
@@ -13,6 +29,7 @@ const ResponsiveAppBar = () => {
   const closeProfileOptions = () => {
     setProfileAnchor(null);
   };
+
 
   return (
     <AppBar position='sticky'>
@@ -30,7 +47,7 @@ const ResponsiveAppBar = () => {
             </Grid>
             <Grid item xs={1}>
               <ProfileButton {...{username, openProfileOptions}}/>
-              <ProfileOptions {...{username, profileAnchor, closeProfileOptions}}/>
+              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, logoutHandler}}/>
             </Grid>
           </Grid>
         </Grid>
@@ -79,13 +96,13 @@ const ProfileButton = ({username, openProfileOptions} :
   );
 }
 
-const ProfileOptions = ({username, profileAnchor, closeProfileOptions} :
-   {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void}) => {
+const ProfileOptions = ({username, profileAnchor, closeProfileOptions, logoutHandler} :
+   {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, logoutHandler: () => void}) => {
 
     const dropDownOptions = [
       { to: `/profile/${username}`, text: 'Profile' },
       { to: `/settings/${username}`, text: 'Settings' },
-      { to: '/login', text: 'Logout' },
+      // { to: '/login', text: 'Logout' },
     ];
     return(
       <Menu
@@ -101,6 +118,11 @@ const ProfileOptions = ({username, profileAnchor, closeProfileOptions} :
                     </Button></Link>
               </MenuItem>
             ))}
+        <MenuItem onClick={logoutHandler} sx={{p: 0, m: '.25vw'}}>
+            <Button variant='text' fullWidth sx={{p: 0}}>
+                <Typography>Logout</Typography>
+            </Button>
+          </MenuItem>    
       </Menu>
     );
 }

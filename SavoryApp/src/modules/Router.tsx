@@ -7,8 +7,8 @@ import Register from './pages/Authorize/Register';
 import ProfileEdit from './pages/Profile/Profile.edit';
 import StandardLayout from './StandardLayout';
 import PostCreate from './pages/Post/Post.create';
-import Settings from './pages/Settings';
-import Error404 from './pages/Error404';
+import Settings from './pages/Profile/Settings';
+import Error404 from './shared/Error404';
 
 const StandardLayoutRouter = () => (
     <BrowserRouter>
@@ -23,7 +23,7 @@ const StandardLayoutRouter = () => (
                 <Route path="feed" element={<Feed/>}/>
                 <Route path='feed/:filters' element={<Feed/>}/>
                 <Route path='post/new' element={<PostCreate/>}/>
-                <Route path='/settings/:username' element={<Settings/>}/>
+                <Route path='settings/:username' element={<Settings/>}/>
                 <Route path='*' element={<Error404/>}/>
             </Route>
         </Routes>

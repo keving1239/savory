@@ -1,16 +1,16 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./User/user-slice";
+import recipesReducer from './Recipes/recipes-slice';
+import interactionsReducer from "./Interactions/interactions-slice";
+
 
 export const store = configureStore({
   reducer: {
-    // reducers
+    user: userReducer,
+    recipes: recipesReducer,
+    interactions: interactionsReducer,
   },
 });
 
-export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
+export type AppDispatch = typeof store.dispatch;
