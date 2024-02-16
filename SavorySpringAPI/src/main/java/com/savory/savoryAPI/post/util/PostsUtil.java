@@ -22,7 +22,6 @@
 package com.savory.savoryAPI.post.util;
 import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.dto.PostsDto;
-import com.savory.savoryAPI.person.*;
 
 // public class PostsDto {
 //     int id;
@@ -37,9 +36,6 @@ import com.savory.savoryAPI.person.*;
 
 
 // }
-
-import java.util.Base64;
-import java.util.stream.Collectors;
 
 public class PostsUtil
 {
