@@ -32,13 +32,31 @@ const PostCreate = () => {
   }));
 
 
-    //Handle Form Submit
-    const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const newRecipe = [title, img, ingredients, recipe, tags];
-      console.log(`Recipe has been created! ${newRecipe}`);
-      navigate('/feed');
-    }
+    // //Handle Form Submit
+    // const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    //   e.preventDefault();
+    //   const newRecipe = [title, img, ingredients, recipe, tags];
+    //   console.log(`Recipe has been created! ${newRecipe}`);
+    //   navigate('/feed');
+    // }
+
+      //Handle Form Submit
+  const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    //userID field is filler. Need to figure out how to retrieve it for Posts table. postdate is also filler
+    const newRecipe = {userID: 2, headline: title, ingredients: ingredients, recipe: recipe, img: [], tags: tags, postdate: "2024"};
+    // console.log(`Recipe has been created! ${newRecipe}`);
+    // navigate('/feed');
+    fetch('http://localhost:8080/posts/addNewPost', {
+      method: 'POST',
+      headers: {'Content-type':'application/json'},
+      body: JSON.stringify(newRecipe)
+    }).then(() => {
+    console.log(`Recipe has been created! ${newRecipe}`);
+    navigate('/feed');
+    });
+  }
+
 
   return (      
     <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>

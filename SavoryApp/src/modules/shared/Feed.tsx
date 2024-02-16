@@ -8,7 +8,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
-import { Recipes } from '../../recipes';
+import { Recipes } from '../../Recipes';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 
