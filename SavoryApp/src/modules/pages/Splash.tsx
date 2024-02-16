@@ -1,10 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Typography, Grid, Button } from '@mui/material';
 import ProfileTile from './Profile/Profile.tile';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAuth0 } from '@auth0/auth0-react';
-import { AppDispatch } from '../../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import { fetchUser } from '../../redux/User/user-slice';
+import { useEffect } from 'react';
 
 const teamMembers = [
     {username: 'Kevin Galdamez', img: '/img/kevin.png', bio: 'TS Consultant | Atlanta'},
@@ -13,21 +14,20 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const { isAuthenticated, loginWithPopup, user, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, user, getAccessTokenSilently } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-       
-
-    const handleLogin = async () => {
-        try {
-            await loginWithPopup();
-            const token = await getAccessTokenSilently();
-            const email = (user ? user?.email : '') as string;
-            dispatch(fetchUser({ email, isAuthenticated, token })).then(()=>{
-            navigate(`/feed`);
-            });
-        } catch (error) {console.error('Error logging in:', error);}
-    };   
+    // useEffect(() => {
+        // try {
+            // if(!isAuthenticated || !user) return;
+            // getAccessTokenSilently().then((token) => {
+                // const email = (user ? user?.email : '') as string;
+                // dispatch(fetchUser({ email, isAuthenticated, token })).then((action) => {
+                    // if(action.type === `${fetchUser.fulfilled}`) navigate('/feed');
+                // });
+            // });
+        // } catch(error){console.error("Error Logging in: ", error)} 
+    // },[isAuthenticated, user]);
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -51,7 +51,7 @@ const SplashPage = () => {
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
-            <Button variant='contained' color='primary' onClick={() => handleLogin()}>
+            <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
                 Log in
             </Button>}
         </Grid>

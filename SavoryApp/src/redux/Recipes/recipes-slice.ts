@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface Recipe {
-    id: string,
+    id: number,
     ownerId: number,
     title: string;
     img: string;
@@ -29,7 +29,7 @@ const recipesSlice = createSlice({
             const index = state.recipes.findIndex(recipe => recipe.id === update.id);
             if (index !== -1) state.recipes[index] = update;
         },
-        deleteRecipes(state: LocalRecipesState, action: PayloadAction<{recipeId: string}>) {
+        deleteRecipes(state: LocalRecipesState, action: PayloadAction<{recipeId: number}>) {
             state.recipes = state.recipes.filter(recipe => recipe.id !== action.payload.recipeId);
         },
     },
@@ -45,6 +45,7 @@ const recipesSlice = createSlice({
                 state.recipes = action.payload;
                 state.loading = false;
                 console.log('Recipe Fetch Successful...');
+                console.log(state.recipes);
             }
         ).addCase(
             fetchRecipes.rejected, (state: LocalRecipesState, action) => {
@@ -58,15 +59,20 @@ const recipesSlice = createSlice({
 
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
-    async () => {
-        const response = await fetch(`http://localhost:8080/posts`, {method: 'GET'});
-        const data = await response.json();
-        const recipes: Recipe[] = data.map((item: any) => ({
-            id: item.post_id,
-            ownerId: item.userID,
-            title: item.headline,
-            img: '',
-        }));
+    async ({userId}: {userId: number}) => {
+        // const response = await fetch(`http://localhost:8080/posts/${userId}`);
+        // const data = await response.json();
+        // const recipes: Recipe[] = data.map((item: any) => ({
+            // id: item.post_id,
+            // ownerId: item.userID,
+            // title: item.headline,
+            // img: '',
+        // }));
+        const recipes: Recipe[] = [
+            {id: 1, ownerId: userId, title: 'Recipe 1', img: 'img',},
+            {id: 2, ownerId: userId, title: 'Recipe 2', img: 'img',},
+            {id: 3, ownerId: userId, title: 'Recipe 3', img: 'img',},
+        ];
         return recipes;
     },
 );
