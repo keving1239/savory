@@ -12,12 +12,10 @@ const ResponsiveAppBar = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const { logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const logoutHandler = async () => {
     try {
-      await logout();
+      await logout({ logoutParams: { returnTo: window.location.origin } });
       dispatch(removeUser());
-      navigate('/');
     } catch(error) {console.log("Error logging out: "+error);}
   }
 

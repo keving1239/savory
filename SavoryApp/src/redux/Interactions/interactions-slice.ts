@@ -40,6 +40,7 @@ const interactionsSlice = createSlice({
                 state.interactions = action.payload;
                 state.loading = false;
                 console.log('Interaction Fetch Successful...');
+                console.log(state.interactions);
             }
         ).addCase(
             fetchInteractions.rejected, (state: InteractionsState, action) => {
@@ -53,17 +54,20 @@ const interactionsSlice = createSlice({
 
 export const fetchInteractions = createAsyncThunk(
     '/api/interactions/fetch',
-    async () => {
-        const response = await fetch(`http://localhost:8080/posts`);
-        const data = await response.json();
+    async ({userId}: {userId: number}) => {
+        // const response = await fetch(`http://localhost:8080/users/${userId}`);
+        // const data = await response.json();
         const interactions: Record<number, RecipeInteraction> = {};
-        data.forEach((item: any) => {
-            interactions[item.post_id] = {
-                recipeId: item.post_id,
-                liked: false,
-                bookmarked: false,
-            };
-        });
+        // data.forEach((item: any) => {
+            // interactions[item.post_id] = {
+                // recipeId: item.post_id,
+                // liked: false,
+                // bookmarked: false,
+            // };
+        // });
+        interactions[0] = {recipeId: 1, liked: false, bookmarked: false,};
+        interactions[1] = {recipeId: 1, liked: true, bookmarked: true,};
+        interactions[2] = {recipeId: 1, liked: true, bookmarked: false,};
         return interactions;
     },
 );

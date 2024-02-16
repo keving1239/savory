@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
@@ -13,9 +12,11 @@ const root = createRoot(container);
 root.render(
     <Provider store={store}>
       <Auth0Provider
-        domain="dev-ccviiilbztbrkbgs.us.auth0.com"
-        clientId="skApss4fd5jqdUyfMqW9T0W394QkTxH0"
-        authorizationParams = {{redirect_uri: `${window.location.origin}/feed`}}
+        domain="dev-t6vspuc8qrssaarc.us.auth0.com"
+        clientId="QOhn47I8VQpCd3QS8r98u6qUZAjVCJKt"
+        authorizationParams={{
+          redirect_uri: `${window.location.origin}/login`
+        }}
       >
         <App/>
       </Auth0Provider>

@@ -30,8 +30,7 @@ const userSlice = createSlice({
             state.isAuthenticated = false;
             state.user = null;
             state.token = null;
-            console.log('User Removed...');
-            console.log(state.user);
+            console.log(`User Removed...`);
         },
     },
     extraReducers: (builder) => {
@@ -49,7 +48,6 @@ const userSlice = createSlice({
                 state.loading = false;
                 console.log('User Fetch Successful...');
                 console.log(state.user);
-                console.log(state.token);
             }
         ).addCase(
             fetchUser.rejected, (state: UserState, action) => {
@@ -58,7 +56,7 @@ const userSlice = createSlice({
                 state.token = null;
                 state.loading = false;
                 state.error = action.error.message;
-                console.log('User Fetch Successful...');
+                console.log('User Fetch Failed...');
                 console.error(state.error);
             }
         );
@@ -68,11 +66,13 @@ const userSlice = createSlice({
 export const fetchUser = createAsyncThunk(
     '/api/person/email/{email}',
     async ({ email, isAuthenticated, token }: { email: string; isAuthenticated: boolean, token: string }) => {
-        if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...')
-        const response = await fetch(`http://localhost:8080/api/person/email/${email}`);
-        const data = await response.json();
-        return {user: {id: data.id, username: data.username, 
-            img: '', bio: data.bio, role: data.admin} as User, token};
+        if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...');
+        // const response = await fetch(`http://localhost:8080/api/person/email/${email}`);
+        // const data = await response.json();
+        // return {user: {id: data.id, username: data.username, 
+        // img: '', bio: data.bio, role: data.admin} as User, token};
+        return {user: {id: 12345, username: 'our.database.be.broken', 
+            img: '', bio: 'spongeboy me bob', role: false} as User, token};
     },
 );
 
