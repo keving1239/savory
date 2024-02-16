@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem } from '@mui/material';
-import { Recipes } from '../../../recipes';
+import { Recipes } from '../../../Recipes';
 
 const Post = ({id}:{id: string}) => {
     const recipe = Recipes[+id] || {id: '', img:'', title: '', author: '', ingredients: [''], recipe: '', tags: [''], isBookmarked: false, date: new Date()};
