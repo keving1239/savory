@@ -11,10 +11,17 @@ import Post from '../pages/Post/Post';
 import { Recipes } from '../../Recipes';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
+import { fetchRecipes } from '../../redux/Recipes/recipes-slice';
 
 export default function Feed({id}: {id?: string}) {
     const user = useSelector((state: RootState) => state.user.user);
     console.log('This is the feed for '+user?.username);
+    const r2 = useSelector((state: RootState) => state.recipes);
+    r2.recipes.forEach((recipe, index) => {
+        console.log(`Recipe ${index + 1}:`, recipe);
+      });
+      
     // State
     const { filters } = useParams();
     const { state } = useLocation();

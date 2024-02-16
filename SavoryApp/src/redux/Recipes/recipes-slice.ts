@@ -60,19 +60,19 @@ const recipesSlice = createSlice({
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({userId}: {userId: number}) => {
-        // const response = await fetch(`http://localhost:8080/posts/${userId}`);
-        // const data = await response.json();
-        // const recipes: Recipe[] = data.map((item: any) => ({
-            // id: item.post_id,
-            // ownerId: item.userID,
-            // title: item.headline,
-            // img: '',
-        // }));
-        const recipes: Recipe[] = [
-            {id: 1, ownerId: userId, title: 'Recipe 1', img: 'img',},
-            {id: 2, ownerId: userId, title: 'Recipe 2', img: 'img',},
-            {id: 3, ownerId: userId, title: 'Recipe 3', img: 'img',},
-        ];
+         const response = await fetch(`http://localhost:8080/posts/${userId}`);
+         const data = await response.json();
+         const recipes: Recipe[] = data.map((item: any) => ({
+             id: item.post_id,
+             ownerId: item.userID,
+             title: item.headline,
+             img: '',
+         }));
+   //     const recipes: Recipe[] = [
+   //         {id: 1, ownerId: userId, title: 'Recipe 1', img: 'img',},
+   //         {id: 2, ownerId: userId, title: 'Recipe 2', img: 'img',},
+   //         {id: 3, ownerId: userId, title: 'Recipe 3', img: 'img',},
+   //     ];
         return recipes;
     },
 );

@@ -57,7 +57,7 @@ const LoadingAccount = () => {
         } catch(error){console.error("Error Fetching User: ", error)}
     }
     function loadRecipes() {
-        const userId = savoryUser.user ? savoryUser.user?.id : -1;
+        const userId = savoryUser.user ? savoryUser.user?.id : 1;
         if (userId < 0) return;
         try {
             dispatch(fetchRecipes({userId}));
