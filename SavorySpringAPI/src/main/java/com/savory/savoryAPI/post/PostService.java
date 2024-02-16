@@ -31,11 +31,11 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<Posts> findPosts(List<Long> ids) {
+    public List<Posts> findPosts(List<Integer> ids) {
         return postRepository.findAllByPost_idIn(ids);
     }
 
-    public List<PostsDto> findPostByUserID(Long userID)
+    public List<PostsDto> findPostByUserID(int userID)
     {
         List<Posts> posts = postRepository.findByUserID(userID);
         return posts.stream()
@@ -43,14 +43,14 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public void deletePostByPId(Long post_id)
+    public void deletePostByPId(int post_id)
     {
         postRepository.deleteByPost_id(post_id);
 
     }
 
 
-    public PostsDto findPostbyPostID(Long post_id)
+    public PostsDto findPostbyPostID(int post_id)
     {
         var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
             log.warn("Unable to find super power with id {} while trying to update", post_id);
@@ -71,7 +71,7 @@ public class PostService
 //        return SuperPowerUtil.buildSuperPowerDto(savedPower);
 //    }
 
-    public PostsDto updatePostPort(PostsDto postsDto, Long post_id)
+    public PostsDto updatePostPort(PostsDto postsDto, int post_id)
     {
         var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
                     log.warn("Unable to find super power with id {} while trying to update", post_id);
@@ -90,6 +90,14 @@ public class PostService
         return PostsUtil.buildPostDto(savedPost);
     }
 
+    public PostsDto createPostbyUserID(PostsDto postsDto, int userID) {
+        var post = reifyByUserID(postsDto, new Posts(), userID);
+        var savedPost = postRepository.save(post);
+        return PostsUtil.buildPostDto(savedPost);
+    }
+
+
+
 
 
 
@@ -104,6 +112,20 @@ public class PostService
         target.setPostdate(postsDto.getPostdate());
 
         return target;
+    }
+
+    private Posts reifyByUserID(PostsDto postsDto, Posts target, int userID)
+    {
+        target.setHeadline(postsDto.getHeadline());
+        target.setUserID(userID);
+        target.setIngredients(postsDto.getIngredients());
+        target.setRecipe(postsDto.getRecipe());
+        target.setImg(postsDto.getImg());
+        target.setTags(postsDto.getTags());
+        target.setPostdate(postsDto.getPostdate());
+
+        return target;
+
     }
 
 
