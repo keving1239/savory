@@ -44,6 +44,25 @@ class BookmarksControllerTest {
         verify(bookmarksService, times(1)).findBookmarksByUser(bookmarkUserId);
     }
 
+    @Test
+    void getBookmarkTotalBookmarkCount() {
+        BookmarksDto bookmarksDtoOne =  createExpecteBookmarksDto(1, 4, 2);
+        BookmarksDto bookmarksDtoTwo = createExpecteBookmarksDto(2, 6, 3);
+        BookmarksDto bookmarksDtoThree = createExpecteBookmarksDto(3, 1, 1);
+        List<BookmarksDto> expectedBookmarks = Arrays.asList(
+            bookmarksDtoOne, bookmarksDtoTwo, bookmarksDtoThree
+        );
+        //Mock
+        when(bookmarksService.findAllBookmarks()).thenReturn(expectedBookmarks);
+        //Act
+        List<BookmarksDto> actualBookmarks = bookmarksController.getAllBookmarks();
+        //Assert
+        assertEquals(expectedBookmarks, actualBookmarks);
+        //Verify
+        verify(bookmarksService, times(1)).findAllBookmarks();
+
+    }
+
     private BookmarksDto createExpecteBookmarksDto(int id, int postId, int userId) {
         return BookmarksDto.builder()
                 .id(id)

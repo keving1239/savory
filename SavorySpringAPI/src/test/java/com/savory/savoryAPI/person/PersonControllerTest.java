@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,6 +60,21 @@ class PersonControllerTest {
 
         // Verify that the getPersonByEmail method of personService is called with the correct argument
         verify(personService, times(1)).getPersonByEmail(eq(userEmail));
+    }
+
+    @Test
+    void getNoPersonIfNotExist() {
+        int testUserId = 3;
+        PersonDto expectedPerson = createExpectedPersonDto(1, "test1.user", "test1.user@gmail.com", "password1", null, "the bio of test user", false);
+        //Mock
+        when(personService.getPerson(testUserId)).thenReturn(expectedPerson);
+        //Act
+        PersonDto actualPerson = personController.getPerson(testUserId);
+        //Assert
+        assertEquals(expectedPerson, actualPerson);
+        //Verify
+        verify(personService, times(1)).getPerson(eq(testUserId));
+
     }
 
     private PersonDto createExpectedPersonDto(int id, String username, String email, String password, byte[] img, String bio, boolean isAdmin) {
