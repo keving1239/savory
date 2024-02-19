@@ -1,11 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Typography, Grid, Button } from '@mui/material';
-import ProfileTile from './Profile/Profile.tile';
-import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Typography, Grid, Button, Card, CardMedia, CardContent } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
-import { AppDispatch, RootState } from '../../redux/store';
-import { fetchUser } from '../../redux/User/user-slice';
-import { useEffect } from 'react';
 
 const teamMembers = [
     {username: 'Kevin Galdamez', img: '/img/kevin.png', bio: 'TS Consultant | Atlanta'},
@@ -14,20 +9,7 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const { isAuthenticated, loginWithRedirect, user, getAccessTokenSilently } = useAuth0();
-    const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
-    // useEffect(() => {
-        // try {
-            // if(!isAuthenticated || !user) return;
-            // getAccessTokenSilently().then((token) => {
-                // const email = (user ? user?.email : '') as string;
-                // dispatch(fetchUser({ email, isAuthenticated, token })).then((action) => {
-                    // if(action.type === `${fetchUser.fulfilled}`) navigate('/feed');
-                // });
-            // });
-        // } catch(error){console.error("Error Logging in: ", error)} 
-    // },[isAuthenticated, user]);
+    const { isAuthenticated, loginWithRedirect } = useAuth0();
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -42,7 +24,15 @@ const SplashPage = () => {
         </Grid>
         <Grid container item justifyContent='space-around' rowSpacing={4}>
             {teamMembers.map((member, index) => (
-                <Grid item key={index} xs={4.5} md={2}><ProfileTile {...member}/></Grid>
+                <Grid item key={index} xs={4.5} md={2}>
+                    <Card elevation={5}>
+                        <CardMedia component='img' src={member.img} alt={member.username} sx={{height: '30vh'}}/>
+                        <CardContent>
+                            <Typography variant='h5' align='left'>{member.username}</Typography>
+                            <Typography variant='body2' align='left'>{member.bio}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
             ))}
         </Grid>
         <Grid item>

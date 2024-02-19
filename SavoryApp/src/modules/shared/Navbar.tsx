@@ -10,8 +10,13 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const { logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
+  const loginHandler = async () => {
+    try {
+      await loginWithRedirect();
+    } catch(error) {console.log("Error logging out: "+error);}
+  }
   const logoutHandler = async () => {
     try {
       await logout({ logoutParams: { returnTo: window.location.origin } });
@@ -19,7 +24,8 @@ const ResponsiveAppBar = () => {
     } catch(error) {console.log("Error logging out: "+error);}
   }
 
-  const username = 'Savory';    // CHECK IF LOGGED IN
+  const username = user?.username || 'savory';
+  const img = user?.img || '';
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null); 
   const openProfileOptions = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchor(event.currentTarget);
@@ -44,8 +50,8 @@ const ResponsiveAppBar = () => {
               <SearchBar/>
             </Grid>
             <Grid item xs={1}>
-              <ProfileButton {...{username, openProfileOptions}}/>
-              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, logoutHandler}}/>
+              <ProfileButton {...{username, img, openProfileOptions}}/>
+              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler}}/>
             </Grid>
           </Grid>
         </Grid>
@@ -82,25 +88,24 @@ const NavigationButtons = () => {
   );
 }
 
-const ProfileButton = ({username, openProfileOptions} :
-  {username: string, openProfileOptions: (event: React.MouseEvent<HTMLElement>) => void}) => {
-  const img = username; // RETREIVE IMG
+const ProfileButton = ({username, img, openProfileOptions} :
+  {username: string, img: string, openProfileOptions: (event: React.MouseEvent<HTMLElement>) => void}) => {
   return(
     <Tooltip title='Profile Options'>
       <IconButton onClick={openProfileOptions}>
-        <Avatar alt={username} src={img}/>
+        <Avatar alt={username} src={img}>{!img ? username.toUpperCase().charAt(0) : ''}</Avatar>
       </IconButton>
     </Tooltip>
   );
 }
 
-const ProfileOptions = ({username, profileAnchor, closeProfileOptions, logoutHandler} :
-   {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, logoutHandler: () => void}) => {
+const ProfileOptions = ({username, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler} :
+   {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, isAuthenticated: boolean,
+     logoutHandler: () => void, loginHandler: () => void}) => {
 
     const dropDownOptions = [
       { to: `/profile/${username}`, text: 'Profile' },
-      { to: `/settings/${username}`, text: 'Settings' },
-      // { to: '/login', text: 'Logout' },
+      { to: `/settings`, text: 'Settings' },
     ];
     return(
       <Menu
@@ -116,10 +121,12 @@ const ProfileOptions = ({username, profileAnchor, closeProfileOptions, logoutHan
                     </Button></Link>
               </MenuItem>
             ))}
-        <MenuItem onClick={logoutHandler} sx={{p: 0, m: '.25vw'}}>
-            <Button variant='text' fullWidth sx={{p: 0}}>
+        <MenuItem onClick={isAuthenticated ? logoutHandler : loginHandler} sx={{p: 0, m: '.25vw'}}>
+            {isAuthenticated ? <Button variant='text' fullWidth sx={{p: 0}}>
                 <Typography>Logout</Typography>
-            </Button>
+            </Button> : <Button variant='text' fullWidth sx={{p: 0}}>
+                <Typography>Log in</Typography>
+            </Button>}
           </MenuItem>    
       </Menu>
     );

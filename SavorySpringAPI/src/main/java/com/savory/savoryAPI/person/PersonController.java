@@ -25,22 +25,37 @@ public class PersonController {
     public List<PersonDto> getAllPersons() {
         return personService.findAll();
     }
+    @GetMapping("api/person/{id}")
+    public PersonDto getPerson(@PathVariable("id") Integer id) {
+        return personService.getPerson(id);
+    }
     @GetMapping("/api/person/email/{email}")
     public PersonDto getPersonByEmail(@PathVariable("email") String email) {
         return personService.getPersonByEmail(email);
     }
+    @GetMapping("/api/person/username/{username}")
+    public PersonDto getPersonByUsername(@PathVariable("username") String username) {
+        return personService.getPersonByUsername(username);
+    }
+    @GetMapping("/api/person/username/exists")
+    public Boolean isUsernameAvailable(@RequestBody String username) {
+        return personService.isUsernameAvailable(username);
+    }
+
     @PostMapping("api/person/new")
     public PersonDto createPerson(@RequestBody BuildPersonRequest personDTO) {
         return personService.createPerson(personDTO);
-    }
-    @GetMapping("api/person/{id}")
-    public PersonDto getPerson(@PathVariable("id") Integer id) {
-        return personService.getPerson(id);
     }
 
     @PutMapping("api/person/{id}/edit")
     public PersonDto updatePerson(@RequestBody BuildPersonRequest personDto,@PathVariable("id") Integer id) {
         return personService.updatePerson(personDto, id);
+    }
+    @PutMapping("api/person/{id}/edit/username")
+    public ResponseEntity<String> updatePersonUsername(@RequestBody String username, @PathVariable("id") Integer id) {
+        return (personService.updatePersonUsername(username, id)) ?
+                ResponseEntity.ok("Resource with id " + id + " username set to " + username) :
+                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Resource with id " + id + " not found.");
     }
     @PutMapping("api/person/{id}/edit/img")
     public ResponseEntity<String> updatePersonImg(@RequestBody String img, @PathVariable("id") Integer id) {
