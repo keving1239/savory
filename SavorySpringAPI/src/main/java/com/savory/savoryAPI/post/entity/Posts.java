@@ -56,7 +56,6 @@
 package com.savory.savoryAPI.post.entity;
 
 
-import com.savory.savoryAPI.person.entity.Person;
 import jakarta.persistence.*;
 import lombok.*;
 

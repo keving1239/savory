@@ -1,10 +1,8 @@
 package com.savory.savoryAPI.post.dto;
-import com.savory.savoryAPI.person.dto.PersonDto;
-import com.savory.savoryAPI.person.entity.Person;
+
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.List;
 
 @Builder
 @Value

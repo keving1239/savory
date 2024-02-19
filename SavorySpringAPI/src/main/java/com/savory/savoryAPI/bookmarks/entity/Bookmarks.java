@@ -1,14 +1,10 @@
 package com.savory.savoryAPI.bookmarks.entity;
 
 
-import com.savory.savoryAPI.person.entity.Person;
-import com.savory.savoryAPI.post.entity.Posts;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
 
 @Getter
 @Setter
