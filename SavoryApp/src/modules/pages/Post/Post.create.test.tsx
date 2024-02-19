@@ -5,7 +5,11 @@ import '@testing-library/jest-dom/extend-expect';
 import { MemoryRouter } from 'react-router-dom';
 import PostCreate from './Post.create';
 import { Provider } from 'react-redux';
-import Post from './Post';
+import userEvent from '@testing-library/user-event';
+import Error404 from '../../shared/Error404';
+
+
+
 
 
 
@@ -25,5 +29,15 @@ jest.mock('react-router-dom', () => ({
     });
   
     // Other tests...
+    it('should render the Error 404', () => {
+      render(<Error404/>);
+      screen.debug();
+    });
   });
+
+
+ 
+
+
+
 
