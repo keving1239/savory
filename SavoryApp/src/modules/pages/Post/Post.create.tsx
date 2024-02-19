@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Box, Grid, Tooltip, Typography, TextField, Card, Button, CardContent, TextFieldProps } from '@mui/material';
-
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 const PostCreate = () => {
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
   const [title, setTitle] = useState('');
   const [img, setImg] = useState('');
   const [ingredients, setIngredients] = useState('');

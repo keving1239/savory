@@ -16,12 +16,12 @@ const StandardLayoutRouter = () => (
                 <Route index element={<SplashPage/>}/>
                 <Route path='profile/:username' element={<Profile/>}/>
                 <Route path='profile/:username/:post' element={<Profile/>}/>
-                <Route path='profile/:username/edit' element={<ProfileEdit/>}/>
+                <Route path='profile/edit' element={<ProfileEdit/>}/>
                 <Route path="login" element={<LoadingAccount/>}/>
                 <Route path="feed" element={<Feed/>}/>
                 <Route path='feed/:filters' element={<Feed/>}/>
                 <Route path='post/new' element={<PostCreate/>}/>
-                <Route path='settings/:username' element={<Settings/>}/>
+                <Route path='settings' element={<Settings/>}/>
                 <Route path='*' element={<Error404/>}/>
             </Route>
         </Routes>

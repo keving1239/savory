@@ -16,7 +16,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    isAuthenticated: true,
+    isAuthenticated: false,
     user: null,
     token: null,
     loading: false,
@@ -30,7 +30,18 @@ const userSlice = createSlice({
             state.isAuthenticated = false;
             state.user = null;
             state.token = null;
-            console.log(`User Removed...`);
+        },
+        updateUserUsername(state: UserState, action: PayloadAction<{username: string}>) {
+            if(!state.user) return;
+            state.user.username = action.payload.username;
+        },
+        updateUserImage(state: UserState, action: PayloadAction<{img: string}>) {
+            if(!state.user) return;
+            state.user.img = action.payload.img;
+        },
+        updateUserBio(state: UserState, action: PayloadAction<{bio: string}>) {
+            if(!state.user) return;
+            state.user.bio = action.payload.bio;
         },
     },
     extraReducers: (builder) => {
@@ -71,10 +82,10 @@ export const fetchUser = createAsyncThunk(
         // const data = await response.json();
         // return {user: {id: data.id, username: data.username, 
         // img: '', bio: data.bio, role: data.admin} as User, token};
-        return {user: {id: 12345, username: 'our.database.be.broken', 
+        return {user: {id: 12345, username: '', 
             img: '', bio: 'spongeboy me bob', role: false} as User, token};
     },
 );
 
-export const { removeUser } = userSlice.actions;
+export const { removeUser, updateUserUsername, updateUserImage, updateUserBio } = userSlice.actions;
 export default userSlice.reducer;
