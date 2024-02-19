@@ -98,4 +98,6 @@ public class Posts {
 
    @Column(name = "PostDate", nullable = false)
    private String postdate;
+
+
 }

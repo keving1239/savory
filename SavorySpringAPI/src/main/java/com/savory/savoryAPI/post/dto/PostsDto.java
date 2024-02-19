@@ -5,10 +5,9 @@ import lombok.Value;
 
 @Builder
 @Value
-public class PostsUsernameDto {
+public class PostsDto {
     int post_id;
     int userID;
-    String username;
     String headline;
     String ingredients;
     String recipe;
