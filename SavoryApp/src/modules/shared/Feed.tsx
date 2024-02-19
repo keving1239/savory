@@ -96,7 +96,6 @@ export default function Feed({ id }: { id?: number }) {
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {filteredRecipes.map((recipe) => {
                     if (recipe.id > 0) {
-                        console.log("ID: " + recipe.id);
                         return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
                     } else {
                         return null;
@@ -109,7 +108,6 @@ export default function Feed({ id }: { id?: number }) {
 }
 
 const RecipeAvatar = ({ author }: { author: string }) => {
-    console.log("AUTHOR: " + author)
     return (
         <Tooltip title={author}>
             <Link to={`/profile/${author}`}><IconButton>

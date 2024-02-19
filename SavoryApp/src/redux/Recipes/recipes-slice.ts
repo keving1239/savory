@@ -75,11 +75,11 @@ function splitter(input:string) {
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({userId}: {userId: number}) => {
-         const response = await fetch('http://localhost:8080/posts/all');
+         const response = await fetch('http://localhost:8080/posts/allWithUsername');
          const data = await response.json();
          const recipes: Recipe[] = data.map((item: any) => ({
              id: String(item.post_id),
-             author: 'fill later',
+             author: item.username,
              ownerId: item.userID,
              title: item.headline,
              img: 'https://images.unsplash.com/photo-1680990999782-ba7fe26e4d0b?q=80&w=2020&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
