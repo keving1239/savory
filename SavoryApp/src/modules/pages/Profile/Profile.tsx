@@ -6,13 +6,14 @@ import ProfileTile from './Profile.tile';
 import Feed from '../../shared/Feed';
 
 const Profile = () => {
-    const {username, post} = useParams()
+    const {username, postString} = useParams()
+    var post: number = Number(postString);
     const isPostOpen = Boolean(post);
     // **************************************************************************    
     return(
         <Box sx={{ mt: 5 }}>
             <ProfileOverview username = {username || ''}/>                        
-            {isPostOpen ? <Feed id={post || ''}/> : <Feed/>}
+            {isPostOpen ? <Feed id={post}/> : <Feed/>}
         </Box>
     );
 }
