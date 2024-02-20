@@ -26,7 +26,7 @@ const userSlice = createSlice({
     name: 'user-slice',
     initialState,
     reducers: {
-        removeUser(state: UserState) {
+        removeLocalUser(state: UserState) {
             state.isAuthenticated = false;
             state.user = null;
             state.token = null;
@@ -78,14 +78,14 @@ export const fetchUser = createAsyncThunk(
     '/api/person/email/{email}',
     async ({ email, isAuthenticated, token }: { email: string; isAuthenticated: boolean, token: string }) => {
         if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...');
-        // const response = await fetch(`http://localhost:8080/api/person/email/${email}`);
-        // const data = await response.json();
-        // return {user: {id: data.id, username: data.username, 
-        // img: '', bio: data.bio, role: data.admin} as User, token};
-        return {user: {id: 12345, username: '', 
-            img: '', bio: 'spongeboy me bob', role: false} as User, token};
+        const response = await fetch(`http://localhost:8080/api/person/email/${email}`);
+        const data = await response.json();
+        return {user: {id: data.id, username: data.username, 
+        img: '', bio: data.bio, role: data.admin} as User, token};
+        // return {user: {id: 12345, username: '', 
+            // img: '', bio: 'spongeboy me bob', role: false} as User, token};
     },
 );
 
-export const { removeUser, updateUserUsername, updateUserImage, updateUserBio } = userSlice.actions;
+export const { removeLocalUser, updateUserUsername, updateUserImage, updateUserBio } = userSlice.actions;
 export default userSlice.reducer;
