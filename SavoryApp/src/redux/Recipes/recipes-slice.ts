@@ -29,6 +29,9 @@ const recipesSlice = createSlice({
     name: 'recipes-slice',
     initialState,
     reducers: {
+        removeLocalRecipes(state: LocalRecipesState) {
+            state.recipes = [];
+        },
         addRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
             state.recipes.push(action.payload.recipe);
         },
@@ -99,5 +102,5 @@ export const fetchRecipes = createAsyncThunk(
     },
 );
 
-export const { addRecipes, updateRecipes, deleteRecipes } = recipesSlice.actions;
+export const { addRecipes, updateRecipes, deleteRecipes, removeLocalRecipes } = recipesSlice.actions;
 export default recipesSlice.reducer;

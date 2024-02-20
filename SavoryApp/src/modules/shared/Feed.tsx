@@ -19,7 +19,6 @@ import { addInteraction, toggleBookmark } from '../../redux/Interactions/interac
 import { postBookmark, deleteBookmark } from '../../redux/Interactions/interactions-slice';
 
 
-
 export default function Feed({ id }: { id?: number }) {
     const user = useSelector((state: RootState) => state.user.user);
     console.log('This is the feed for ' + user?.username);
@@ -138,6 +137,7 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
     const i = useSelector((state: RootState) => state.interactions);
     const [interactions, setInteractions] = useState(i.interactions);
     const dispatch = useDispatch<AppDispatch>();
+    const user = useSelector((state: RootState) => state.user.user);
 
     const addInteractionLocal = () => {
         // add post to interactions state if not already there
@@ -194,10 +194,10 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
             liked: intLocal.liked,
             bookmarked: !bookmarkStatus
         })
-        if (!bookmarkStatus) {
-            dispatch(postBookmark({postId: id, userId: 8}))
+        if (!bookmarkStatus && user?.id) {
+            dispatch(postBookmark({postId: id, userId: user?.id}))
         } else {
-            dispatch(deleteBookmark({postId: id, userId: 8}))
+            dispatch(deleteBookmark({postId: id, userId: user?.id}))
         }
         
 

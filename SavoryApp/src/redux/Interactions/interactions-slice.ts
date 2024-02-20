@@ -25,6 +25,9 @@ const interactionsSlice = createSlice({
     initialState,
     
     reducers: {
+        removeLocalInteractions(state: InteractionsState) {
+            state.interactions = {};
+        },
         toggleLike(state: InteractionsState, action: PayloadAction<{recipeId: number; liked: boolean}>) {
             state.interactions[action.payload.recipeId].liked = action.payload.liked;
         },
@@ -67,7 +70,7 @@ const interactionsSlice = createSlice({
 export const fetchInteractions = createAsyncThunk(
     '/api/interactions/fetch',
     async ({userId}: {userId: number}) => {
-         const response = await fetch(`http://localhost:8080/api/bookmarks/users/8`);
+         const response = await fetch(`http://localhost:8080/api/bookmarks/users/${userId}`);
          const data = await response.json();
          console.log("DATA: " + JSON.stringify(data));
         const interactions: Record<number, RecipeInteraction> = {};
@@ -87,7 +90,7 @@ export const fetchInteractions = createAsyncThunk(
 
 export const postBookmark = createAsyncThunk(
     'api/interactions/postBookmark',
-    async ({ postId, userId }: { postId: number; userId: number }) => {
+    async ({ postId, userId }: { postId: number; userId: number | undefined }) => {
         const response = await fetch(`http://localhost:8080/api/bookmarks/postBookmark`, {
             method: 'POST',
             headers: {
@@ -105,7 +108,7 @@ export const postBookmark = createAsyncThunk(
 
 export const deleteBookmark = createAsyncThunk(
     'api/interactions/deleteBookmark',
-    async ({ postId, userId }: { postId: number; userId: number }) => {
+    async ({ postId, userId }: { postId: number; userId: number | undefined }) => {
         const response = await fetch(`http://localhost:8080/api/bookmarks/deleteByInputs/${userId}/${postId}`, {
             method: 'DELETE',
             headers: {
@@ -120,5 +123,5 @@ export const deleteBookmark = createAsyncThunk(
     }
 );
 
-export const { toggleLike, toggleBookmark, addInteraction } = interactionsSlice.actions;
+export const { toggleLike, toggleBookmark, addInteraction, removeLocalInteractions } = interactionsSlice.actions;
 export default interactionsSlice.reducer;
