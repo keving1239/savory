@@ -21,6 +21,9 @@ const recipesSlice = createSlice({
     name: 'recipes-slice',
     initialState,
     reducers: {
+        removeLocalRecipes(state: LocalRecipesState) {
+            state.recipes = [];
+        },
         addRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
             state.recipes.push(action.payload.recipe);
         },
@@ -60,7 +63,7 @@ const recipesSlice = createSlice({
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({userId}: {userId: number}) => {
-        // const response = await fetch(`http://localhost:8080/posts/${userId}`);
+        // const response = await fetch(`http://localhost:8080/posts/all`);
         // const data = await response.json();
         // const recipes: Recipe[] = data.map((item: any) => ({
             // id: item.post_id,
@@ -77,5 +80,5 @@ export const fetchRecipes = createAsyncThunk(
     },
 );
 
-export const { addRecipes, updateRecipes, deleteRecipes } = recipesSlice.actions;
+export const { removeLocalRecipes, addRecipes, updateRecipes, deleteRecipes } = recipesSlice.actions;
 export default recipesSlice.reducer;
