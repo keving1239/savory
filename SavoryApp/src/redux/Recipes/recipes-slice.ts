@@ -1,10 +1,18 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface Recipe {
-    id: number,
+    tags: string[];
+    id: any,
     ownerId: number,
     title: string;
     img: string;
+    isBookmarked: boolean,
+    isLiked: boolean,
+    date: Date,
+    tage: string,
+    ingredients: string[],
+    recipe: string,
+    author: string
 }
 interface LocalRecipesState {
     recipes: Recipe[],
@@ -55,30 +63,44 @@ const recipesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
                 console.log('Recipe Fetch Failed...');
+                console.log("error: " + state.error + "here")
             }
         );
     },
 });
 
+function splitter(input:string) {
+
+    return input.split(", ")
+
+}
+
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({userId}: {userId: number}) => {
-        // const response = await fetch(`http://localhost:8080/posts/all`);
-        // const data = await response.json();
-        // const recipes: Recipe[] = data.map((item: any) => ({
-            // id: item.post_id,
-            // ownerId: item.userID,
-            // title: item.headline,
-            // img: '',
-        // }));
-        const recipes: Recipe[] = [
-            {id: 1, ownerId: userId, title: 'Recipe 1', img: 'img',},
-            {id: 2, ownerId: userId, title: 'Recipe 2', img: 'img',},
-            {id: 3, ownerId: userId, title: 'Recipe 3', img: 'img',},
-        ];
+         const response = await fetch('http://localhost:8080/posts/allWithUsername');
+         const data = await response.json();
+         const recipes: Recipe[] = data.map((item: any) => ({
+             id: String(item.post_id),
+             author: item.username,
+             ownerId: item.userID,
+             title: item.headline,
+             img: 'https://images.unsplash.com/photo-1680990999782-ba7fe26e4d0b?q=80&w=2020&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+             recipe: item.recipe,
+             tags: splitter(item.tags),
+             ingredients: splitter(item.ingredients),
+             isBookmarked: false,
+             isLiked: true,
+             date: item.postdate
+         }));
+  //      const recipes: Recipe[] = [
+    //        {id: 1, ownerId: userId, title: 'Recipe 1', img: 'img',},
+     //       {id: 2, ownerId: userId, title: 'Recipe 2', img: 'img',},
+     //       {id: 3, ownerId: userId, title: 'Recipe 3', img: 'img',},
+      //  ];
         return recipes;
     },
 );
 
-export const { removeLocalRecipes, addRecipes, updateRecipes, deleteRecipes } = recipesSlice.actions;
+export const { addRecipes, updateRecipes, deleteRecipes, removeLocalRecipes } = recipesSlice.actions;
 export default recipesSlice.reducer;
