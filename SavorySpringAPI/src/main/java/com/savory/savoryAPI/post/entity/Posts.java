@@ -86,8 +86,8 @@ public class Posts {
    @Column(name = "Recipe", nullable = false)
    private String recipe;
 
-   @Column(name = "Img", nullable = false)
-   private byte[] img;
+   @Column(name = "Img")
+   private String img;
 
    @Column(name = "Tags", nullable = false)
    private String tags;

@@ -13,7 +13,7 @@ public class PostsDto {
     String headline;
     String ingredients;
     String recipe;
-    byte[] img;
+    String img;
     String tags;
     String postdate;
 

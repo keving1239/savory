@@ -8,7 +8,7 @@ public class BuildPersonRequest {
     String username;
     String email;
     String password;
-    byte[] img;
+    String img;
     String bio;
     boolean isAdmin;
 }

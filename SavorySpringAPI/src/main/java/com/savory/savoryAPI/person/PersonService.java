@@ -56,9 +56,9 @@ public class PersonService {
     public Boolean updatePersonImg(String img, Integer id) {
         var person = personRepository.findById(id).orElse(null);
         if(person == null) return false;
-        var imgBytes = img.getBytes(StandardCharsets.UTF_8);
-        person.setImg(imgBytes);
-        return Arrays.equals(personRepository.save(person).getImg(), imgBytes);
+//        var imgBytes = img.getBytes(StandardCharsets.UTF_8);
+        person.setImg(img);
+        return personRepository.save(person).getImg().equals(img);
     }
 
     public Boolean updatePersonBio(String bio, Integer id) {

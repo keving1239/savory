@@ -24,7 +24,7 @@ public class Person {
     @Column(name = "Password", nullable = false)
     private String password;
     @Column (name = "Img")
-    private byte[] img;
+    private String img;
     @Column (name = "Bio")
     private String bio;
     @Column (name = "Role", nullable = false)
