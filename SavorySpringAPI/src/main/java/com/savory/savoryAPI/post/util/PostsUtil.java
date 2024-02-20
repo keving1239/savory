@@ -20,8 +20,10 @@
 //// }
 //
 package com.savory.savoryAPI.post.util;
+import com.savory.savoryAPI.post.dto.PostsUsernameDto;
 import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.dto.PostsDto;
+import com.savory.savoryAPI.post.entity.PostsUsername;
 
 // public class PostsDto {
 //     int id;
@@ -51,4 +53,21 @@ public class PostsUtil
        .tags(post.getTags())
        .build();
    }
+
+    public static PostsUsernameDto buildPostUsernameDto(PostsUsername post)
+    {
+        return PostsUsernameDto.builder()
+                .post_id(post.getPost_id())
+                .userID(post.getUserID())
+                .headline(post.getHeadline())
+                .ingredients(post.getIngredients())
+                .recipe(post.getRecipe())
+                .img(post.getImg())
+                .tags(post.getTags())
+                .username(post.getUsername())
+                .build();
+    }
+
+
+
 }
