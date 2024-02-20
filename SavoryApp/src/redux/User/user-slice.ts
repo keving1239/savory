@@ -71,7 +71,7 @@ export const fetchUser = createAsyncThunk(
         // const data = await response.json();
         // return {user: {id: data.id, username: data.username, 
         // img: '', bio: data.bio, role: data.admin} as User, token};
-        return {user: {id: 12345, username: 'our.database.be.broken', 
+        return {user: {id: 8, username: 'our.database.be.broken', 
             img: '', bio: 'spongeboy me bob', role: false} as User, token};
     },
 );

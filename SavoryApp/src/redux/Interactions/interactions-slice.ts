@@ -1,7 +1,9 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 interface RecipeInteraction {
-    recipeId: number,
+    postId: number,
     liked: boolean,
     bookmarked: boolean,
 }
@@ -27,6 +29,14 @@ const interactionsSlice = createSlice({
         toggleBookmark(state: InteractionsState, action: PayloadAction<{recipeId: number; bookmarked: boolean}>) {
             state.interactions[action.payload.recipeId].bookmarked = action.payload.bookmarked;
         },
+        addInteraction(state: InteractionsState, action: PayloadAction<number>) {
+            state.interactions[action.payload] = {
+                postId: action.payload,
+                liked: false,
+                bookmarked: false
+            }
+        }
+
     },
     extraReducers: (builder) => {
         builder
@@ -55,22 +65,23 @@ const interactionsSlice = createSlice({
 export const fetchInteractions = createAsyncThunk(
     '/api/interactions/fetch',
     async ({userId}: {userId: number}) => {
-        // const response = await fetch(`http://localhost:8080/users/${userId}`);
-        // const data = await response.json();
+         const response = await fetch(`http://localhost:8080/api/bookmarks/users/8`);
+         const data = await response.json();
+         console.log("DATA: " + JSON.stringify(data));
         const interactions: Record<number, RecipeInteraction> = {};
-        // data.forEach((item: any) => {
-            // interactions[item.post_id] = {
-                // recipeId: item.post_id,
-                // liked: false,
-                // bookmarked: false,
-            // };
-        // });
-        interactions[0] = {recipeId: 1, liked: false, bookmarked: false,};
-        interactions[1] = {recipeId: 1, liked: true, bookmarked: true,};
-        interactions[2] = {recipeId: 1, liked: true, bookmarked: false,};
+         data.forEach((item: any) => {
+             interactions[item.postId] = {
+                 postId: item.postId,
+                 liked: false,
+                 bookmarked: true,
+             };
+         });
+       // interactions[0] = {recipeId: 1, liked: false, bookmarked: false,};
+      //  interactions[1] = {recipeId: 1, liked: true, bookmarked: true,};
+      //  interactions[2] = {recipeId: 1, liked: true, bookmarked: false,};
         return interactions;
     },
 );
 
-export const { toggleLike, toggleBookmark } = interactionsSlice.actions;
+export const { toggleLike, toggleBookmark, addInteraction } = interactionsSlice.actions;
 export default interactionsSlice.reducer;

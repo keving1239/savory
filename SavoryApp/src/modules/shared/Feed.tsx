@@ -13,8 +13,10 @@ import CardActions from '@mui/material/CardActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
 //import { Recipes } from '../../Recipes';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { addInteraction } from '../../redux/Interactions/interactions-slice';
+import { exit } from 'process';
 
 
 
@@ -133,9 +135,33 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
     const r = useSelector((state: RootState) => state.recipes);
     const Recipes = r.recipes
     const recipe = Recipes[id - 1];
+    const i = useSelector((state: RootState) => state.interactions);
+    const [interactions, setInteractions] = useState(i.interactions);
+    const dispatch = useDispatch<AppDispatch>();
+
+    const addInteractionLocal = () => {
+        // add post to interactions state if not already there
+        setInteractions(interactions => ({
+          ...interactions,
+          [id]: {
+            postId: id,
+            liked: false,
+            bookmarked: false
+          }
+        }));
+      };
+
+    if (!interactions[id]) {
+        dispatch(addInteraction(id))
+        addInteractionLocal()
+    }
     // Recipe State 
-    const [bookmark, setBookmark] = useState(recipe.isBookmarked);
-    const [like, setLike] = useState(recipe.isLiked);
+    console.log("ID: " + id + "STATE: " + JSON.stringify(interactions[id].bookmarked))
+
+    const [bookmark, setBookmark] = useState(interactions[id].bookmarked);
+    const [like, setLike] = useState(interactions[id].liked);
+    const [intLocal, setIntLocal] = useState(interactions[id])
+    console.log("THIS INTERACTION: " + JSON.stringify(intLocal));
     const [copySuccess, setCopySuccess] = useState('');
     useEffect(() => {
         copySuccess && console.log(copySuccess);
