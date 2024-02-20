@@ -17,31 +17,39 @@ const LoadingAccount = () => {
     const navigate = useNavigate();
     // loading resources
     const [status, setStatus] = useState('Loading...');
-    async function loadUserResources() {
+    async function loadProfile() {
         setStatus('Loading Profile...');
         await loadUser();
+    }
+    async function loadFeed() {
         setStatus('Loading Recipes...');
         await loadRecipes();
         setStatus('Loading Interactions...');
         await loadInteractions();
         setStatus('Loading Complete...');
-    } 
+    }
     // loading functions
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getAccessTokenSilently({
+                // authorizationParams: {
+                    // audience: 'http://localhost:8080/api/person/all',
+                // },
+                cacheMode: 'off',
+                timeoutInSeconds: 86400,
+            });
             await dispatch(fetchUser({ email, isAuthenticated, token }));
         } catch(error){console.error("Error Fetching User: ", error)}
     }
     async function loadRecipes() {
-        const userId = savoryUser.user ? savoryUser.user?.id : -1;
+        const userId = savoryUser?.user?.id || -1;
         try {
             await dispatch(fetchRecipes({userId}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
     async function loadInteractions() {
-        const userId = savoryUser.user ? savoryUser.user?.id : -1;
+        const userId = savoryUser?.user?.id || -1;
         try {
             await dispatch(fetchInteractions({userId}));
         } catch(error){console.error("Error Fetching Interactions: ", error)}
@@ -49,8 +57,12 @@ const LoadingAccount = () => {
     // effect
     useEffect(() => {
         if(!isAuthenticated || !user) return;
-        loadUserResources();
+        loadProfile();
     }, [isAuthenticated, user]);
+    useEffect(() => {
+        if(!savoryUser || !savoryUser.user) return;
+        loadFeed();
+    }, [savoryUser]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
         const page = savoryUser.user?.username ? '/feed' : '/profile/edit'
