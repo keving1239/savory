@@ -5,7 +5,9 @@ import {Menu, Typography, IconButton, AppBar, Toolbar, Box,
 import {LocalDining, Search } from '@mui/icons-material'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
-import { removeUser } from '../../redux/User/user-slice';
+import { removeLocalUser } from '../../redux/User/user-slice';
+import { removeLocalRecipes } from '../../redux/Recipes/recipes-slice';
+import { removeLocalInteractions } from '../../redux/Interactions/interactions-slice';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
@@ -20,11 +22,13 @@ const ResponsiveAppBar = () => {
   const logoutHandler = async () => {
     try {
       await logout({ logoutParams: { returnTo: window.location.origin } });
-      dispatch(removeUser());
+      dispatch(removeLocalUser());
+      dispatch(removeLocalRecipes());
+      dispatch(removeLocalInteractions());
     } catch(error) {console.log("Error logging out: "+error);}
   }
 
-  const username = user?.username || 'savory';
+  const username = user?.username || '';
   const img = user?.img || '';
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null); 
   const openProfileOptions = (event: React.MouseEvent<HTMLElement>) => {
@@ -42,12 +46,12 @@ const ResponsiveAppBar = () => {
           <Grid container item justifyContent='flex-start' alignItems='center' sm={10} md={9} lg={8} xl={7}>
             <Grid item xs={2}><LogoButton/></Grid>
             <Grid container item  alignItems='center' xs={6}>
-              <NavigationButtons/>
+              <NavigationButtons {...{isAuthenticated}}/>
             </Grid>
           </Grid>
           <Grid container item justifyContent='flex-end' alignItems='center' sm={2} md={3} lg={4} xl={5}>
             <Grid container item justifyContent='flex-end' alignItems='center' xs={7}>
-              <SearchBar/>
+              {isAuthenticated ?  <SearchBar/> : <></>}
             </Grid>
             <Grid item xs={1}>
               <ProfileButton {...{username, img, openProfileOptions}}/>
@@ -71,11 +75,15 @@ const LogoButton = () => {
   );
 }
 
-const NavigationButtons = () => {
-  const navMenuOptions = [
+const NavigationButtons = ({isAuthenticated}: {isAuthenticated: boolean}) => {
+  const navMenuOptions =  isAuthenticated ? 
+  [
     { to: '/', text: 'About' },
     { to: '/post/new', text: 'Add Post' },
     { to: '/feed/bookmarks?', text: 'Bookmarks' },
+  ] : 
+  [
+    { to: '/', text: 'About' },
   ];
   return (
     <>
@@ -103,10 +111,11 @@ const ProfileOptions = ({username, profileAnchor, closeProfileOptions, isAuthent
    {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, isAuthenticated: boolean,
      logoutHandler: () => void, loginHandler: () => void}) => {
 
-    const dropDownOptions = [
+    const dropDownOptions = isAuthenticated ? 
+    [
       { to: `/profile/${username}`, text: 'Profile' },
       { to: `/settings`, text: 'Settings' },
-    ];
+    ] : [];
     return(
       <Menu
         anchorEl={profileAnchor}
