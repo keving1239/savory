@@ -21,6 +21,9 @@ const interactionsSlice = createSlice({
     name: 'interactions-slice',
     initialState,
     reducers: {
+        removeLocalInteractions(state: InteractionsState) {
+            state.interactions = {};
+        },
         toggleLike(state: InteractionsState, action: PayloadAction<{recipeId: number; liked: boolean}>) {
             state.interactions[action.payload.recipeId].liked = action.payload.liked;
         },
@@ -55,14 +58,14 @@ const interactionsSlice = createSlice({
 export const fetchInteractions = createAsyncThunk(
     '/api/interactions/fetch',
     async ({userId}: {userId: number}) => {
-        // const response = await fetch(`http://localhost:8080/users/${userId}`);
+        // const response = await fetch(`http://localhost:8080/api/bookmarks/users/${userId}`);
         // const data = await response.json();
         const interactions: Record<number, RecipeInteraction> = {};
-        // data.forEach((item: any) => {
-            // interactions[item.post_id] = {
-                // recipeId: item.post_id,
+        // data.forEach((item: {id: number, postId: number, userId: number}) => {
+            // interactions[item.postId] = {
+                // recipeId: item.postId,
                 // liked: false,
-                // bookmarked: false,
+                // bookmarked: true,
             // };
         // });
         interactions[0] = {recipeId: 1, liked: false, bookmarked: false,};
@@ -72,5 +75,5 @@ export const fetchInteractions = createAsyncThunk(
     },
 );
 
-export const { toggleLike, toggleBookmark } = interactionsSlice.actions;
+export const { removeLocalInteractions, toggleLike, toggleBookmark } = interactionsSlice.actions;
 export default interactionsSlice.reducer;
