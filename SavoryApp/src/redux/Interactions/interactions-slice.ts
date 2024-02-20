@@ -1,6 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+
 
 interface RecipeInteraction {
     postId: number,
@@ -19,9 +18,12 @@ const initialState: InteractionsState = {
     loading: false,
 };
 
+
 const interactionsSlice = createSlice({
+    
     name: 'interactions-slice',
     initialState,
+    
     reducers: {
         toggleLike(state: InteractionsState, action: PayloadAction<{recipeId: number; liked: boolean}>) {
             state.interactions[action.payload.recipeId].liked = action.payload.liked;
@@ -81,6 +83,41 @@ export const fetchInteractions = createAsyncThunk(
       //  interactions[2] = {recipeId: 1, liked: true, bookmarked: false,};
         return interactions;
     },
+);
+
+export const postBookmark = createAsyncThunk(
+    'api/interactions/postBookmark',
+    async ({ postId, userId }: { postId: number; userId: number }) => {
+        const response = await fetch(`http://localhost:8080/api/bookmarks/postBookmark`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ postId, userId }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to post bookmark');
+        } else {
+            console.log("POSTED TO DB")
+        }
+    }
+);
+
+export const deleteBookmark = createAsyncThunk(
+    'api/interactions/deleteBookmark',
+    async ({ postId, userId }: { postId: number; userId: number }) => {
+        const response = await fetch(`http://localhost:8080/api/bookmarks/deleteByInputs/${userId}/${postId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete bookmark');
+        } else {
+            console.log("DELETED FROM DB")
+        }
+    }
 );
 
 export const { toggleLike, toggleBookmark, addInteraction } = interactionsSlice.actions;

@@ -15,8 +15,8 @@ import Post from '../pages/Post/Post';
 //import { Recipes } from '../../Recipes';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { addInteraction } from '../../redux/Interactions/interactions-slice';
-import { exit } from 'process';
+import { addInteraction, toggleBookmark } from '../../redux/Interactions/interactions-slice';
+import { postBookmark, deleteBookmark } from '../../redux/Interactions/interactions-slice';
 
 
 
@@ -156,9 +156,8 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
         addInteractionLocal()
     }
     // Recipe State 
-    console.log("ID: " + id + "STATE: " + JSON.stringify(interactions[id].bookmarked))
 
-    const [bookmark, setBookmark] = useState(interactions[id].bookmarked);
+    //const [bookmark, setBookmark] = useState(interactions[id].bookmarked);
     const [like, setLike] = useState(interactions[id].liked);
     const [intLocal, setIntLocal] = useState(interactions[id])
     console.log("THIS INTERACTION: " + JSON.stringify(intLocal));
@@ -188,8 +187,21 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
         } catch (err) { setCopySuccess('Copy Link Failed: ' + id); }
     }
     const bookmarkHandler = () => {
-        setBookmark(!bookmark);
-        console.log(bookmark ? `Unbookmarked: ${id}` : `Bookmarked: ${id}`);
+        const bookmarkStatus = intLocal.bookmarked;
+        dispatch(toggleBookmark({recipeId: intLocal.postId, bookmarked: !bookmarkStatus}))
+        setIntLocal({
+            postId: intLocal.postId,
+            liked: intLocal.liked,
+            bookmarked: !bookmarkStatus
+        })
+        if (!bookmarkStatus) {
+            dispatch(postBookmark({postId: id, userId: 8}))
+        } else {
+            dispatch(deleteBookmark({postId: id, userId: 8}))
+        }
+        
+
+        console.log(intLocal.bookmarked ? `Unbookmarked: ${id}` : `Bookmarked: ${id}`);
         // Notification Alert
     }
     // Recipe Card
@@ -227,7 +239,7 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
                             </IconButton></Grid>
                         </Grid></Grid>
                         <Grid item><IconButton onClick={bookmarkHandler}>
-                            {bookmark ? <Bookmark color='secondary' /> : <BookmarkBorder />}
+                            {intLocal.bookmarked ? <Bookmark color='secondary' /> : <BookmarkBorder />}
                         </IconButton></Grid>
                     </Grid>
                 </CardActions>
