@@ -39,7 +39,6 @@ import com.savory.savoryAPI.post.entity.PostsUsername;
 
 // }
 
-
 public class PostsUtil
 {
    public static PostsDto buildPostDto(Posts post)

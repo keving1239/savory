@@ -42,6 +42,12 @@ public class PersonService {
                 HttpStatus.NOT_FOUND, "Resource with email " + email + " not found");
         return PersonUtil.buildPersonDto(person);
     }
+    public PersonDto getPersonByUsername(String username) {
+        var person =  personRepository.findByUsername(username).orElse(null);
+        if(person == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Resource with username " + username + " not found");
+        return PersonUtil.buildPersonDto(person);
+    }
     public PersonDto updatePerson(BuildPersonRequest personDto, Integer id) {
         var oldPerson = personRepository.findById(id).orElse(new Person());
         var savedPerson = reify(personDto, oldPerson);
@@ -82,5 +88,16 @@ public class PersonService {
                 .stream()
                 .map(PersonUtil::buildPersonDto)
                 .collect(Collectors.toList());
+    }
+
+    public Boolean isUsernameAvailable(String username) {
+        return personRepository.findByUsername(username).orElse(null) == null;
+    }
+
+    public Boolean updatePersonUsername(String username, Integer id) {
+        var person = personRepository.findById(id).orElse(null);
+        if(person == null) return false;
+        person.setUsername(username);
+        return personRepository.save(person).getUsername().equals(username);
     }
 }

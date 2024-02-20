@@ -11,69 +11,63 @@ import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 const LoadingAccount = () => {
     // redux state
     const savoryUser = useSelector((state: RootState) => state.user);
-    const savoryRecipes = useSelector((state: RootState) => state.recipes);
-    const savoryInteractions = useSelector((state: RootState) => state.interactions);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    // loading status
+    // loading resources
     const [status, setStatus] = useState('Loading...');
-    useEffect(() => {
+    async function loadProfile() {
         setStatus('Loading Profile...');
-        const timeout = setTimeout(() => {
-            loadUser();
-        }, 3000);
-        return () => clearTimeout(timeout);
-    },[isAuthenticated, user]);
-    useEffect(() => {
+        await loadUser();
+    }
+    async function loadFeed() {
         setStatus('Loading Recipes...');
-        const timeout = setTimeout(() => {
-            loadRecipes();
-        }, 3000);
-        return () => clearTimeout(timeout);
-    }, [savoryUser]);
-    useEffect(() => {
+        await loadRecipes();
         setStatus('Loading Interactions...');
-        const timeout = setTimeout(() => {
-            loadInteractions();
-        }, 3000);
-        return () => clearTimeout(timeout);
-    }, [savoryRecipes]);
-    useEffect(() => {
+        await loadInteractions();
         setStatus('Loading Complete...');
-        const timeout = setTimeout(() => {
-            loadLandingPage();
-        }, 10000);
-        return () => clearTimeout(timeout);
-    }, [savoryInteractions]);
+    }
     // loading functions
     async function loadUser() {
-        if(!isAuthenticated || !user) return;
+        const email = (user ? user?.email : '') as string;
         try {
-            const email = (user ? user?.email : '') as string;
-            const token = await getAccessTokenSilently();
-            dispatch(fetchUser({ email, isAuthenticated, token }));
+            const token = await getAccessTokenSilently({
+                // authorizationParams: {
+                    // audience: 'http://localhost:8080/api/person/all',
+                // },
+                cacheMode: 'off',
+                timeoutInSeconds: 86400,
+            });
+            await dispatch(fetchUser({ email, isAuthenticated, token }));
         } catch(error){console.error("Error Fetching User: ", error)}
     }
-    function loadRecipes() {
-        const userId = savoryUser.user ? savoryUser.user?.id : 1;
-        if (userId < 0) return;
+    async function loadRecipes() {
+        const userId = savoryUser?.user?.id || -1;
         try {
-            dispatch(fetchRecipes({userId}));
+            await dispatch(fetchRecipes({userId}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
-    function loadInteractions() {
-        const userId = savoryUser.user ? savoryUser.user?.id : -1;
-        if (userId < 0) return;
+    async function loadInteractions() {
+        const userId = savoryUser?.user?.id || -1;
         try {
-            dispatch(fetchInteractions({userId}));
+            await dispatch(fetchInteractions({userId}));
         } catch(error){console.error("Error Fetching Interactions: ", error)}
     }
-    function loadLandingPage() { 
-        if(savoryUser.error || savoryRecipes.error || savoryInteractions.error) return;
-        navigate('/feed');
-    }
+    // effect
+    useEffect(() => {
+        if(!isAuthenticated || !user) return;
+        loadProfile();
+    }, [isAuthenticated, user]);
+    useEffect(() => {
+        if(!savoryUser || !savoryUser.user) return;
+        loadFeed();
+    }, [savoryUser]);
+    useEffect(() => {
+        if(status != 'Loading Complete...') return;
+        const page = savoryUser.user?.username ? '/feed' : '/profile/edit'
+        navigate(`${page}`);
+    },[status]);
     // display
     return(
       <Box>
