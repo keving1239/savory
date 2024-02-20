@@ -59,6 +59,7 @@ const userSlice = createSlice({
                 state.loading = false;
                 console.log('User Fetch Successful...');
                 console.log(state.user);
+                console.log(state.token);
             }
         ).addCase(
             fetchUser.rejected, (state: UserState, action) => {

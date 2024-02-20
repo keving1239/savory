@@ -9,7 +9,32 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const { isAuthenticated, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
+
+    // const handleLoginJWT = async () => {
+
+    //     if (!isAuthenticated) {
+    //         await loginWithRedirect();
+    //     }
+
+
+    //     try {
+    //         // If user is authenticated
+
+    //         // Begin to fetch data after authentication
+    //         const token = await getAccessTokenSilently();
+    //         const response = await fetch('https://dummy-url', {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
+    //         const data = await response.json();
+    //         console.log(data);
+    //     } catch (error) {
+    //         console.error('Failed login/fetch', error);
+    //     }
+    // };
+
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -19,7 +44,7 @@ const SplashPage = () => {
             <Typography variant='h6' maxWidth='80vw'>
                 Hi! Savory is a foodie's social media! Discover recipes, share 
                 your meals, and connect with other food lovers! Create an account,
-                and you can create, like, comment on, save, and share recipe posts.
+                and you can create, like, save, and share recipe posts.
             </Typography>
         </Grid>
         <Grid container item justifyContent='space-around' rowSpacing={4}>
@@ -41,7 +66,7 @@ const SplashPage = () => {
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
-            <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
+            <Button variant='contained' color='primary' onClick={()=> loginWithRedirect()}>
                 Log in
             </Button>}
         </Grid>
