@@ -10,7 +10,7 @@ public class PersonDto {
     String username;
     String email;
     String password;
-    byte[] img;
+    String img;
     String bio;
     boolean isAdmin;
 }

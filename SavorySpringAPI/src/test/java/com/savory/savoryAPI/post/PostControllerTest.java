@@ -127,7 +127,7 @@ class PostControllerTest
                 .headline(headline)
                 .ingredients(ingredients)
                 .recipe(recipe)
-                .img(new byte[0])
+                .img("")
                 .tags(tags)
                 .postdate(postdate)
                 .build();

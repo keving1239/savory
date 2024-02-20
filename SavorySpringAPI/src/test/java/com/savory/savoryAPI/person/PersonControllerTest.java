@@ -83,7 +83,7 @@ class PersonControllerTest {
                 .username(username)
                 .email(email)
                 .password(password)
-                .img(new byte[0])
+                .img("")
                 .bio(bio)
                 .isAdmin(isAdmin)
                 .build();
