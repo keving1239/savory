@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/v3/api-docs") // Endpoint for OpenAPI documentation
                 .allowedOrigins("http://localhost:3000") // Adjust the origin as needed
-                .allowedMethods("GET", "PUT", "DELETE")
+                .allowedMethods("GET", "PUT", "DELETE", "POST")
                 .allowedHeaders("*"); // Allow all headers
     }
 }
