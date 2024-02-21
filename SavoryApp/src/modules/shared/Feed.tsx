@@ -24,7 +24,7 @@ export default function Feed({ id }: { id?: number }) {
     console.log('This is the feed for ' + user?.username);
     const r = useSelector((state: RootState) => state.recipes);
     const Recipes = r.recipes
-    console.log("RECIPES: " + JSON.stringify(Recipes))
+   // console.log("RECIPES: " + JSON.stringify(Recipes))
     // State
     const { filters } = useParams();
     const { state } = useLocation();
@@ -137,7 +137,7 @@ const RecipeItem = ({ id, openHandler, index }: { id: number, openHandler: (id: 
     const r = useSelector((state: RootState) => state.recipes);
     const Recipes = r.recipes
     const recipe = Recipes[index];
-    console.log("THIS ONE: " + JSON.stringify(recipe))
+    //console.log("THIS ONE: " + JSON.stringify(recipe))
     const i = useSelector((state: RootState) => state.interactions);
     const [interactions, setInteractions] = useState(i.interactions);
     const dispatch = useDispatch<AppDispatch>();
@@ -164,7 +164,7 @@ const RecipeItem = ({ id, openHandler, index }: { id: number, openHandler: (id: 
     //const [bookmark, setBookmark] = useState(interactions[id].bookmarked);
     const [like, setLike] = useState(interactions[id].liked);
     const [intLocal, setIntLocal] = useState(interactions[id])
-    console.log("THIS INTERACTION: " + JSON.stringify(intLocal));
+    //console.log("THIS INTERACTION: " + JSON.stringify(intLocal));
     const [copySuccess, setCopySuccess] = useState('');
     useEffect(() => {
         copySuccess && console.log(copySuccess);
