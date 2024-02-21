@@ -32,7 +32,7 @@ const fakeState: RootState = {
     loading: false,
   },
   recipes: {
-    recipes: [], // Add fake recipes as needed
+    recipes: {}, // Add fake recipes as needed
     loading: false,
   },
   interactions: {
