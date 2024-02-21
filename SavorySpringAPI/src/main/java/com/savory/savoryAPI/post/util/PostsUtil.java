@@ -44,7 +44,7 @@ public class PostsUtil
    public static PostsDto buildPostDto(Posts post)
    {
        return PostsDto.builder()
-       .post_id(post.getPost_id())
+       .postId(post.getPostId())
        .userID(post.getUserID())
        .headline(post.getHeadline())
        .ingredients(post.getIngredients())
@@ -57,7 +57,7 @@ public class PostsUtil
     public static PostsUsernameDto buildPostUsernameDto(PostsUsername post)
     {
         return PostsUsernameDto.builder()
-                .post_id(post.getPost_id())
+                .postId(post.getPostId())
                 .userID(post.getUserID())
                 .headline(post.getHeadline())
                 .ingredients(post.getIngredients())

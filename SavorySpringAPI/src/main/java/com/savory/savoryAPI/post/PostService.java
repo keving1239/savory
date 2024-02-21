@@ -42,7 +42,7 @@ public class PostService
     }
 
     public List<Posts> findPosts(List<Integer> ids) {
-        return postRepository.findAllByPost_idIn(ids);
+        return postRepository.findAllBypostIdIn(ids);
     }
 
     public List<PostsDto> findPostByUserID(int userID)
@@ -53,27 +53,27 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public void deletePostByPId(int post_id)
+    public void deletePostByPId(int postId)
     {
-        postRepository.deleteByPost_id(post_id);
+        postRepository.deleteBypostId(postId);
 
     }
 
 
-    public PostsDto findPostbyPostID(int post_id)
+    public PostsDto findPostbyPostID(int postId)
     {
-        var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
-            log.warn("Unable to find super power with id {} while trying to update", post_id);
+        var existingPost = postRepository.findBypostId(postId).orElseThrow(() -> {
+            log.warn("Unable to find super power with id {} while trying to update", postId);
             return null;
         });
         return PostsUtil.buildPostDto(existingPost);
 
     }
 
-    public PostsDto updatePostPort(PostsDto postsDto, int post_id)
+    public PostsDto updatePostPort(PostsDto postsDto, int postId)
     {
-        var existingPost = postRepository.findByPost_id(post_id).orElseThrow(() -> {
-                    log.warn("Unable to find super power with id {} while trying to update", post_id);
+        var existingPost = postRepository.findBypostId(postId).orElseThrow(() -> {
+                    log.warn("Unable to find super power with id {} while trying to update", postId);
                     return null;
                 });
 

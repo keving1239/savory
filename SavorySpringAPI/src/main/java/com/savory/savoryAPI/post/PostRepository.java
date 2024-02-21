@@ -22,13 +22,13 @@ public interface PostRepository extends JpaRepository<Posts, Long>
    //Delete Still Under Construction
    @Transactional
    @Modifying
-   @Query("DELETE FROM Posts WHERE post_id = :post_id")
-   void deleteByPost_id(@Param("post_id") int post_id);
-   @Query("SELECT p FROM Posts p WHERE p.post_id = :post_id")
-   Optional<Posts> findByPost_id(@Param("post_id") int post_id);
+   @Query("DELETE FROM Posts WHERE postId = :postId")
+   void deleteBypostId(@Param("postId") int postId);
+   @Query("SELECT p FROM Posts p WHERE p.postId = :postId")
+   Optional<Posts> findBypostId(@Param("postId") int postId);
 
-   @Query("SELECT p FROM Posts p WHERE p.post_id IN :ids")
-   List<Posts> findAllByPost_idIn(@Param("ids") Collection<Integer> ids);
+   @Query("SELECT p FROM Posts p WHERE p.postId IN :ids")
+   List<Posts> findAllBypostIdIn(@Param("ids") Collection<Integer> ids);
 
    @Query("SELECT p FROM Posts p WHERE p.userID = :userID")
    List<Posts> findByUserID(@Param("userID") int userID);
