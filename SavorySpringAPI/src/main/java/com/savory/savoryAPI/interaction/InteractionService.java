@@ -3,6 +3,9 @@ package com.savory.savoryAPI.interaction;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.savory.savoryAPI.post.PostService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.savory.savoryAPI.interaction.dto.InteractionDto;
 import com.savory.savoryAPI.interaction.dto.BuildInteractionRequest;
@@ -13,22 +16,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class InteractionService {
     private final InteractionRepository interactionRepository;
+    private final Logger log = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     public InteractionService(InteractionRepository interactionRepository) {
         this.interactionRepository = interactionRepository;
     }
 
-    public InteractionDto createInteraction(BuildInteractionRequest interactionDto) {
-        var interaction = reify(interactionDto, new Interaction());
-        var savedInteraction = interactionRepository.save(interaction);
-
-        return InteractionUtil.buildInteractionDto(savedInteraction);
+    public InteractionDto createInteraction(BuildInteractionRequest interactionRequest) {
+        var interaction = reify(interactionRequest, new Interaction());
+        return InteractionUtil.buildInteractionDto(interaction);
     }
 
-    private Interaction reify(BuildInteractionRequest interactionDto, Interaction target) {
-        target.setPostId(interactionDto.getPostId());
-        target.setUserId(interactionDto.getUserId());
+    private Interaction reify(BuildInteractionRequest interactionRequest, Interaction target) {
+        log.debug("Processed request with body: "+interactionRequest.toString());
+        target.setPostId(interactionRequest.getPostId());
+        target.setUserId(interactionRequest.getUserId());
+        target.setLiked(interactionRequest.isLiked());
+        target.setBookmarked(interactionRequest.isBookmarked());
         return interactionRepository.save(target);
     }
 
@@ -64,5 +69,14 @@ public class InteractionService {
 
     public Integer getBookmarkCount(int postId) {
         return interactionRepository.getBookmarkCount(postId);
+    }
+
+    public boolean updateInteraction(BuildInteractionRequest interactionRequest) {
+        var oldInteraction = interactionRepository.findByInputs(
+                interactionRequest.getUserId(), interactionRequest.getPostId()).orElse(null);
+        if(oldInteraction == null) return false;
+        var newInteraction = reify(interactionRequest, oldInteraction);
+        return newInteraction.isLiked() == interactionRequest.isLiked()
+                && newInteraction.isBookmarked() == interactionRequest.isBookmarked();
     }
 }

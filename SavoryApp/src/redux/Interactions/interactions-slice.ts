@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 interface RecipeInteraction {
-    postId: number,
+    recipeId: number,
     liked: boolean,
     bookmarked: boolean,
 }
@@ -28,20 +28,6 @@ const interactionsSlice = createSlice({
         removeLocalInteractions(state: InteractionsState) {
             state.interactions = {};
         },
-        toggleLike(state: InteractionsState, action: PayloadAction<{recipeId: number; liked: boolean}>) {
-            state.interactions[action.payload.recipeId].liked = action.payload.liked;
-        },
-        toggleBookmark(state: InteractionsState, action: PayloadAction<{recipeId: number; bookmarked: boolean}>) {
-            state.interactions[action.payload.recipeId].bookmarked = action.payload.bookmarked;
-        },
-        addInteraction(state: InteractionsState, action: PayloadAction<number>) {
-            state.interactions[action.payload] = {
-                postId: action.payload,
-                liked: false,
-                bookmarked: false
-            }
-        }
-
     },
     extraReducers: (builder) => {
         builder
@@ -61,67 +47,94 @@ const interactionsSlice = createSlice({
             fetchInteractions.rejected, (state: InteractionsState, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                console.log('Interaction Fetch Failed...');
+                console.log('Interaction Fetch Failed... ');
+                console.error(state.error);
+            }
+        );
+        builder.addCase(
+            postInteraction.fulfilled, (state: InteractionsState, action: PayloadAction<RecipeInteraction>) => {
+                state.interactions[action.payload.recipeId] = action.payload;
+            }
+        ).addCase(
+            postInteraction.rejected, (state: InteractionsState, action) => {
+                state.error = action.error.message;
+                console.error('Error Posting Interaction: ',state.error);
+            }
+        );
+        builder.addCase(
+            deleteInteraction.fulfilled, (state: InteractionsState, action: PayloadAction<number>) => {
+                delete state.interactions[action.payload];
+            }
+        ).addCase(
+            deleteInteraction.rejected, (state: InteractionsState, action) => {
+                state.error = action.error.message;
+                console.error('Error Deleting Interaction: ',state.error);
+            }
+        );
+        builder.addCase(
+            updateInteraction.fulfilled, (state: InteractionsState, action: PayloadAction<RecipeInteraction>) => {
+                state.interactions[action.payload.recipeId] = action.payload;
+            }
+        ).addCase(
+            updateInteraction.rejected, (state: InteractionsState, action) => {
+                state.error = action.error.message;
+                console.error('Error Updating Interaction: ',state.error);
             }
         );
     }
 });
 
 export const fetchInteractions = createAsyncThunk(
-    '/api/interactions/fetch',
+    'fetch-interactions',
     async ({userId}: {userId: number}) => {
-         const response = await fetch(`http://localhost:8080/api/bookmarks/users/${userId}`);
-         const data = await response.json();
-         console.log("DATA: " + JSON.stringify(data));
+        const response = await fetch(`http://localhost:8080/api/interaction/users/${userId}`);
+        const data = await response.json();
         const interactions: Record<number, RecipeInteraction> = {};
-         data.forEach((item: any) => {
-             interactions[item.postId] = {
-                 postId: item.postId,
-                 liked: false,
-                 bookmarked: true,
-             };
-         });
-       // interactions[0] = {recipeId: 1, liked: false, bookmarked: false,};
-      //  interactions[1] = {recipeId: 1, liked: true, bookmarked: true,};
-      //  interactions[2] = {recipeId: 1, liked: true, bookmarked: false,};
+        data.forEach((item: any) => {
+            interactions[item.postId] = {
+                recipeId: item.postId,
+                liked: item.liked,
+                bookmarked: item.bookmarked,
+            };
+        });
         return interactions;
     },
 );
 
-export const postBookmark = createAsyncThunk(
-    'api/interactions/postBookmark',
-    async ({ postId, userId }: { postId: number; userId: number | undefined }) => {
-        const response = await fetch(`http://localhost:8080/api/bookmarks/postBookmark`, {
+export const postInteraction = createAsyncThunk(
+    'post-interaction',
+    async ({ postId, userId, liked, bookmarked }: 
+        { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
+        await fetch('http://localhost:8080/api/interaction/postInteraction', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ postId, userId }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
         });
-        if (!response.ok) {
-            throw new Error('Failed to post bookmark');
-        } else {
-            console.log("POSTED TO DB")
-        }
+        return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
     }
 );
 
-export const deleteBookmark = createAsyncThunk(
-    'api/interactions/deleteBookmark',
+export const updateInteraction = createAsyncThunk(
+    'update-interaction',
+    async ({ postId, userId, liked, bookmarked }: 
+        { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
+        await fetch('http://localhost:8080/api/interaction/update', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
+        });
+        return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
+    }
+);
+
+export const deleteInteraction = createAsyncThunk(
+    'delete-interaction',
     async ({ postId, userId }: { postId: number; userId: number | undefined }) => {
-        const response = await fetch(`http://localhost:8080/api/bookmarks/deleteByInputs/${userId}/${postId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Failed to delete bookmark');
-        } else {
-            console.log("DELETED FROM DB")
-        }
+        await fetch(`http://localhost:8080/api/interaction/deleteByInputs/${userId}/${postId}`,
+        {method: 'DELETE'});
+        return postId;
     }
 );
 
-export const { toggleLike, toggleBookmark, addInteraction, removeLocalInteractions } = interactionsSlice.actions;
+export const { removeLocalInteractions } = interactionsSlice.actions;
 export default interactionsSlice.reducer;

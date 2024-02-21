@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
     CardMedia, Avatar, IconButton, Modal
 } from '@mui/material';
 import {
     CropFree, Share, Bookmark, BookmarkBorder,
-    Favorite, ChatBubbleOutline, FavoriteBorder, Close
+    Favorite, Assistant, FavoriteBorder, Close
 } from '@mui/icons-material';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -15,24 +15,16 @@ import Post from '../pages/Post/Post';
 //import { Recipes } from '../../Recipes';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { addInteraction, toggleBookmark } from '../../redux/Interactions/interactions-slice';
-import { postBookmark, deleteBookmark } from '../../redux/Interactions/interactions-slice';
-
+import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    const user = useSelector((state: RootState) => state.user.user);
-    console.log('This is the feed for ' + user?.username);
-    const r = useSelector((state: RootState) => state.recipes);
-    const Recipes = r.recipes
+    const recipes = useSelector((state: RootState) => state.recipes.recipes);
     // State
+    const { post } = useParams();
     const { filters } = useParams();
-    const { state } = useLocation();
-    const [filteredRecipes, setFilteredRecipes] = useState(Recipes);
-    const [open, setOpen] = useState(Boolean(id) && Boolean(state?.fromTag));
+    const [filteredRecipes, setFilteredRecipes] = useState(recipes);
+    const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
-    useEffect(() => {
-        setOpen(Boolean(state?.fromTag))
-    }, [state]);
     // Handlers
     const openHandler = (id: number) => {
         setcurrentPost(id);
@@ -42,11 +34,9 @@ export default function Feed({ id }: { id?: number }) {
         setcurrentPost(0);
         setOpen(false);
     }
-    
-    
     // filter
     function parseFilters() {
-        if (!filters) return Recipes;
+        if (!filters) return recipes;
         let filterBookmarks = false;
         let filterLikes = false;
         let filterTagGroup = ''
@@ -80,12 +70,17 @@ export default function Feed({ id }: { id?: number }) {
             }
             return false;
         }
-        return Recipes.filter(recipe => {
+        const validRecipes = Object.values(recipes).filter(recipe => {
             return applyFilters({
                 title: recipe.title, tags: recipe.tags, ingredients: recipe.ingredients,
-                isBookmarked: recipe.isBookmarked, isLiked: recipe.isLiked
+                isBookmarked: false, isLiked:false
             });
         });
+        const result: typeof filteredRecipes = {};
+        validRecipes.forEach((item: typeof validRecipes[0]) => {
+            result[item.id] = item;
+        });
+        return result;
     }
     useEffect(() => {
         setFilteredRecipes(parseFilters());
@@ -95,8 +90,8 @@ export default function Feed({ id }: { id?: number }) {
         <Box>
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
-                {filteredRecipes.map((recipe) => {
-                    if (recipe.id > 0) {
+                {Object.values(filteredRecipes).map((recipe) => {
+                    if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
                     } else {
                         return null;
@@ -130,51 +125,30 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
 }
 
 const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number) => void }) => {
-    // Get from REST API
-    const r = useSelector((state: RootState) => state.recipes);
-    const Recipes = r.recipes
-    const recipe = Recipes[id - 1];
-    const i = useSelector((state: RootState) => state.interactions);
-    const [interactions, setInteractions] = useState(i.interactions);
-    const dispatch = useDispatch<AppDispatch>();
+    // state
     const user = useSelector((state: RootState) => state.user.user);
-
-    const addInteractionLocal = () => {
-        // add post to interactions state if not already there
-        setInteractions(interactions => ({
-          ...interactions,
-          [id]: {
-            postId: id,
-            liked: false,
-            bookmarked: false
-          }
-        }));
-      };
-
-    if (!interactions[id]) {
-        dispatch(addInteraction(id))
-        addInteractionLocal()
-    }
-    // Recipe State 
-
-    //const [bookmark, setBookmark] = useState(interactions[id].bookmarked);
-    const [like, setLike] = useState(interactions[id].liked);
-    const [intLocal, setIntLocal] = useState(interactions[id])
-    console.log("THIS INTERACTION: " + JSON.stringify(intLocal));
+    const recipe = useSelector((state: RootState) => state.recipes.recipes[id]);
+    const interaction = useSelector((state: RootState) => state.interactions.interactions[id]);
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    // copy
     const [copySuccess, setCopySuccess] = useState('');
     useEffect(() => {
         copySuccess && console.log(copySuccess);
     }, [copySuccess]);
-    // Handlers
+    // handlers
     const likeHandler = () => {
-        setLike(!like);
-        console.log(like ? `Unliked: ${id}` : `Liked: ${id}`);
-        // Notification Alert
+        if(!interaction) return dispatch(postInteraction({postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false}))
+        else if(interaction.liked && !interaction.bookmarked) dispatch(deleteInteraction({postId: id, userId: user ? user.id : -1}));
+        else dispatch(updateInteraction({postId: id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked}));
     }
-    const commentHandler = (comment: string) => {
-        // NOTE: NOT TO BE IMPLEMENTED
-        // REST API comment
-        console.log(`Commented: ${comment} on ${id}`);
+    const bookmarkHandler = () => {
+        if(!interaction) return dispatch(postInteraction({postId: id, userId: user ? user.id : -1, liked: false, bookmarked: true}))
+        else if(!interaction.liked && interaction.bookmarked) dispatch(deleteInteraction({postId: id, userId: user ? user.id : -1}));
+        else dispatch(updateInteraction({postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked}));
+    }
+    const exploreHandler = () => {
+        navigate(`/feed/${recipe?.title+recipe?.tags?.join(' ')+recipe?.ingredients?.join(' ')}`);
     }
     const shareHandler = async () => {
         try {
@@ -185,24 +159,6 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
             await navigator.clipboard.writeText(url + '/' + id);
             setCopySuccess('Copy Link Successful: ' + id);
         } catch (err) { setCopySuccess('Copy Link Failed: ' + id); }
-    }
-    const bookmarkHandler = () => {
-        const bookmarkStatus = intLocal.bookmarked;
-        dispatch(toggleBookmark({recipeId: intLocal.postId, bookmarked: !bookmarkStatus}))
-        setIntLocal({
-            postId: intLocal.postId,
-            liked: intLocal.liked,
-            bookmarked: !bookmarkStatus
-        })
-        if (!bookmarkStatus && user?.id) {
-            dispatch(postBookmark({postId: id, userId: user?.id}))
-        } else {
-            dispatch(deleteBookmark({postId: id, userId: user?.id}))
-        }
-        
-
-        console.log(intLocal.bookmarked ? `Unbookmarked: ${id}` : `Bookmarked: ${id}`);
-        // Notification Alert
     }
     // Recipe Card
     return (
@@ -229,17 +185,17 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
                     <Grid container justifyContent={'space-between'}>
                         <Grid item><Grid container>
                             <Grid item><IconButton onClick={likeHandler}>
-                                {like ? <Favorite color='error' /> : <FavoriteBorder />}
+                                {interaction && interaction.liked ? <Favorite color='error' /> : <FavoriteBorder />}
                             </IconButton></Grid>
-                            <Grid item><IconButton onClick={() => commentHandler('')}>
-                                <ChatBubbleOutline />
+                            <Grid item><IconButton onClick={exploreHandler}>
+                                <Assistant />
                             </IconButton></Grid>
                             <Grid item><IconButton onClick={shareHandler}>
                                 <Share />
                             </IconButton></Grid>
                         </Grid></Grid>
                         <Grid item><IconButton onClick={bookmarkHandler}>
-                            {intLocal.bookmarked ? <Bookmark color='secondary' /> : <BookmarkBorder />}
+                            {interaction && interaction.bookmarked ? <Bookmark color='secondary' /> : <BookmarkBorder />}
                         </IconButton></Grid>
                     </Grid>
                 </CardActions>

@@ -91,7 +91,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
         <Grid container justifyContent='center' alignItems='center'>
             {visibleTags.map((tag, index) => (
                 <Grid item key={index}>
-                    <Link to={`/feed/${tag}`} state={{ fromTag: false }}><Button variant='text'>
+                    <Link to={`/feed/${tag}`}><Button variant='text'>
                         <Typography textTransform='none'>{`#${tag}`}</Typography>
                     </Button></Link>
                 </Grid>

@@ -26,18 +26,20 @@ public interface InteractionRepository extends JpaRepository<Interaction, Intege
     @Transactional
     @Modifying
     @Query("DELETE FROM Interaction WHERE userId = :uid AND postId = :pid")
-    void deleteByInputs(@Param("uid") int uid,
-                                @Param("pid") int pid);
+    void deleteByInputs(@Param("uid") int uid, @Param("pid") int pid);
 
-    @Query("SELECT b FROM Interaction b WHERE b.id = :id")
+    @Query("SELECT i FROM Interaction i WHERE i.userId = :uid AND i.postId = :pid")
+    Optional<Interaction> findByInputs(int uid, int pid);
+
+    @Query("SELECT i FROM Interaction i WHERE i.id = :id")
     Optional<Interaction> findById(int id);
 
-    @Query("SELECT b FROM Interaction b WHERE b.userId = :uid")
+    @Query("SELECT i FROM Interaction i WHERE i.userId = :uid")
     List<Interaction> findByUserId(int uid);
 
-    @Query("SELECT COUNT(*) FROM Interaction b WHERE b.postId = :pid AND b.isLiked = true")
+    @Query("SELECT COUNT(*) FROM Interaction i WHERE i.postId = :pid AND i.isLiked = true")
     Integer getLikeCount(int pid);
 
-    @Query("SELECT COUNT(*) FROM Interaction b WHERE b.postId = :pid AND b.isBookmarked = true")
+    @Query("SELECT COUNT(*) FROM Interaction i WHERE i.postId = :pid AND i.isBookmarked = true")
     Integer getBookmarkCount(int pid);
 }

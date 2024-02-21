@@ -1,8 +1,10 @@
 package com.savory.savoryAPI.interaction;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.savory.savoryAPI.interaction.dto.InteractionDto;
 import com.savory.savoryAPI.interaction.dto.BuildInteractionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public class InteractionController {
         this.interactionService = interactionService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<InteractionDto> getAllInteractions() {
         return interactionService.findAllInteractions();
     }
@@ -37,9 +39,16 @@ public class InteractionController {
         return interactionService.getBookmarkCount(postId);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<String> updateInteraction(@RequestBody BuildInteractionRequest interactionRequest) {
+        return (interactionService.updateInteraction(interactionRequest)) ?
+                ResponseEntity.ok("Interaction Updated "+interactionRequest) :
+                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Interaction not found.");
+    }
+
     @PostMapping("/postInteraction")
-    public InteractionDto createInteraction(@RequestBody BuildInteractionRequest interactionDto) {
-        return interactionService.createInteraction(interactionDto);
+    public InteractionDto createInteraction(@RequestBody BuildInteractionRequest interactionRequest) {
+        return interactionService.createInteraction(interactionRequest);
     }
 
     @DeleteMapping("/deleteById/{id}")
