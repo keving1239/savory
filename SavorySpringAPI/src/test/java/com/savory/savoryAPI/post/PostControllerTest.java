@@ -119,11 +119,11 @@ class PostControllerTest
 
     }
 
-    private PostsDto createExpectedPostDto(int post_id, int user_id, String headline, String ingredients, String recipe, String tags, String postdate) {
+    private PostsDto createExpectedPostDto(int postId, int userId, String headline, String ingredients, String recipe, String tags, String postdate) {
         // Use reflection or other methods to create an instance of PostsDto
         return PostsDto.builder()
-                .post_id(post_id)
-                .userID(user_id)
+                .postId(postId)
+                .userID(userId)
                 .headline(headline)
                 .ingredients(ingredients)
                 .recipe(recipe)

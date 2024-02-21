@@ -41,23 +41,23 @@ import com.savory.savoryAPI.post.entity.PostsUsername;
 
 public class PostsUtil
 {
-   public static PostsDto buildPostDto(Posts post)
-   {
-       return PostsDto.builder()
-       .post_id(post.getPost_id())
-       .userID(post.getUserID())
-       .headline(post.getHeadline())
-       .ingredients(post.getIngredients())
-       .recipe(post.getRecipe())
-       .img(post.getImg())
-       .tags(post.getTags())
-       .build();
-   }
+    public static PostsDto buildPostDto(Posts post)
+    {
+        return PostsDto.builder()
+                .postId(post.getPostId())
+                .userID(post.getUserID())
+                .headline(post.getHeadline())
+                .ingredients(post.getIngredients())
+                .recipe(post.getRecipe())
+                .img(post.getImg())
+                .tags(post.getTags())
+                .build();
+    }
 
     public static PostsUsernameDto buildPostUsernameDto(PostsUsername post)
     {
         return PostsUsernameDto.builder()
-                .post_id(post.getPost_id())
+                .postId(post.getPostId())
                 .userID(post.getUserID())
                 .headline(post.getHeadline())
                 .ingredients(post.getIngredients())

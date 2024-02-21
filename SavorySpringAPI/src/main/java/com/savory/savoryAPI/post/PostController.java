@@ -39,16 +39,16 @@ public class PostController {
         return postService.findPostByUserID(userID);
     }
 
-    @GetMapping("/postID/{post_id}")
-    public PostsDto getPostbyPostID(int post_id)
+    @GetMapping("/postID/{postId}")
+    public PostsDto getPostbyPostID(int postId)
     {
-        return postService.findPostbyPostID(post_id);
+        return postService.findPostbyPostID(postId);
     }
 
-    @DeleteMapping("/byPostID/{post_id}")
-    public void deletePostbyPostID(int post_id)
+    @DeleteMapping("/byPostID/{postId}")
+    public void deletePostbyPostID(int postId)
     {
-        postService.deletePostByPId(post_id);
+        postService.deletePostByPId(postId);
     }
 
     @PostMapping("/addNewPost")
@@ -65,11 +65,11 @@ public class PostController {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(post);
 //    }
 
-//    }
+    //    }
     @PutMapping
-    public ResponseEntity<PostsDto> updatePost(@RequestBody PostsDto postsDto, @RequestParam(value = "postId") int post_id)
+    public ResponseEntity<PostsDto> updatePost(@RequestBody PostsDto postsDto, @RequestParam(value = "postId") int postId)
     {
-        var post = postService.updatePostPort(postsDto, post_id);
+        var post = postService.updatePostPort(postsDto, postId);
         return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 }
