@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 
 const Profile = () => {
-    const {username} = useParams();
+    const {username, post} = useParams();
     const user = useSelector((state: RootState) => state.user.user);
     const navigate = useNavigate();
     const isOwner = user?.username === username;
@@ -54,7 +54,7 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            <Feed/>
+            {post ? <Feed id={+post}/> : <Feed/>}
         </Box>
     );
 }
