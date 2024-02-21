@@ -9,7 +9,36 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const { isAuthenticated, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
+
+    const handleLoginJWT = async () => {
+
+        if (!isAuthenticated) {
+            await loginWithRedirect();
+        }
+        const domain = "dev-t6vspuc8qrssaarc.us.auth0.com";
+
+        try {
+            // If user is authenticated
+
+            // Begin to fetch data after authentication
+            const token = await getAccessTokenSilently({
+                authorizationParams: {
+                  audience: `https://${domain}/api/v2/`,
+                  scope: "read:current_user",
+                },
+              });
+            const response = await fetch(`https://${domain}/api/v2/users/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Failed login/fetch', error);
+        }
+    };
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -41,7 +70,7 @@ const SplashPage = () => {
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
-            <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
+            <Button variant='contained' color='primary' onClick={() => handleLoginJWT()}>
                 Log in
             </Button>}
         </Grid>

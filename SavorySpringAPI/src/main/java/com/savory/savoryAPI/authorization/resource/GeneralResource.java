@@ -32,7 +32,7 @@ public class GeneralResource {
         }
     }
 
-    @GetMapping("/feed")
+    @GetMapping("/protected")
     public String getProtectedResource(@RequestHeader("Authorization") String bearerToken) {
         String jwt = jwtService.getTokenFromHeader(bearerToken);
         if (jwtService.isValidJwt(jwt)) {
