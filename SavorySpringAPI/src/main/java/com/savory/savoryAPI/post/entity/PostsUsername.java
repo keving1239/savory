@@ -31,7 +31,7 @@ public class PostsUsername {
     private String recipe;
 
     @Column(name = "Img", nullable = false)
-    private byte[] img;
+    private String img;
 
     @Column(name = "Tags", nullable = false)
     private String tags;
