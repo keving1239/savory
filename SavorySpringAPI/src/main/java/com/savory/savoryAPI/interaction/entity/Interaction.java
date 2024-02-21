@@ -1,19 +1,18 @@
-package com.savory.savoryAPI.bookmarks.entity;
-
+package com.savory.savoryAPI.interaction.entity;
 
 import lombok.*;
-
 import jakarta.persistence.*;
 
 
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 @Entity
-@Table(name = "BOOKMARKS")
-public class Bookmarks {
-
+@Table(name = "Interactions")
+public class Interaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,10 +24,9 @@ public class Bookmarks {
     @JoinColumn(name = "postId", nullable = false)
     int postId;
 
+    @Column(name = "liked", nullable = false)
+    boolean isLiked;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
+    @Column(name = "bookmarked", nullable = false)
+    boolean isBookmarked;
 }
