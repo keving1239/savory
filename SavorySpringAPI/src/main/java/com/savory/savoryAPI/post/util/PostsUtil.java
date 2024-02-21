@@ -25,20 +25,6 @@ import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.dto.PostsDto;
 import com.savory.savoryAPI.post.entity.PostsUsername;
 
-// public class PostsDto {
-//     int id;
-//     int userID;
-//     string headline;
-//     List<String>ingredients;
-//     List<String>recipe;
-//     String pictureURL;
-//     String tag1;
-//     String tag2;
-//     String date;
-
-
-// }
-
 public class PostsUtil
 {
    public static PostsDto buildPostDto(Posts post)

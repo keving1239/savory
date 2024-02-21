@@ -77,7 +77,7 @@ class PersonControllerTest {
 
     }
 
-    private PersonDto createExpectedPersonDto(int id, String username, String email, String password, byte[] img, String bio, boolean isAdmin) {
+    private PersonDto createExpectedPersonDto(int id, String username, String email, String password, String img, String bio, boolean isAdmin) {
         return PersonDto.builder()
                 .id(id)
                 .username(username)
