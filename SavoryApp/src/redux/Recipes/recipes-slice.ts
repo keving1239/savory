@@ -71,7 +71,12 @@ const recipesSlice = createSlice({
 
 function splitter(input:string) {
 
-    return input.split(", ")
+    if (input) {
+        return input.split(", ")
+    } else {
+        return null;
+    }
+    
 
 }
 
@@ -81,7 +86,7 @@ export const fetchRecipes = createAsyncThunk(
          const response = await fetch('http://localhost:8080/posts/allWithUsername');
          const data = await response.json();
          const recipes: Recipe[] = data.map((item: any) => ({
-             id: String(item.post_id),
+             id: String(item.postId),
              author: item.username,
              ownerId: item.userID,
              title: item.headline,

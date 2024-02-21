@@ -24,6 +24,7 @@ export default function Feed({ id }: { id?: number }) {
     console.log('This is the feed for ' + user?.username);
     const r = useSelector((state: RootState) => state.recipes);
     const Recipes = r.recipes
+    console.log("RECIPES: " + JSON.stringify(Recipes))
     // State
     const { filters } = useParams();
     const { state } = useLocation();
@@ -96,8 +97,10 @@ export default function Feed({ id }: { id?: number }) {
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {filteredRecipes.map((recipe) => {
+                    var index = 0
                     if (recipe.id > 0) {
-                        return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
+                        index = index + 1
+                        return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler, index }} />
                     } else {
                         return null;
                     }
@@ -129,11 +132,12 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
     );
 }
 
-const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number) => void }) => {
+const RecipeItem = ({ id, openHandler, index }: { id: number, openHandler: (id: number) => void, index: number }) => {
     // Get from REST API
     const r = useSelector((state: RootState) => state.recipes);
     const Recipes = r.recipes
-    const recipe = Recipes[id - 1];
+    const recipe = Recipes[index];
+    console.log("THIS ONE: " + JSON.stringify(recipe))
     const i = useSelector((state: RootState) => state.interactions);
     const [interactions, setInteractions] = useState(i.interactions);
     const dispatch = useDispatch<AppDispatch>();
