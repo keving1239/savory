@@ -78,11 +78,17 @@ const Post = ({ id }: { id: number }) => {
 };
 
 const RecipeTags = ({ tags }: { tags: string[] }) => {
+
+    const [tagsAnchorEl, setTagsAnchorEl] = useState<null | HTMLElement>(null);
+
+    if (!tags) {
+        return <Typography></Typography>
+    }
     const maxTags = 5;
     const visibleTags = tags.slice(0, maxTags);
     const hiddenTags = tags.slice(maxTags);
 
-    const [tagsAnchorEl, setTagsAnchorEl] = useState<null | HTMLElement>(null);
+    
     const open = Boolean(tagsAnchorEl);
     const showHiddenTags = (event: React.MouseEvent<HTMLElement>) => { setTagsAnchorEl(event.currentTarget); };
     const hideHiddenTags = () => { setTagsAnchorEl(null); };

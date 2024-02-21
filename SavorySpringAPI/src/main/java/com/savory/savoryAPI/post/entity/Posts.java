@@ -72,7 +72,7 @@ public class Posts {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    @Column(name = "postId", nullable = false)
-   private int post_id;
+   private int postId;
 
    @Column(name = "userId", nullable = false)
    private int userID;

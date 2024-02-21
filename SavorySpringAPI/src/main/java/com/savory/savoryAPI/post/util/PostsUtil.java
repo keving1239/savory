@@ -25,26 +25,12 @@ import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.dto.PostsDto;
 import com.savory.savoryAPI.post.entity.PostsUsername;
 
-// public class PostsDto {
-//     int id;
-//     int userID;
-//     string headline;
-//     List<String>ingredients;
-//     List<String>recipe;
-//     String pictureURL;
-//     String tag1;
-//     String tag2;
-//     String date;
-
-
-// }
-
 public class PostsUtil
 {
    public static PostsDto buildPostDto(Posts post)
    {
        return PostsDto.builder()
-       .post_id(post.getPost_id())
+       .postId(post.getPostId())
        .userID(post.getUserID())
        .headline(post.getHeadline())
        .ingredients(post.getIngredients())
@@ -57,7 +43,7 @@ public class PostsUtil
     public static PostsUsernameDto buildPostUsernameDto(PostsUsername post)
     {
         return PostsUsernameDto.builder()
-                .post_id(post.getPost_id())
+                .postId(post.getPostId())
                 .userID(post.getUserID())
                 .headline(post.getHeadline())
                 .ingredients(post.getIngredients())

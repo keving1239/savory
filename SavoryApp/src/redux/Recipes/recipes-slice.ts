@@ -70,18 +70,9 @@ const recipesSlice = createSlice({
         );
     },
 });
- 
-function splitter(input:string) {
- 
-    if (input) {
-        return input.split(", ")
-    } else {
-        return null;
-    }
-    
- 
-}
- 
+
+
+
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({userId}: {userId: number}) => {
