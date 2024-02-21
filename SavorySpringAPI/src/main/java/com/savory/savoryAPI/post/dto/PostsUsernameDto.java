@@ -10,7 +10,7 @@ public class PostsUsernameDto {
     String headline;
     String ingredients;
     String recipe;
-    byte[] img;
+    String img;
     String tags;
     String postdate;
     String username;
