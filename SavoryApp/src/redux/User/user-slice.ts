@@ -13,6 +13,7 @@ export interface UserState {
     token: string | null,
     loading: boolean,
     error?: string,
+    localUser: User | null
 }
 
 const initialState: UserState = {
@@ -20,6 +21,7 @@ const initialState: UserState = {
     user: null,
     token: null,
     loading: false,
+    localUser: null
 };
 
 const userSlice = createSlice({
@@ -70,7 +72,23 @@ const userSlice = createSlice({
                 console.log('User Fetch Failed...');
                 console.error(state.error);
             }
-        );
+        ).addCase(
+            fetchLocalUser.pending, (state: UserState) => {
+                state.loading = true;
+                console.log('Fetching Local User...')
+            }
+        ).addCase(
+            fetchLocalUser.rejected, (state: UserState, action) => {
+                console.log('Local User Fetch Failed...');
+                console.error(state.error)
+            }
+        ).addCase(
+            fetchLocalUser.fulfilled, (state: UserState, action: PayloadAction<{user: User}>) => {
+            state.localUser = action.payload.user;
+            console.log('Local User Fetch Successful...');
+            console.log(JSON.stringify(state.localUser));
+            }
+        )
     },
 });
 
@@ -81,7 +99,7 @@ export const fetchUser = createAsyncThunk(
         const response = await fetch(`http://localhost:8080/api/person/byEmail/${email}`);
         const data = await response.json();
         return {user: {id: data.id, username: data.username, 
-        img: '', bio: data.bio, role: data.admin} as User, token};
+        img: '', bio: data.bio, localUser: null, role: data.admin} as User, token};
     },
 );
 export const updateUser = createAsyncThunk(
@@ -93,7 +111,20 @@ export const updateUser = createAsyncThunk(
             body: JSON.stringify({username: username, email: email, img: img, bio: bio, isAdmin: false}), 
         });
     }
-)
+);
+
+export const fetchLocalUser = createAsyncThunk(
+    '/api/person/username/{username}',
+    async ({ username }: { username: string;}) => {
+        if(!username) throw new Error('Auth0 Login Failed...');
+        const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`);
+        const data = await response.json();
+        return {user: {id: data.id, username: data.username, 
+        img: '', bio: data.bio, role: data.admin} as User};
+        // return {user: {id: 12345, username: '', 
+            // img: '', bio: 'spongeboy me bob', role: false} as User, token};
+    },
+);
 
 export const { removeLocalUser, updateUserUsername, updateUserImage, updateUserBio } = userSlice.actions;
 export default userSlice.reducer;
