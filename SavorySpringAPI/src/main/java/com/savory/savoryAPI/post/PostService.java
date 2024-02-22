@@ -34,11 +34,14 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findPostAndUsername()
-    {
-        return postsURepository.findPostAndUsername().stream()
-                .map(PostsUtil::buildPostUsernameDto)
-                .collect(Collectors.toList());
+    public List<PostsUsernameDto> findPostAndUsername(int limit) {
+        List<PostsUsername> posts = postsURepository.findPostAndUsername(limit);
+        return posts.stream()
+                    .map(PostsUtil::buildPostUsernameDto)
+                    .collect(Collectors.toList());
+        // return postsURepository.findPostAndUsername(limit).stream()
+        //         .map(PostsUtil::buildPostUsernameDto)
+        //         .collect(Collectors.toList());
     }
 
     public List<Posts> findPosts(List<Integer> ids) {

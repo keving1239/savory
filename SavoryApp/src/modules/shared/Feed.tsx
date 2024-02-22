@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
-    CardMedia, Avatar, IconButton, Modal
+    CardMedia, Avatar, IconButton, Modal, Button
 } from '@mui/material';
 import React from 'react';
 import {
@@ -19,6 +19,19 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
+    const dispatch = useDispatch();
+    // const currentPage = useSelector(state => state.data.currentPage);
+
+    const handleNextPage = () => {
+        // dispatch(fetchDataForNextPage());
+        console.log('hello')
+      };
+    
+      const handlePreviousPage = () => {
+        // dispatch(fetchDataForPreviousPage());
+        console.log('hello')
+      };
+    
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
     const { post } = useParams();
@@ -98,8 +111,12 @@ export default function Feed({ id }: { id?: number }) {
                         return null;
                     }
                 })}
+
+                <Button variant='contained' color='primary' onClick={handlePreviousPage}> Previous </Button>
+                <Button variant='contained' color='primary' onClick={handleNextPage}> Next </Button>
+
             </Grid>
-            <CircularProgress sx={{ mt: '2vh' }} />
+            {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
         </Box>
     );
 }
