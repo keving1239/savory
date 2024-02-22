@@ -9,14 +9,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
@@ -26,31 +28,44 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = PostController.class)
-class PostControllerIntTest {
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@TestPropertySource(locations = "classpath:application.properties")
+class PostControllerIntTest
+{
 
     @Autowired
     private MockMvc mvc;
 
 
-//    private PostService postService;
+    @Autowired
+    private PostService postService; // Autowire the actual PostService
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private PostsURepository postsURepository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-
-    @TestConfiguration
+    @Configuration
     static class TestConfig {
-
         @Bean
-        public PostService postService() {
-            return Mockito.mock(PostService.class);
+        public PostService postService(PostRepository postRepository, PostsURepository postsURepository) {
+            return new PostService(postRepository, postsURepository); // Create an instance of PostService
         }
     }
 
 
 
 
-    @Test
+
+
+
+
+
+        @Test
     void getPostIfIDInSetIntTest() throws Exception
     {
 //        List<PostsDto> samplePostsList = Arrays.asList(
@@ -78,17 +93,5 @@ class PostControllerIntTest {
         System.out.println(responseBody);
     }
 
-    private PostsDto createExpectedPostDto(int postId, int userId, String headline, String ingredients, String recipe, String tags, String postdate) {
-        // Use reflection or other methods to create an instance of PostsDto
-        return PostsDto.builder()
-                .postId(postId)
-                .userID(userId)
-                .headline(headline)
-                .ingredients(ingredients)
-                .recipe(recipe)
-                .img("")
-                .tags(tags)
-                .postdate(postdate)
-                .build();
-    }
+
 }
