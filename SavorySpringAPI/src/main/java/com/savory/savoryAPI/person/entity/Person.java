@@ -27,6 +27,4 @@ public class Person {
     private String bio;
     @Column (name = "Role", nullable = false)
     private boolean isAdmin;
-//    @OneToMany(cascade=CascadeType.ALL, mappedBy="userId")
-//    private List<Post> postList;
 }
