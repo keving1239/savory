@@ -92,9 +92,6 @@ public class Posts {
    @Column(name = "Tags", nullable = false)
    private String tags;
 
-//   @Column(name = "Tag2", nullable = false)
-//   private String tag2;
-
    @Column(name = "PostDate", nullable = false)
    private String postdate;
 

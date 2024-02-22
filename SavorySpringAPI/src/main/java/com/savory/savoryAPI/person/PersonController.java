@@ -42,19 +42,23 @@ public class PersonController {
     public Boolean isUsernameAvailable(@PathVariable("username") String username) {
         return personService.isUsernameAvailable(username);
     }
+    @GetMapping("/emailExists/{email}")
+    public Boolean emailExists(@PathVariable("email") String email) {
+        return personService.emailExists(email);
+    }
 
-    @PostMapping("api/person/new")
+    @PostMapping("/new")
     public PersonDto createPerson(@RequestBody BuildPersonRequest personDTO) {
         return personService.createPerson(personDTO);
     }
 
-    @PutMapping("api/person/{id}/edit")
+    @PutMapping("/{id}/edit")
     public PersonDto updatePerson(@RequestBody BuildPersonRequest personDto,@PathVariable("id") Integer id) {
         return personService.updatePerson(personDto, id);
     }
 
 
-    @DeleteMapping("api/person/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePerson(@PathVariable("id") Integer id) {
         return (personService.deletePerson(id)) ?
                 ResponseEntity.ok("Resource with id " + id + " deleted") :

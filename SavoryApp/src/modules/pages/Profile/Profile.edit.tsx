@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, Button, TextField, Card, CardContent, Paper, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store';
-import { updateUserUsername, updateUserImage, updateUserBio } from '../../../redux/User/user-slice';
+import { updateUser } from '../../../redux/User/user-slice';
 
 const ProfileEdit = () => {
     const navigate = useNavigate();
@@ -17,34 +17,18 @@ const ProfileEdit = () => {
     const [blogBio, setBlogBio] = useState(user?.bio || '');
     const [usernameError, setUsernameError] = useState({error: false, helperText: ''});
 
-    const handleUsernameChange = async (username: string) => {
-        setBlogUsername(username);
-        // ensure username is unique
-        // const isUsed = await fetch('');
-        // if(isUsed) return setUsernameError({error: true, helperText: 'Username is already in use.'})
-        const isValid = /^[a-zA-Z0-9_.]{3,20}$/.test(username);
-        if(!isValid) return setUsernameError({error: true, helperText: 'Only use letters, numbers, or "." and 3-20 characters'});
-        return setUsernameError({error: false, helperText: ''});
-    }
-
     const handleProfileEdits = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(!user?.username) {
-            dispatch(updateUserUsername({username: blogUsername}));
-            await fetch('');
-        }
-        dispatch(updateUserImage({img: blogImg}));
-        // await fetch(`http://localhost:8080/api/person/${id}/edit/img`, {
-        //       method: 'PUT',
-        //       headers: {'Content-type':'application/json'},
-        //       body: blogImg
-        // });
-        dispatch(updateUserBio({bio: blogBio}));
-        // await fetch(`http://localhost:8080/api/person/${id}/edit/bio`, {
-            // method: 'PUT',
-            // headers: {'Content-type':'application/json'},
-            // body: blogBio
-        // });
+        if(!user) return;
+        // ensure username is unique
+        const checkUsername = await fetch(`http://localhost:8080/api/person/usernameAvailable/${blogUsername}`);
+        const isAvailable = await checkUsername.json();
+        if(!isAvailable) return setUsernameError({error: true, helperText: 'Username is already in use.'})
+        const isValid = /^[a-zA-Z0-9_.]{3,20}$/.test(blogUsername);
+        if(!isValid) return setUsernameError({error: true, helperText: 'Only use letters, numbers, or "." and 3-20 characters'});
+        setUsernameError({error: false, helperText: ''});
+        dispatch(updateUser({id: user.id, username: user.username || blogUsername, 
+            email: user.email, img: blogImg, bio: blogBio}));
         navigate(`/profile/${blogUsername}`);
     }
 
@@ -78,20 +62,21 @@ const ProfileEdit = () => {
                         {...usernameError}
                         margin= 'normal'
                         value={blogUsername}
-                        onChange={(e) => {handleUsernameChange(e.target.value)}}
+                        onChange={(e) => {setBlogUsername(e.target.value)}}
                     /> : <></>}
                     <TextField 
-                        type="file"
-                        label="Blog Image"
+                        type="text"
+                        label="Image URL"
                         variant='outlined'
                         fullWidth
                         margin='normal'
-                        InputLabelProps={{ shrink: true }}  
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setBlogImg(e.target.files?.[0]?.name || '')}}
+                        placeholder='https://images.unsplash.com/...'
+                        value = {blogImg}  
+                        onChange={(e) => {setBlogImg(e.target.value)}}
                     />
                     <TextField
                         type='text'
-                        label="Blog Bio"
+                        label="Bio"
                         variant="outlined"
                         fullWidth
                         multiline

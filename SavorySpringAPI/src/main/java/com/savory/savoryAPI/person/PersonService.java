@@ -78,4 +78,8 @@ public class PersonService {
     public Boolean isUsernameAvailable(String username) {
         return personRepository.findByUsername(username).orElse(null) == null;
     }
+
+    public Boolean emailExists(String email) {
+        return personRepository.findByEmail(email).orElse(null) != null;
+    }
 }
