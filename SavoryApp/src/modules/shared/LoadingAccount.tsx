@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';

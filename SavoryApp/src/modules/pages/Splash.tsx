@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Typography, Grid, Button, Card, CardMedia, CardContent } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
+import React from 'react';
 
 const teamMembers = [
     {username: 'Kevin Galdamez', img: '/img/kevin.png', bio: 'TS Consultant | Atlanta'},
