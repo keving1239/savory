@@ -18,8 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
-export default function Bookmarks({ id }: { id?: number }) {
+export default function ProfileFeed({ id }: { id?: number }) {
     var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+    var userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id);
     // State
     const { post } = useParams();
     const { filters } = useParams();
@@ -27,19 +28,8 @@ export default function Bookmarks({ id }: { id?: number }) {
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
     const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
-    console.log("INTERACTIONS:" + JSON.stringify(interactions))
 
-    const bookmarkedPostIds: string[] = [];
-    for (const postId in interactions) {
-        const inter = interactions[postId];
-        if (inter.bookmarked) {
-            bookmarkedPostIds.push(postId);
-        }
-    };
-
-    console.log("BOOKMARKED IDS: " + bookmarkedPostIds);
-
-    const newPosts: Record<number, {
+    const myPosts: Record<number, {
         tags: string[],
         id: number,
         ownerId: number,
@@ -51,14 +41,14 @@ export default function Bookmarks({ id }: { id?: number }) {
         author: string
     }> = {};
     for (const postId of Object.keys(recipes)) {
-        if (bookmarkedPostIds.includes(postId)) {
-            newPosts[Number(postId)] = recipes[Number(postId)];
+        if (userId === recipes[Number(postId)].ownerId) {
+            myPosts[Number(postId)] = recipes[Number(postId)];
         }
     }
 
-    console.log("filtered posts: " + newPosts);
+    console.log("filtered posts: " + myPosts);
 
-    recipes = newPosts
+    recipes = myPosts;
 
     // Handlers
     const openHandler = (id: number) => {
