@@ -31,8 +31,8 @@ public class PostController {
     }
 
     @GetMapping("/allWithUsername")
-    public List<PostsUsernameDto> getUsernames(@RequestParam(defaultValue = "18") int limit) {
-        return postService.findPostAndUsername(limit);
+    public List<PostsUsernameDto> getUsernames() {
+        return postService.findPostAndUsername();
     }
 
     @GetMapping("/byUserId/{userID}")
