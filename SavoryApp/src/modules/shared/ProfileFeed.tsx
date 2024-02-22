@@ -133,7 +133,7 @@ const RecipeAvatar = ({ author }: { author: string }) => {
         <Tooltip title={author}>
             <Link to={`/profile/${author}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
-                    {author.charAt(1).toUpperCase()}
+                    {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
         </Tooltip>
     );
