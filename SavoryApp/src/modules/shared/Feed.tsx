@@ -4,6 +4,7 @@ import {
     Box, Grid, Tooltip, Typography, Card,
     CardMedia, Avatar, IconButton, Modal
 } from '@mui/material';
+import React from 'react';
 import {
     CropFree, Share, Bookmark, BookmarkBorder,
     Favorite, Assistant, FavoriteBorder, Close
