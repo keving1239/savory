@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { Typography, Grid, Button, Card, CardMedia, CardContent } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const teamMembers = [
     {username: 'Kevin Galdamez', img: '/img/kevin.png', bio: 'TS Consultant | Atlanta'},
@@ -10,7 +12,8 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const { isAuthenticated, loginWithRedirect } = useAuth0();
+    const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const { loginWithRedirect } = useAuth0();
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -37,7 +40,7 @@ const SplashPage = () => {
             ))}
         </Grid>
         <Grid item>
-            {isAuthenticated ?             
+            {savoryAuth ?             
             <Link to='/feed'>
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 

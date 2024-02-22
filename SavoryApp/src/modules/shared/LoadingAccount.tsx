@@ -11,7 +11,7 @@ import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingAccount = () => {
     // redux state
-    const savoryUser = useSelector((state: RootState) => state.user);
+    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();

@@ -6,8 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 
 const Post = ({ id }: { id: number }) => {
-    const r = useSelector((state: RootState) => state.recipes);
-    const Recipes = r.recipes
+    const Recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     const recipe = Recipes[id] || { id: 0, img: '', title: '', author: '', ingredients: [''], recipe: '', tags: [''], isBookmarked: false, date: new Date() };
         const chunkedIngredients = recipe.ingredients.reduce<string[][]>((chunkResult, ingredient, index) => {
             const chunkIndex = Math.floor(index / 2);

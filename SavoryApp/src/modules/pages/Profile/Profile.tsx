@@ -7,7 +7,7 @@ import { RootState } from '../../../redux/store';
 
 const Profile = () => {
     const {username, post} = useParams();
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const navigate = useNavigate();
     const isOwner = user?.username === username;
     const displayedUser = isOwner ? user : retrieveUser();

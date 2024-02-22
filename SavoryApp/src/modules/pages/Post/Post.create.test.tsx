@@ -15,7 +15,11 @@ import { BrowserRouter } from 'react-router-dom';
 import Profile from '../Profile/Profile';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { PersistedState } from 'redux-persist';
+import { PersistPartial } from 'redux-persist/es/persistReducer';
+import { InteractionsState } from '../../../redux/Interactions/interactions-slice';
+import { UserState } from '../../../redux/User/user-slice';
+import { LocalRecipesState } from '../../../redux/Recipes/recipes-slice';
 
 
 jest.mock('react-redux', () => ({
@@ -24,21 +28,31 @@ jest.mock('react-redux', () => ({
   useParams: jest.fn(),
   useNavigate: jest.fn(),
 }));
-const fakeState: RootState = {
-  user: {
-    isAuthenticated: true,
-    user: null,
-    token: null,
-    loading: false,
-  },
-  recipes: {
-    recipes: {}, // Add fake recipes as needed
-    loading: false,
-  },
-  interactions: {
-    interactions: {}, // Add fake interactions as needed
-    loading: false,
-  },
+
+interface FakeState {
+  persistedReducer: {
+      userReducer: UserState;
+      recipesReducer: LocalRecipesState;
+      interactionsReducer: InteractionsState;
+  };
+}
+const fakeState: FakeState = {
+  persistedReducer: {
+    userReducer: {
+      isAuthenticated: true,
+      user: null,
+      token: null,
+      loading: false,
+    } as UserState,
+    recipesReducer: {
+      recipes: {}, // Add fake recipes as needed
+      loading: false,
+    } as LocalRecipesState,
+    interactionsReducer: {
+      interactions: {}, // Add fake interactions as needed
+      loading: false,
+    } as InteractionsState,
+  }
 };
 const mockStore = configureStore([]);
 

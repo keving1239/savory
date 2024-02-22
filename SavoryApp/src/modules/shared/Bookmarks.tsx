@@ -18,14 +18,14 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
 export default function Bookmarks({ id }: { id?: number }) {
-    var recipes = useSelector((state: RootState) => state.recipes.recipes);
+    var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
-    const interactions = useSelector((state: RootState) => state.interactions.interactions);
+    const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
     console.log("INTERACTIONS:" + JSON.stringify(interactions))
 
     const bookmarkedPostIds: string[] = [];
@@ -160,9 +160,9 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
 
 const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number) => void }) => {
     // state
-    const user = useSelector((state: RootState) => state.user.user);
-    const recipe = useSelector((state: RootState) => state.recipes.recipes[id]);
-    const interaction = useSelector((state: RootState) => state.interactions.interactions[id]);
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const recipe = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes[id]);
+    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     // copy

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
     CardMedia, Avatar, IconButton, Modal
@@ -19,7 +19,7 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    const recipes = useSelector((state: RootState) => state.recipes.recipes);
+    const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
     const { post } = useParams();
     const { filters } = useParams();
@@ -127,9 +127,9 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
 
 const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number) => void }) => {
     // state
-    const user = useSelector((state: RootState) => state.user.user);
-    const recipe = useSelector((state: RootState) => state.recipes.recipes[id]);
-    const interaction = useSelector((state: RootState) => state.interactions.interactions[id]);
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const recipe = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes[id]);
+    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     // copy
