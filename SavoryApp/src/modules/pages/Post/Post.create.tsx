@@ -6,7 +6,7 @@ import { RootState } from '../../../redux/store';
 
 const PostCreate = () => {
   const navigate = useNavigate();
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
   useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
   const [title, setTitle] = useState('');
   const [img, setImg] = useState('');

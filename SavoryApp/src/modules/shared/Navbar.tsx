@@ -11,7 +11,8 @@ import { removeLocalInteractions } from '../../redux/Interactions/interactions-s
 import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+  const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
   const loginHandler = async () => {
@@ -46,16 +47,16 @@ const ResponsiveAppBar = () => {
           <Grid container item justifyContent='flex-start' alignItems='center' sm={10} md={9} lg={8} xl={7}>
             <Grid item xs={2}><LogoButton/></Grid>
             <Grid container item  alignItems='center' xs={6}>
-              <NavigationButtons {...{isAuthenticated}}/>
+              <NavigationButtons {...{isAuthenticated: savoryAuth}}/>
             </Grid>
           </Grid>
           <Grid container item justifyContent='flex-end' alignItems='center' sm={2} md={3} lg={4} xl={5}>
             <Grid container item justifyContent='flex-end' alignItems='center' xs={7}>
-              {isAuthenticated ?  <SearchBar/> : <></>}
+              {savoryAuth ?  <SearchBar/> : <></>}
             </Grid>
             <Grid item xs={1}>
               <ProfileButton {...{username, img, openProfileOptions}}/>
-              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler}}/>
+              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, isAuthenticated: savoryAuth, logoutHandler, loginHandler}}/>
             </Grid>
           </Grid>
         </Grid>

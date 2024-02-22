@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
     const navigate = useNavigate();
-    const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     return(
         <Typography variant='h2'>Settings Page</Typography>

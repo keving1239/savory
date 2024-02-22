@@ -11,7 +11,7 @@ interface Recipe {
     recipe: string,
     author: string
 }
-interface LocalRecipesState {
+export interface LocalRecipesState {
     recipes: Record<number, Recipe>,
     loading: boolean,
     error?: string,
