@@ -45,7 +45,7 @@ const ResponsiveAppBar = () => {
       <Toolbar>
         <Grid container justifyContent='space-between' alignItems='center' p='0 1vw'>
           <Grid container item justifyContent='flex-start' alignItems='center' sm={10} md={9} lg={8} xl={7}>
-            <Grid item xs={2}><LogoButton/></Grid>
+            <Grid item xs={2}><LogoButton {...{savoryAuth}}/></Grid>
             <Grid container item  alignItems='center' xs={6}>
               <NavigationButtons {...{isAuthenticated: savoryAuth}}/>
             </Grid>
@@ -65,13 +65,20 @@ const ResponsiveAppBar = () => {
   );
 }
 
-const LogoButton = () => {
+const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
   return(
     <>
+    {
+      savoryAuth ?
       <Link to='/feed'><Button sx={{p: 0}}>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
-      </Button></Link>
+      </Button></Link> :
+      <Button sx={{p: 0}}>
+        <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
+        <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
+      </Button>
+    }
     </>
   );
 }

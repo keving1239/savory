@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/person")
 public class PersonController {
 
     private final PersonService personService;
@@ -21,24 +22,24 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping("/api/person/all")
+    @GetMapping("/all")
     public List<PersonDto> getAllPersons() {
         return personService.findAll();
     }
-    @GetMapping("api/person/{id}")
+    @GetMapping("/byId/{id}")
     public PersonDto getPerson(@PathVariable("id") Integer id) {
         return personService.getPerson(id);
     }
-    @GetMapping("/api/person/email/{email}")
+    @GetMapping("/byEmail/{email}")
     public PersonDto getPersonByEmail(@PathVariable("email") String email) {
         return personService.getPersonByEmail(email);
     }
-    @GetMapping("/api/person/username/{username}")
+    @GetMapping("/byUsername/{username}")
     public PersonDto getPersonByUsername(@PathVariable("username") String username) {
         return personService.getPersonByUsername(username);
     }
-    @GetMapping("/api/person/username/exists")
-    public Boolean isUsernameAvailable(@RequestBody String username) {
+    @GetMapping("/usernameAvailable/{username}")
+    public Boolean isUsernameAvailable(@PathVariable("username") String username) {
         return personService.isUsernameAvailable(username);
     }
 
@@ -50,24 +51,6 @@ public class PersonController {
     @PutMapping("api/person/{id}/edit")
     public PersonDto updatePerson(@RequestBody BuildPersonRequest personDto,@PathVariable("id") Integer id) {
         return personService.updatePerson(personDto, id);
-    }
-    @PutMapping("api/person/{id}/edit/username")
-    public ResponseEntity<String> updatePersonUsername(@RequestBody String username, @PathVariable("id") Integer id) {
-        return (personService.updatePersonUsername(username, id)) ?
-                ResponseEntity.ok("Resource with id " + id + " username set to " + username) :
-                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Resource with id " + id + " not found.");
-    }
-    @PutMapping("api/person/{id}/edit/img")
-    public ResponseEntity<String> updatePersonImg(@RequestBody String img, @PathVariable("id") Integer id) {
-        return (personService.updatePersonImg(img, id)) ?
-                ResponseEntity.ok("Resource with id " + id + " img set to " + img) :
-                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Resource with id " + id + " not found.");
-    }
-    @PutMapping("api/person/{id}/edit/bio")
-    public ResponseEntity<String> updatePersonBio(@RequestBody String bio, @PathVariable("id") Integer id) {
-        return (personService.updatePersonBio(bio, id)) ?
-                ResponseEntity.ok("Resource with id " + id + " bio set to " + bio) :
-                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Resource with id " + id + " not found.");
     }
 
 

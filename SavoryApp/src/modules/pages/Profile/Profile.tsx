@@ -1,8 +1,9 @@
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Typography, Grid, Paper, Box, IconButton } from '@mui/material';
 import {Favorite, FavoriteBorder, Link, Edit} from '@mui/icons-material';
-import Feed from '../../shared/Feed';
 import { useSelector } from 'react-redux';
+import ProfileFeed from '../../shared/ProfileFeed';
 import { RootState } from '../../../redux/store';
 
 const Profile = () => {
@@ -54,7 +55,7 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            {post ? <Feed id={+post}/> : <Feed/>}
+            <ProfileFeed></ProfileFeed>
         </Box>
     );
 }

@@ -78,14 +78,22 @@ export const fetchUser = createAsyncThunk(
     '/api/person/email/{email}',
     async ({ email, isAuthenticated, token }: { email: string; isAuthenticated: boolean, token: string }) => {
         if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...');
-        const response = await fetch(`http://localhost:8080/api/person/email/${email}`);
+        const response = await fetch(`http://localhost:8080/api/person/byEmail/${email}`);
         const data = await response.json();
         return {user: {id: data.id, username: data.username, 
         img: '', bio: data.bio, role: data.admin} as User, token};
-        // return {user: {id: 12345, username: '', 
-            // img: '', bio: 'spongeboy me bob', role: false} as User, token};
     },
 );
+export const updateUser = createAsyncThunk(
+    '/api/person/update',
+    async ({id, username, email, img, bio}: {id: number, username: string, email: string, img: string, bio: string}) => {
+        const response = await fetch(`http://localhost:8080/api/person/${id}/edit`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: username, email: email, img: img, bio: bio, isAdmin: false}), 
+        });
+    }
+)
 
 export const { removeLocalUser, updateUserUsername, updateUserImage, updateUserBio } = userSlice.actions;
 export default userSlice.reducer;

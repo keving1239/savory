@@ -53,20 +53,7 @@ public class PersonService {
         var savedPerson = reify(personDto, oldPerson);
         return PersonUtil.buildPersonDto(savedPerson);
     }
-    public Boolean updatePersonImg(String img, Integer id) {
-        var person = personRepository.findById(id).orElse(null);
-        if(person == null) return false;
-//        var imgBytes = img.getBytes(StandardCharsets.UTF_8);
-        person.setImg(img);
-        return personRepository.save(person).getImg().equals(img);
-    }
 
-    public Boolean updatePersonBio(String bio, Integer id) {
-        var person = personRepository.findById(id).orElse(null);
-        if(person == null) return false;
-        person.setBio(bio);
-        return personRepository.save(person).getBio().equals(bio);
-    }
     public Boolean deletePerson(Integer id) {
         Boolean exists = personRepository.existsById(id);
         personRepository.deleteById(id);
@@ -76,10 +63,8 @@ public class PersonService {
     private Person reify(BuildPersonRequest personDto, Person target) {
         target.setUsername(personDto.getUsername());
         target.setEmail(personDto.getEmail());
-        target.setPassword(personDto.getPassword());
         target.setImg(personDto.getImg());
         target.setBio(personDto.getBio());
-        target.setAdmin(personDto.isAdmin());
         return personRepository.save(target);
     }
 
@@ -92,12 +77,5 @@ public class PersonService {
 
     public Boolean isUsernameAvailable(String username) {
         return personRepository.findByUsername(username).orElse(null) == null;
-    }
-
-    public Boolean updatePersonUsername(String username, Integer id) {
-        var person = personRepository.findById(id).orElse(null);
-        if(person == null) return false;
-        person.setUsername(username);
-        return personRepository.save(person).getUsername().equals(username);
     }
 }
