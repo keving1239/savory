@@ -82,7 +82,6 @@ class PersonControllerTest {
                 .id(id)
                 .username(username)
                 .email(email)
-                .password(password)
                 .img("")
                 .bio(bio)
                 .isAdmin(isAdmin)

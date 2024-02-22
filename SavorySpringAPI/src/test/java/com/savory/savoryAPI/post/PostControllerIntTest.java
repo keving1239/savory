@@ -71,7 +71,7 @@ class PostControllerIntTest
 
 
     @Test
-    void getPostIfIDInSetIntTest() throws Exception
+    void getAllPostsIntTest() throws Exception
     {
 //        List<PostsDto> samplePostsList = Arrays.asList(
 //                createExpectedPostDto(31, 3, "Parmesian","Test", "Test", "cheesy", "1999")
@@ -98,7 +98,7 @@ class PostControllerIntTest
     }
 
     @Test
-    void getPostIfIDInSetIntTestForUsername() throws Exception
+    void getAllPostsIntTestUsername() throws Exception
     {
 //        List<PostsDto> samplePostsList = Arrays.asList(
 //                createExpectedPostDto(31, 3, "Parmesian","Test", "Test", "cheesy", "1999")
@@ -123,6 +123,8 @@ class PostControllerIntTest
 //        System.out.println(postsList);
         System.out.println(responseBody);
     }
+
+
 
 
 
