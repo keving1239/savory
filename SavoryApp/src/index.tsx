@@ -16,7 +16,7 @@ root.render(
         clientId="QOhn47I8VQpCd3QS8r98u6qUZAjVCJKt"
         authorizationParams={{
           redirect_uri: `${window.location.origin}/login`,
-          audience: "https://{yourDomain}/api/v2/",
+          audience: "https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/",
           scope: "all"
         }}
       >

@@ -22,7 +22,7 @@ public class GeneralResource {
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
 
-    @PostMapping(path = "/", 
+    @PostMapping(path = "/login", 
         consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public String login(UserCreds userCredentials) {
         if (authenticationService.isValidUser(userCredentials)){

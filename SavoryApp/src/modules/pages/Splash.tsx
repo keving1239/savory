@@ -11,6 +11,8 @@ const teamMembers = [
 const SplashPage = () => {
     const { isAuthenticated, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
 
+
+
     const handleLoginJWT = async () => {
 
         if (!isAuthenticated) {
@@ -28,6 +30,7 @@ const SplashPage = () => {
                   scope: "read:current_user",
                 },
               });
+              console.log(token)
             const response = await fetch(`https://${domain}/api/v2/users/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
