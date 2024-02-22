@@ -29,7 +29,7 @@ class PersonControllerTest {
     void getPersonIfIDIsInSet() {
         //Arrange
         int userId = 2;
-        PersonDto personDtoOne = createExpectedPersonDto(userId, "sanjit.muthineni", "sanjit.muthineni@credera.com", "password", null, "this is my bio", false);
+        PersonDto personDtoOne = createExpectedPersonDto(userId, "sanjit.muthineni", "sanjit.muthineni@credera.com", null, "this is my bio", false);
 
         // Mock behavior of personService
         when(personService.getPerson(eq(userId))).thenReturn(personDtoOne);
@@ -47,7 +47,7 @@ class PersonControllerTest {
     @Test
     void getPersonByEmail() {
         String userEmail = "sanjit.muthineni@credera.com";
-        PersonDto personDtoOne = createExpectedPersonDto(1, "test.user", "test.user@gmail.com", "password1", null, "the bio of test user", false);
+        PersonDto personDtoOne = createExpectedPersonDto(1, "test.user", "test.user@gmail.com", null, "the bio of test user", false);
 
         // Mock behavior of personService
         when(personService.getPersonByEmail(eq(userEmail))).thenReturn(personDtoOne);
@@ -65,7 +65,7 @@ class PersonControllerTest {
     @Test
     void getNoPersonIfNotExist() {
         int testUserId = 3;
-        PersonDto expectedPerson = createExpectedPersonDto(1, "test1.user", "test1.user@gmail.com", "password1", null, "the bio of test user", false);
+        PersonDto expectedPerson = createExpectedPersonDto(1, "test1.user", "test1.user@gmail.com", null, "the bio of test user", false);
         //Mock
         when(personService.getPerson(testUserId)).thenReturn(expectedPerson);
         //Act
@@ -77,7 +77,7 @@ class PersonControllerTest {
 
     }
 
-    private PersonDto createExpectedPersonDto(int id, String username, String email, String password, String img, String bio, boolean isAdmin) {
+    private PersonDto createExpectedPersonDto(int id, String username, String email, String img, String bio, boolean isAdmin) {
         return PersonDto.builder()
                 .id(id)
                 .username(username)
