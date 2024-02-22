@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
     CardMedia, Avatar, IconButton, Modal
 } from '@mui/material';
-import React from 'react';
 import {
     CropFree, Share, Bookmark, BookmarkBorder,
     Favorite, Assistant, FavoriteBorder, Close
@@ -18,14 +17,48 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
-export default function Feed({ id }: { id?: number }) {
-    const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+export default function Bookmarks({ id }: { id?: number }) {
+    var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
+    const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
+    console.log("INTERACTIONS:" + JSON.stringify(interactions))
+
+    const bookmarkedPostIds: string[] = [];
+    for (const postId in interactions) {
+        const inter = interactions[postId];
+        if (inter.bookmarked) {
+            bookmarkedPostIds.push(postId);
+        }
+    };
+
+    console.log("BOOKMARKED IDS: " + bookmarkedPostIds);
+
+    const newPosts: Record<number, {
+        tags: string[],
+        id: number,
+        ownerId: number,
+        title: string,
+        img: string,
+        date: Date,
+        ingredients: string[],
+        recipe: string,
+        author: string
+    }> = {};
+    for (const postId of Object.keys(recipes)) {
+        if (bookmarkedPostIds.includes(postId)) {
+            newPosts[Number(postId)] = recipes[Number(postId)];
+        }
+    }
+
+    console.log("filtered posts: " + newPosts);
+
+    recipes = newPosts
+
     // Handlers
     const openHandler = (id: number) => {
         setcurrentPost(id);

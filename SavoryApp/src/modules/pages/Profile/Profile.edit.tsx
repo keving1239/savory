@@ -8,8 +8,8 @@ import { updateUserUsername, updateUserImage, updateUserBio } from '../../../red
 const ProfileEdit = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const user = useSelector((state: RootState) => state.user.user);
-    const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     const [blogUsername, setBlogUsername] = useState(user?.username || '');
     const [blogImg, setBlogImg] = useState(user?.img || '');

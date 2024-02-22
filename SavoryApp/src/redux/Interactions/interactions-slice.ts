@@ -6,7 +6,7 @@ interface RecipeInteraction {
     liked: boolean,
     bookmarked: boolean,
 }
-interface InteractionsState {
+export interface InteractionsState {
     interactions: Record<number, RecipeInteraction>,
     loading: boolean,
     error?: string,

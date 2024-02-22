@@ -7,7 +7,7 @@ interface User {
     bio: string,
     role: boolean,
 }
-interface UserState {
+export interface UserState {
     isAuthenticated: boolean,
     user: User | null,
     token: string | null,
