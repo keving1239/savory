@@ -31,7 +31,9 @@ public class PostController {
     }
 
     @GetMapping("/allWithUsername")
-    public List<PostsUsernameDto> getUsernames() {return postService.findPostAndUsername();}
+    public List<PostsUsernameDto> getUsernames() {
+        return postService.findPostAndUsername();
+    }
 
     @GetMapping("/byUserId/{userID}")
     public List<PostsDto> getUserPosts(int userID)

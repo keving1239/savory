@@ -78,6 +78,7 @@ export const fetchRecipes = createAsyncThunk(
     async ({userId}: {userId: number}) => {
          const response = await fetch('http://localhost:8080/posts/allWithUsername');
          const data = await response.json();
+         console.log(data)
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
