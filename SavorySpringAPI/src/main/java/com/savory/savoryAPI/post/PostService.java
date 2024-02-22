@@ -35,7 +35,7 @@ public class PostService
     }
 
     public List<PostsUsernameDto> findPostAndUsername(int limit) {
-        List<PostsUsername> posts = postsURepository.findPostAndUsername(limit);
+        List<PostsUsername> posts = postsURepository.findPostAndUsername();
         return posts.stream()
                     .map(PostsUtil::buildPostUsernameDto)
                     .collect(Collectors.toList());
