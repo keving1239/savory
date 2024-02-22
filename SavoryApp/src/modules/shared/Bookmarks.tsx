@@ -27,7 +27,6 @@ export default function Bookmarks({ id }: { id?: number }) {
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
     const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
-    console.log("INTERACTIONS:" + JSON.stringify(interactions))
 
     const bookmarkedPostIds: string[] = [];
     for (const postId in interactions) {
@@ -36,8 +35,6 @@ export default function Bookmarks({ id }: { id?: number }) {
             bookmarkedPostIds.push(postId);
         }
     };
-
-    console.log("BOOKMARKED IDS: " + bookmarkedPostIds);
 
     const newPosts: Record<number, {
         tags: string[],

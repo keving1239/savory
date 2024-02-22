@@ -1,28 +1,49 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Typography, Grid, Paper, Box, IconButton } from '@mui/material';
 import {Favorite, FavoriteBorder, Link, Edit} from '@mui/icons-material';
-import { useSelector } from 'react-redux';
 import ProfileFeed from '../../shared/ProfileFeed';
-import { RootState } from '../../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../redux/store';
+import { fetchLocalUser } from '../../../redux/User/user-slice';
 
 const Profile = () => {
     const {username, post} = useParams();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const navigate = useNavigate();
     const isOwner = user?.username === username;
-    const displayedUser = isOwner ? user : retrieveUser();
-    function retrieveUser() {    
-        // const response = await fetch(`http://localhost:8080/api/person/username/${username}`);
-        // const data = await response.json();
-        // const found = {id: data.id, username: data.username, 
-        // img: data.img, bio: data.bio, role: data.admin};
-        return {id: 420, username: 'you.found.me', img: 'logo512.png', bio: 'I am the one you have been searching for', role: false};
+    const [status, setStatus] = useState(true);
+  //  const displayedUser = {id: 420, username: 'you.found.me', img: 'logo512.png', bio: 'I am the one you have been searching for', role: false};
+    const dispatch = useDispatch<AppDispatch>();
+    async function loadLocalUser() {
+        if (username) {
+            try {
+                await dispatch(fetchLocalUser({ username }));
+            } catch(error){console.error("Error Fetching Local User: ", error)}
+        }
     }
+        useEffect(() => {
+          const loader = async () => {
+            // Perform asynchronous operations
+            await loadLocalUser();
+            setStatus(false); // Set isLoading to false when loading completes
+          };
+          loader();
+          if (!status) {
+            const page = `/profile/${username}`
+            navigate(`${page}`);
+          }
+        }, []);
+
+
     function handleProfileAction() {
         if(isOwner) return navigate(`/profile/edit`);
         console.log(`Liked ${username}'s blog`);
     }
+    const localUser = useSelector((state: RootState) => state.persistedReducer.userReducer.localUser);
+    const displayedUser = isOwner ? user : localUser;
+
 
     return(
         <Box>
@@ -55,7 +76,7 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            <ProfileFeed></ProfileFeed>
+            <ProfileFeed id = {displayedUser?.id}></ProfileFeed>
         </Box>
     );
 }
