@@ -10,7 +10,6 @@ public class PersonUtil {
                 .id(person.getId())
                 .username(person.getUsername())
                 .email(person.getEmail())
-                .password(person.getPassword())
                 .img(person.getImg())
                 .bio(person.getBio())
                 .isAdmin(person.isAdmin())

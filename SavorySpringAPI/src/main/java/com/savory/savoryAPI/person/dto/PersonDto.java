@@ -9,7 +9,6 @@ public class PersonDto {
     int id;
     String username;
     String email;
-    String password;
     String img;
     String bio;
     boolean isAdmin;
