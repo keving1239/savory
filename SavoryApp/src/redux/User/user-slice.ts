@@ -14,6 +14,7 @@ export interface UserState {
     token: string | null,
     loading: boolean,
     error?: string,
+    localUser: User | null
 }
 
 const initialState: UserState = {
@@ -21,6 +22,7 @@ const initialState: UserState = {
     user: null,
     token: null,
     loading: false,
+    localUser: null
 };
 
 const userSlice = createSlice({
@@ -97,8 +99,8 @@ export const fetchUser = createAsyncThunk(
                 body: JSON.stringify({username: '', email: email, img: '', bio: ''}), 
             });
         const data = await response.json();
-        return {user: {id: data.id, username: data.username, email: email,
-        img: '', bio: data.bio, role: data.admin} as User, token};
+        return {user: {id: data.id, username: data.username, 
+        img: '', bio: data.bio, localUser: null, role: data.admin} as User, token};
     },
 );
 export const updateUser = createAsyncThunk(

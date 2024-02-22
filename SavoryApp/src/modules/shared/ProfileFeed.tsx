@@ -18,8 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
-export default function Bookmarks({ id }: { id?: number }) {
+export default function ProfileFeed({ id }: { id?: number }) {
     var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+    var userId = useSelector((state: RootState) => state.persistedReducer.userReducer.localUser?.id);
     // State
     const { post } = useParams();
     const { filters } = useParams();
@@ -28,15 +29,7 @@ export default function Bookmarks({ id }: { id?: number }) {
     const [currentPost, setcurrentPost] = useState(id || -1);
     const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
 
-    const bookmarkedPostIds: string[] = [];
-    for (const postId in interactions) {
-        const inter = interactions[postId];
-        if (inter.bookmarked) {
-            bookmarkedPostIds.push(postId);
-        }
-    };
-
-    const newPosts: Record<number, {
+    const myPosts: Record<number, {
         tags: string[],
         id: number,
         ownerId: number,
@@ -48,14 +41,12 @@ export default function Bookmarks({ id }: { id?: number }) {
         author: string
     }> = {};
     for (const postId of Object.keys(recipes)) {
-        if (bookmarkedPostIds.includes(postId)) {
-            newPosts[Number(postId)] = recipes[Number(postId)];
+        if (userId === recipes[Number(postId)].ownerId) {
+            myPosts[Number(postId)] = recipes[Number(postId)];
         }
     }
 
-    console.log("filtered posts: " + newPosts);
-
-    recipes = newPosts
+    recipes = myPosts;
 
     // Handlers
     const openHandler = (id: number) => {
@@ -66,63 +57,12 @@ export default function Bookmarks({ id }: { id?: number }) {
         setcurrentPost(0);
         setOpen(false);
     }
-    // filter
-    function parseFilters() {
-        if (!filters) return recipes;
-        let filterBookmarks = false;
-        let filterLikes = false;
-        let filterTagGroup = ''
-        const spaceRemoved = filters?.split(' ');
-        const lowerCased = spaceRemoved?.map(f => f.toLowerCase());
-        lowerCased?.forEach(filter => {
-            if (filter === 'bookmarks' || filter === 'bookmark' || filter === 'bookmarked') {
-                filterBookmarks = true;
-            } else if (filter === 'likes' || filter === 'like' || filter === 'liked') {
-                filterLikes = true;
-            } else {
-                filterTagGroup += filter + ','
-            }
-        });
-        const filterWords = filterTagGroup.split(',').slice(0, -1);
-        const applyFilters = ({ title, tags, ingredients, isBookmarked, isLiked }:
-            { title: string, tags: string[], ingredients: string[], isBookmarked: boolean, isLiked: boolean }) => {
-            if ((filterBookmarks && isBookmarked) || (filterLikes && isLiked)) return true;
-            for (const tag of tags) {
-                if (filterWords.includes(tag.toLowerCase())) return true;
-            }
-            const titleWords = title.split(' ');
-            for (const word of titleWords) {
-                if (filterWords.includes(word.toLowerCase())) return true;
-            }
-            for (const ingredient of ingredients) {
-                const ingredientWords = ingredient.toLowerCase().replace(/[^a-z ]/g, '').split(' ')
-                for (const word of ingredientWords) {
-                    if (filterWords.includes(word)) return true;
-                }
-            }
-            return false;
-        }
-        const validRecipes = Object.values(recipes).filter(recipe => {
-            return applyFilters({
-                title: recipe.title, tags: recipe.tags, ingredients: recipe.ingredients,
-                isBookmarked: false, isLiked: false
-            });
-        });
-        const result: typeof filteredRecipes = {};
-        validRecipes.forEach((item: typeof validRecipes[0]) => {
-            result[item.id] = item;
-        });
-        return result;
-    }
-    useEffect(() => {
-        setFilteredRecipes(parseFilters());
-    }, [filters]);
 
     return (
         <Box>
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
-                {Object.values(filteredRecipes).map((recipe) => {
+                {Object.values(recipes).map((recipe) => {
                     if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
                     } else {
