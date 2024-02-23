@@ -1,4 +1,9 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState } from "../store";
+
+export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
+
  
 interface Recipe {
     tags: string[];
