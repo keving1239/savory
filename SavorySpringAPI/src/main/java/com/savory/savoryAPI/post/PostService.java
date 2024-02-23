@@ -40,7 +40,7 @@ public class PostService
     }
 
     public List<PostsUsernameDto> findPostAndUsername(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("postId").descending());
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
         List<PostsUsername> posts = postsURepository.findPostAndUsername(pageable);
         return posts.stream()
                     .map(PostsUtil::buildPostUsernameDto)
