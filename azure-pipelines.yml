@@ -4,7 +4,12 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- SM-Pipelining
+  branches:
+    include:
+      - SM-Pipelining
+  paths:
+    include:
+      - SavoryApp/*
 
 pool:
   vmImage: ubuntu-latest
@@ -17,5 +22,22 @@ steps:
 
 - script: |
     npm install
+  displayName: 'npm install'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+
+- script: |
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'npm run build'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
+    Contents: '**'
+    TargetFolder: '$(System.DefaultWorkingDirectory)'
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
