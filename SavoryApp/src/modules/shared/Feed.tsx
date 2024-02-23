@@ -17,17 +17,27 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { fetchRecipes, selectRecipes } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, selectRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
+import LoadingPage from './LoadingPage';
+import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
     
+    const pageLoaded = useSelector((state: RootState) => state.persistedReducer.recipesReducer.pageLoaded);
+
+    const navigate = useNavigate();
+
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+    var pageNumber =  useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // State
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
+    const dispatch = useDispatch<AppDispatch>();
+
     // Handlers
     const openHandler = (id: number) => {
         setcurrentPost(id);
@@ -39,13 +49,16 @@ export default function Feed({ id }: { id?: number }) {
     }
 
     const handleNextPage = () => {
-        // dispatch(fetchDataForNextPage());
-        console.log('hello')
+        pageNumber = pageNumber + 1
+        dispatch(changePage({pageNumber: pageNumber}));
+        navigate(`/load`);
+        
       };
     
       const handlePreviousPage = () => {
-        // dispatch(fetchDataForPreviousPage());
-        console.log('hello')
+        pageNumber = pageNumber - 1;
+        dispatch(changePage({pageNumber: pageNumber}));
+        navigate(`/load`);
       };
     // filter
     function parseFilters() {
