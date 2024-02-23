@@ -8,7 +8,11 @@ import com.savory.savoryAPI.post.entity.Posts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,14 +38,12 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findPostAndUsername() {
-        List<PostsUsername> posts = postsURepository.findPostAndUsername();
+    public List<PostsUsernameDto> findPostAndUsername(int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        List<PostsUsername> posts = postsURepository.findPostAndUsername(pageable);
         return posts.stream()
                     .map(PostsUtil::buildPostUsernameDto)
                     .collect(Collectors.toList());
-        // return postsURepository.findPostAndUsername(limit).stream()
-        //         .map(PostsUtil::buildPostUsernameDto)
-        //         .collect(Collectors.toList());
     }
 
     public List<Posts> findPosts(List<Integer> ids) {
