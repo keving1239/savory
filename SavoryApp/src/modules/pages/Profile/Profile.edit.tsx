@@ -21,15 +21,17 @@ const ProfileEdit = () => {
         e.preventDefault();
         if(!user) return;
         // ensure username is unique
-        const checkUsername = await fetch(`http://localhost:8080/api/person/usernameAvailable/${blogUsername}`);
-        const isAvailable = await checkUsername.json();
-        if(!isAvailable) return setUsernameError({error: true, helperText: 'Username is already in use.'})
-        const isValid = /^[a-zA-Z0-9_.]{3,20}$/.test(blogUsername);
-        if(!isValid) return setUsernameError({error: true, helperText: 'Only use letters, numbers, or "." and 3-20 characters'});
-        setUsernameError({error: false, helperText: ''});
-        dispatch(updateUser({id: user.id, username: user.username || blogUsername, 
+        if(!user.username) {
+            const checkUsername = await fetch(`http://localhost:8080/api/person/usernameAvailable/${blogUsername}`);
+            const isAvailable = await checkUsername.json();
+            if(!isAvailable) return setUsernameError({error: true, helperText: 'Username is already in use.'})
+            const isValid = /^[a-zA-Z0-9_.]{3,20}$/.test(blogUsername);
+            if(!isValid) return setUsernameError({error: true, helperText: 'Only use letters, numbers, or "." and 3-20 characters'});
+            setUsernameError({error: false, helperText: ''});
+        }
+        await dispatch(updateUser({id: user.id, username: user.username || blogUsername, 
             email: user.email, img: blogImg, bio: blogBio}));
-        navigate(`/profile/${blogUsername}`);
+        navigate(`/profile/${user.username}`);
     }
 
     return (
