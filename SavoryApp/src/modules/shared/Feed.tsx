@@ -37,6 +37,16 @@ export default function Feed({ id }: { id?: number }) {
         setcurrentPost(0);
         setOpen(false);
     }
+
+    const handleNextPage = () => {
+        // dispatch(fetchDataForNextPage());
+        console.log('hello')
+      };
+    
+      const handlePreviousPage = () => {
+        // dispatch(fetchDataForPreviousPage());
+        console.log('hello')
+      };
     // filter
     function parseFilters() {
         if (!filters) return recipes;
@@ -100,7 +110,8 @@ export default function Feed({ id }: { id?: number }) {
                         return null;
                     }
                 })}
-
+                <Button variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                <Button variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
             </Grid>
             {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
         </Box>
