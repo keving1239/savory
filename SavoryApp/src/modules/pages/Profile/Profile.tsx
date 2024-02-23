@@ -43,6 +43,7 @@ const Profile = () => {
     }
     const localUser = useSelector((state: RootState) => state.persistedReducer.userReducer.localUser);
     const displayedUser = isOwner ? user : localUser;
+    console.log(displayedUser);
 
 
     return(
