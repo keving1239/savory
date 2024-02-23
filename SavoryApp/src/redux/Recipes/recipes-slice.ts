@@ -75,8 +75,9 @@ const recipesSlice = createSlice({
 
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
-    async ({userId}: {userId: number}) => {
-         const response = await fetch('http://localhost:8080/posts/allWithUsername');
+    async ({ userId, offset = 0, limit = 12}: {userId: number; offset?: number; limit?: number}) => {
+         const response = await fetch(`http://localhost:8080/posts/allWithUsername?offset=${offset}&limit=${limit}`);
+         console.log(limit)
          const data = await response.json();
          console.log(data)
          const recipes: Record<number, Recipe> = {};

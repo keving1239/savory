@@ -17,10 +17,9 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
+import { fetchRecipes } from '../../redux/Recipes/recipes-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    const dispatch = useDispatch();
-    // const currentPage = useSelector(state => state.data.currentPage);
 
     const handleNextPage = () => {
         // dispatch(fetchDataForNextPage());
@@ -112,8 +111,8 @@ export default function Feed({ id }: { id?: number }) {
                     }
                 })}
 
-                <Button variant='contained' color='primary' onClick={handlePreviousPage}> Previous </Button>
-                <Button variant='contained' color='primary' onClick={handleNextPage}> Next </Button>
+                <Button variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                <Button variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
 
             </Grid>
             {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
