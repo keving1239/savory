@@ -14,6 +14,7 @@ const PostCreate = () => {
   const [ingredients, setIngredients] = useState('');
   const [recipe, setRecipe] = useState('');
   const [tags, setTags] = useState('');
+  const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id); 
 
   // props for each textfield
   const fields: {tip: string, size: number, fieldProps: TextFieldProps}[] = [
@@ -36,29 +37,30 @@ const PostCreate = () => {
 
 
     //Handle Form Submit
-    const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const newRecipe = [title, img, ingredients, recipe, tags];
-      console.log(`Recipe has been created! ${newRecipe}`);
-      navigate('/feed');
-    }
+    // const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    //   e.preventDefault();
+    //   const newRecipe = [title, img, ingredients, recipe, tags];
+    //   console.log(`Recipe has been created! ${newRecipe}`);
+    //   navigate('/feed');
+    // }
 
   //     //Handle Form Submit
-  // const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   //userID field is filler. Need to figure out how to retrieve it for Posts table. postdate is also filler
-  //   const newRecipe = {userID: 2, headline: title, ingredients: ingredients, recipe: recipe, img: [], tags: tags, postdate: "2024"};
-  //   // console.log(`Recipe has been created! ${newRecipe}`);
-  //   // navigate('/feed');
-  //   fetch('http://localhost:8080/posts/addNewPost', {
-  //     method: 'POST',
-  //     headers: {'Content-type':'application/json'},
-  //     body: JSON.stringify(newRecipe)
-  //   }).then(() => {
-  //   console.log(`Recipe has been created! ${newRecipe}`);
-  //   navigate('/feed');
-  //   });
-  // }
+  const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    //userID field is filler. Need to figure out how to retrieve it for Posts table. postdate is also filler
+    
+    const newRecipe = {userID: userId, headline: title, ingredients: ingredients, recipe: recipe, img: "https://images.unsplash.com/...", tags: tags, postdate: new Date()};
+    // console.log(`Recipe has been created! ${newRecipe}`);
+    // navigate('/feed');
+    fetch('http://localhost:8080/posts/addNewPost', {
+      method: 'POST',
+      headers: {'Content-type':'application/json'},
+      body: JSON.stringify(newRecipe)
+    }).then(() => {
+    console.log(`Recipe has been created! ${newRecipe}`);
+    navigate('/feed');
+    });
+  }
 
 
   return (      
