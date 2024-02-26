@@ -45,7 +45,7 @@ const LoadingPage = () => {
     }, [savoryUser]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
-        const page = savoryUser.user?.username ? `/feed/${pageNumber}` : '/profile/edit'
+        const page = savoryUser.user?.username ? `/feed` : '/profile/edit'
         navigate(`${page}`);
     },[status]);
     // display

@@ -158,7 +158,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   function handleSearch() {
-    navigate(`/feed/${query}`);
+    navigate(`/feed`);
   }
 
   return (

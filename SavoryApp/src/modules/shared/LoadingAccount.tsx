@@ -70,7 +70,7 @@ const LoadingAccount = () => {
     useEffect(() => {
         if(status != 'Loading Complete...') return;
         console.log("LOADED")
-        const page = savoryUser.user?.username ? '/feed/1' : '/profile/edit'
+        const page = savoryUser.user?.username ? '/feed' : '/profile/edit'
         navigate(`${page}`);
     },[status]);
     // display

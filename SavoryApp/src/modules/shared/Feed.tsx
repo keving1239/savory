@@ -22,13 +22,13 @@ import LoadingPage from './LoadingPage';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    
+
     const pageLoaded = useSelector((state: RootState) => state.persistedReducer.recipesReducer.pageLoaded);
 
     const navigate = useNavigate();
 
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    var pageNumber =  useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // State
     const { post } = useParams();
@@ -50,16 +50,16 @@ export default function Feed({ id }: { id?: number }) {
 
     const handleNextPage = () => {
         pageNumber = pageNumber + 1
-        dispatch(changePage({pageNumber: pageNumber}));
+        dispatch(changePage({ pageNumber: pageNumber }));
         navigate(`/load`);
-        
-      };
-    
-      const handlePreviousPage = () => {
+
+    };
+
+    const handlePreviousPage = () => {
         pageNumber = pageNumber - 1;
-        dispatch(changePage({pageNumber: pageNumber}));
+        dispatch(changePage({ pageNumber: pageNumber }));
         navigate(`/load`);
-      };
+    };
     // filter
     function parseFilters() {
         if (!filters) return recipes;
@@ -117,15 +117,21 @@ export default function Feed({ id }: { id?: number }) {
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {Object.values(filteredRecipes).map((recipe) => {
+                    console.log("PAGE NUMBER: " + pageNumber)
                     if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
                     } else {
                         return null;
                     }
                 })}
-                <Button variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
-                <Button variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
             </Grid>
+            <Box sx={{ marginTop: "50px" }}>
+                {pageNumber === 1 ?
+                    null : (
+                        <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                    )}
+                <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
+            </Box>
             {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
         </Box>
     );

@@ -21,7 +21,7 @@ const StandardLayoutRouter = () => (
                 <Route path='profile/:username/:post' element={<Profile/>}/>
                 <Route path='profile/edit' element={<ProfileEdit/>}/>
                 <Route path="login" element={<LoadingAccount/>}/>
-                <Route path="feed/:pageNumber" element={<Feed/>}/>
+                <Route path="feed" element={<Feed/>}/>
                 <Route path="load" element={<LoadingPage/>}/>
                 <Route path='feed/:filters' element={<Feed/>}/>
                 <Route path='feed/bookmarks' element={<Bookmarks/>}/>
