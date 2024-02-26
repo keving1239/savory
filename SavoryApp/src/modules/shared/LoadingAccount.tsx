@@ -16,7 +16,7 @@ const LoadingAccount = () => {
     const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenWithPopup, getAccessTokenSilently } = useAuth0();
-    const [token, setToken] = useState('');
+    // const [token, setToken] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     // loading resources
@@ -36,28 +36,37 @@ const LoadingAccount = () => {
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            try {
-                const accessToken = await getAccessTokenWithPopup({
-                    authorizationParams: {
-                        audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-                        scope: "email",
-                    },
-                    cacheMode: 'off',
-                });
-                if(accessToken) setToken(accessToken);
-            } catch(error) {
-                try {
-                    const accessToken = await getAccessTokenWithPopup({
-                        authorizationParams: {
-                            audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-                            scope: "email",
-                            prompt: 'consent',
-                        },
-                        cacheMode: 'off',
-                    });
-                    if(accessToken) setToken(accessToken);
-                } catch(e) {console.error(e);}
-            }
+            const token = await getAccessTokenWithPopup({
+                authorizationParams: {
+                    audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                    scope: "email",
+                },
+                cacheMode: 'off',
+            }) || '';
+            // try {
+            //     const accessToken = await getAccessTokenSilently({
+            //         authorizationParams: {
+            //             audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+            //             scope: "email",
+            //         },
+            //         cacheMode: 'off',
+            //     }) || '';
+            //     setToken(accessToken);
+            // } catch(error) {
+            //     console.log('Token Error: +')
+            //     console.error(error);
+                // try {
+                //     const accessToken = await getAccessTokenWithPopup({
+                //         authorizationParams: {
+                //             audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                //             scope: "email",
+                //             prompt: 'consent',
+                //         },
+                //         cacheMode: 'off',
+                //     }) || '';
+                //     setToken(accessToken);
+                // } catch(e) {console.error(e);}
+            // }
             Cookies.set('jwtToken', token, {
                 htppOnly: true,
                 expires: 1,
