@@ -207,7 +207,6 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
                 />
                 <CardMedia
                     component="img"
-                    loading="lazy"
                     image={recipe.img}
                     alt={recipe.title}
                     style={{ height: '30vh' }}
