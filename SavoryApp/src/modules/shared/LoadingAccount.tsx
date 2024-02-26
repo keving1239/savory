@@ -47,7 +47,7 @@ const LoadingAccount = () => {
                 if(accessToken) setToken(accessToken);
             } catch(error) {
                 try {
-                    await getAccessTokenWithPopup({
+                    const accessToken = await getAccessTokenWithPopup({
                         authorizationParams: {
                             audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
                             scope: "email",
@@ -55,6 +55,7 @@ const LoadingAccount = () => {
                         },
                         cacheMode: 'off',
                     });
+                    if(accessToken) setToken(accessToken);
                 } catch(e) {console.error(e);}
             }
             Cookies.set('jwtToken', token, {
