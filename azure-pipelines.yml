@@ -61,8 +61,6 @@ stages:
             - task: DownloadBuildArtifacts@0
               inputs:
                 buildType: 'current'
-                project: 'Savory'
-                pipeline: 'Savory'
                 downloadType: 'single'
                 artifactName: 'drop'
                 downloadPath: '$(Build.ArtifactStagingDirectory)'
