@@ -17,10 +17,12 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
+import { fetchBookmarks } from '../../redux/Recipes/recipes-slice';
 
 export default function Bookmarks({ id }: { id?: number }) {
     var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
+    console.log("RECIPES: " + JSON.stringify(recipes))
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
@@ -28,34 +30,6 @@ export default function Bookmarks({ id }: { id?: number }) {
     const [currentPost, setcurrentPost] = useState(id || -1);
     const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
 
-    const bookmarkedPostIds: string[] = [];
-    for (const postId in interactions) {
-        const inter = interactions[postId];
-        if (inter.bookmarked) {
-            bookmarkedPostIds.push(postId);
-        }
-    };
-
-    const newPosts: Record<number, {
-        tags: string[],
-        id: number,
-        ownerId: number,
-        title: string,
-        img: string,
-        date: Date,
-        ingredients: string[],
-        recipe: string,
-        author: string
-    }> = {};
-    for (const postId of Object.keys(recipes)) {
-        if (bookmarkedPostIds.includes(postId)) {
-            newPosts[Number(postId)] = recipes[Number(postId)];
-        }
-    }
-
-    console.log("filtered posts: " + newPosts);
-
-    recipes = newPosts
 
     // Handlers
     const openHandler = (id: number) => {

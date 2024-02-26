@@ -11,22 +11,17 @@ import {
 } from '@mui/icons-material';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
-import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 import { fetchRecipes, selectRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
-import LoadingPage from './LoadingPage';
-import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    const pageLoaded = useSelector((state: RootState) => state.persistedReducer.recipesReducer.pageLoaded);
     const navigate = useNavigate();
     
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
-    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // State
     const { post } = useParams();
     const { filters } = useParams();
@@ -48,14 +43,14 @@ export default function Feed({ id }: { id?: number }) {
     const handleNextPage = () => {
         pageNumber = pageNumber + 1
         dispatch(changePage({ pageNumber: pageNumber }));
-        navigate(`/load`);
+        navigate(`/load/feed`);
 
     };
 
     const handlePreviousPage = () => {
         pageNumber = pageNumber - 1;
         dispatch(changePage({ pageNumber: pageNumber }));
-        navigate(`/load`);
+        navigate(`/load/feed`);
     };
     // filter
     function parseFilters() {

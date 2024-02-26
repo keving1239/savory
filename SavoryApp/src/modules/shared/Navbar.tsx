@@ -74,7 +74,7 @@ const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
     <>
     {
       savoryAuth ?
-      <Link to='/load'><Button onClick={pageHandler} sx={{p: 0}}>
+      <Link to='/load/feed'><Button onClick={pageHandler} sx={{p: 0}}>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
       </Button></Link> :
@@ -92,7 +92,7 @@ const NavigationButtons = ({isAuthenticated}: {isAuthenticated: boolean}) => {
   [
     { to: '/', text: 'About' },
     { to: '/post/new', text: 'Add Post' },
-    { to: '/feed/bookmarks?', text: 'Bookmarks' },
+    { to: '/load/bookmarks', text: 'Bookmarks' },
   ] : 
   [
     { to: '/', text: 'About' },
