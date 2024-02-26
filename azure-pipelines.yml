@@ -47,11 +47,6 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
         
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
 - stage: Deploy
   displayName: 'Deploy Stage'
   dependsOn: Build
