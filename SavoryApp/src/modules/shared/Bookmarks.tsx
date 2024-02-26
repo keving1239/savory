@@ -130,7 +130,6 @@ export default function Bookmarks({ id }: { id?: number }) {
                     }
                 })}
             </Grid>
-            <CircularProgress sx={{ mt: '2vh' }} />
         </Box>
     );
 }

@@ -8,6 +8,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
 import { fetchRecipes, loadPage } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
+
 const LoadingPage = () => {
     // redux state
     const dispatch = useDispatch<AppDispatch>();

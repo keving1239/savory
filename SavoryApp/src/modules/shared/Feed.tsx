@@ -15,9 +15,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
+import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 import { fetchRecipes, selectRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
 import LoadingPage from './LoadingPage';
-import { fetchInteractions, postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
+import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
     const pageLoaded = useSelector((state: RootState) => state.persistedReducer.recipesReducer.pageLoaded);
@@ -43,11 +44,14 @@ export default function Feed({ id }: { id?: number }) {
         setcurrentPost(0);
         setOpen(false);
     }
+
     const handleNextPage = () => {
         pageNumber = pageNumber + 1
         dispatch(changePage({ pageNumber: pageNumber }));
         navigate(`/load`);
+
     };
+
     const handlePreviousPage = () => {
         pageNumber = pageNumber - 1;
         dispatch(changePage({ pageNumber: pageNumber }));
@@ -110,6 +114,7 @@ export default function Feed({ id }: { id?: number }) {
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {Object.values(filteredRecipes).map((recipe) => {
+                    console.log("PAGE NUMBER: " + pageNumber)
                     if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
                     } else {

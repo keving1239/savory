@@ -43,8 +43,8 @@ public class PostService
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
         List<PostsUsername> posts = postsURepository.findPostAndUsername(pageable);
         return posts.stream()
-                .map(PostsUtil::buildPostUsernameDto)
-                .collect(Collectors.toList());
+                    .map(PostsUtil::buildPostUsernameDto)
+                    .collect(Collectors.toList());
     }
 
     public List<Posts> findPosts(List<Integer> ids) {
