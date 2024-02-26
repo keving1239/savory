@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
@@ -35,6 +35,11 @@ public class PostController {
             @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
         return postService.findPostAndUsername(pageNumber, pageSize);
+    }
+
+    @GetMapping("/bookmarkedPosts/{userId}")
+    public List<PostsUsernameDto> getUsernames(@PathVariable int userId) {
+        return postService.findBookmarks(userId);
     }
 
     @GetMapping("/byUserId/{userID}")
