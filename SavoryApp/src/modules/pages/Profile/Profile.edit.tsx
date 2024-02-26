@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Button, TextField, Card, CardContent, Paper, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../redux/store';
+import { AppDispatch, RootState, fetchOptions } from '../../../redux/store';
 import { updateUser } from '../../../redux/User/user-slice';
 
 const ProfileEdit = () => {
@@ -22,7 +22,9 @@ const ProfileEdit = () => {
         if(!user) return;
         // ensure username is unique
         if(!user.username) {
-            const checkUsername = await fetch(`http://localhost:8080/api/person/usernameAvailable/${blogUsername}`);
+            const checkUsername = await fetch(`http://localhost:8080/api/person/usernameAvailable/${blogUsername}`, fetchOptions({
+                method: 'GET',
+            }));
             const isAvailable = await checkUsername.json();
             if(!isAvailable) return setUsernameError({error: true, helperText: 'Username is already in use.'})
             const isValid = /^[a-zA-Z0-9_.]{3,20}$/.test(blogUsername);

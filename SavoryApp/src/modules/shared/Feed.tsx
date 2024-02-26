@@ -13,32 +13,27 @@ import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Post from '../pages/Post/Post';
-//import { Recipes } from '../../Recipes';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
+import { fetchRecipes, selectRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
+import LoadingPage from './LoadingPage';
+import { fetchInteractions, postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 
 export default function Feed({ id }: { id?: number }) {
-    const dispatch = useDispatch();
-    // const currentPage = useSelector(state => state.data.currentPage);
-
-    const handleNextPage = () => {
-        // dispatch(fetchDataForNextPage());
-        console.log('hello')
-      };
-    
-      const handlePreviousPage = () => {
-        // dispatch(fetchDataForPreviousPage());
-        console.log('hello')
-      };
+    const pageLoaded = useSelector((state: RootState) => state.persistedReducer.recipesReducer.pageLoaded);
+    const navigate = useNavigate();
     
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+    var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // State
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
+    const dispatch = useDispatch<AppDispatch>();
+
     // Handlers
     const openHandler = (id: number) => {
         setcurrentPost(id);
@@ -48,6 +43,16 @@ export default function Feed({ id }: { id?: number }) {
         setcurrentPost(0);
         setOpen(false);
     }
+    const handleNextPage = () => {
+        pageNumber = pageNumber + 1
+        dispatch(changePage({ pageNumber: pageNumber }));
+        navigate(`/load`);
+    };
+    const handlePreviousPage = () => {
+        pageNumber = pageNumber - 1;
+        dispatch(changePage({ pageNumber: pageNumber }));
+        navigate(`/load`);
+    };
     // filter
     function parseFilters() {
         if (!filters) return recipes;
@@ -111,11 +116,14 @@ export default function Feed({ id }: { id?: number }) {
                         return null;
                     }
                 })}
-
-                <Button variant='contained' color='primary' onClick={handlePreviousPage}> Previous </Button>
-                <Button variant='contained' color='primary' onClick={handleNextPage}> Next </Button>
-
             </Grid>
+            <Box sx={{ marginTop: "50px" }}>
+                {pageNumber === 1 ?
+                    null : (
+                        <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                    )}
+                <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
+            </Box>
             {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
         </Box>
     );

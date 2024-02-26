@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Box, Grid, Tooltip, Typography, TextField, Card, Button, CardContent, TextFieldProps } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import { RootState, fetchOptions } from '../../../redux/store';
 
 const PostCreate = () => {
   const navigate = useNavigate();
@@ -52,11 +52,9 @@ const PostCreate = () => {
     const newRecipe = {userID: userId, headline: title, ingredients: ingredients, recipe: recipe, img: "https://images.unsplash.com/...", tags: tags, postdate: new Date()};
     // console.log(`Recipe has been created! ${newRecipe}`);
     // navigate('/feed');
-    fetch('http://localhost:8080/posts/addNewPost', {
-      method: 'POST',
-      headers: {'Content-type':'application/json'},
-      body: JSON.stringify(newRecipe)
-    }).then(() => {
+    fetch('http://localhost:8080/posts/addNewPost', fetchOptions({
+      method: 'POST', body: JSON.stringify(newRecipe),
+    })).then(() => {
     console.log(`Recipe has been created! ${newRecipe}`);
     navigate('/feed');
     });

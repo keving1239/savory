@@ -1,4 +1,9 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchOptions } from "../store";
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState } from "../store";
+
+export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
  
 interface Recipe {
     tags: string[];
@@ -15,11 +20,15 @@ export interface LocalRecipesState {
     recipes: Record<number, Recipe>,
     loading: boolean,
     error?: string,
+    page: number,
+    pageLoaded: boolean
 }
  
 const initialState: LocalRecipesState = {
     recipes: {},
     loading: false,
+    page: 1,
+    pageLoaded: false
 };
  
 const recipesSlice = createSlice({
@@ -32,12 +41,18 @@ const recipesSlice = createSlice({
         addRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
             state.recipes[action.payload.recipe.id] = action.payload.recipe;
         },
+        changePage(state: LocalRecipesState, action: PayloadAction<{pageNumber: number}>) {
+            state.page = action.payload.pageNumber;
+        },
         updateRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
             const update = action.payload.recipe;
            // const index = state.recipes.findIndex(recipe => recipe.id === update.id);
             if (String(update.id) in state.recipes) {
                 state.recipes[update.id] = update;
             };
+        },
+        loadPage(state: LocalRecipesState, action: PayloadAction<{loaded: boolean}>) {
+            state.pageLoaded = action.payload.loaded;
         },
         deleteRecipes(state: LocalRecipesState, action: PayloadAction<{recipeId: number}>) {
             if (String(action.payload.recipeId) in state.recipes) {
@@ -75,8 +90,11 @@ const recipesSlice = createSlice({
 
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
-    async ({userId}: {userId: number}) => {
-         const response = await fetch('http://localhost:8080/posts/allWithUsername');
+    async ({ userId, pageNumber, pageSize = 12}: {userId: number; pageNumber: number; pageSize?: number}) => {
+        const response = await fetch(`http://localhost:8080/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
+            method: 'GET',
+        }));
+        console.log("PAGE: " + pageNumber)
          const data = await response.json();
          console.log(data)
          const recipes: Record<number, Recipe> = {};
@@ -97,5 +115,5 @@ export const fetchRecipes = createAsyncThunk(
     },
 );
  
-export const { addRecipes, updateRecipes, deleteRecipes, removeLocalRecipes } = recipesSlice.actions;
+export const { addRecipes, updateRecipes, deleteRecipes, removeLocalRecipes, changePage, loadPage } = recipesSlice.actions;
 export default recipesSlice.reducer;

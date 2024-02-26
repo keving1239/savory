@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+import jwt_decode from "jsonwebtoken";
 import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
-import { fetchRecipes } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingAccount = () => {
@@ -21,9 +23,9 @@ const LoadingAccount = () => {
     async function loadProfile() {
         setStatus('Loading Profile...');
         await loadUser();
+        setStatus('Loading Recipes...');
     }
     async function loadFeed() {
-        setStatus('Loading Recipes...');
         await loadRecipes();
         setStatus('Loading Interactions...');
         await loadInteractions();
@@ -34,19 +36,30 @@ const LoadingAccount = () => {
         const email = (user ? user?.email : '') as string;
         try {
             const token = await getAccessTokenSilently({
-                // authorizationParams: {
-                    // audience: 'http://localhost:8080/api/person/all',
-                // },
+                authorizationParams: {
+                    audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                    scope: "email",
+                },
                 cacheMode: 'off',
-                timeoutInSeconds: 86400,
+            }) || '';
+            
+            Cookies.set('jwtToken', token, {
+                htppOnly: true,
+                expires: 1,
+                path: '/',
+                secure: true,
+                sameSite: 'strict',
             });
             await dispatch(fetchUser({ email, isAuthenticated, token }));
         } catch(error){console.error("Error Fetching User: ", error)}
     }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
+        dispatch(changePage({pageNumber: 1}));
+        dispatch(loadPage({loaded: true}))
+        const pageNumber = 1;
         try {
-            await dispatch(fetchRecipes({userId}));
+            await dispatch(fetchRecipes({userId, pageNumber}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
     async function loadInteractions() {
@@ -57,13 +70,13 @@ const LoadingAccount = () => {
     }
     // effect
     useEffect(() => {
-        if(!isAuthenticated || !user) return;
+        if(!isAuthenticated || !user || status != 'Loading...') return;
         loadProfile();
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, user, status]);
     useEffect(() => {
-        if(!savoryUser || !savoryUser.user) return;
+        if(!savoryUser || !savoryUser.user || status != 'Loading Recipes...') return;
         loadFeed();
-    }, [savoryUser]);
+    }, [savoryUser, status]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
         const page = savoryUser.user?.username ? '/feed' : '/profile/edit'

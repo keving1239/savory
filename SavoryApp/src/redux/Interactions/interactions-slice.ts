@@ -1,4 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchOptions } from "../store";
 
 
 interface RecipeInteraction {
@@ -87,7 +88,9 @@ const interactionsSlice = createSlice({
 export const fetchInteractions = createAsyncThunk(
     'fetch-interactions',
     async ({userId}: {userId: number}) => {
-        const response = await fetch(`http://localhost:8080/api/interaction/users/${userId}`);
+        const response = await fetch(`http://localhost:8080/api/interaction/users/${userId}`, fetchOptions({
+            method: 'GET'
+        }));
         const data = await response.json();
         const interactions: Record<number, RecipeInteraction> = {};
         data.forEach((item: any) => {
@@ -105,11 +108,9 @@ export const postInteraction = createAsyncThunk(
     'post-interaction',
     async ({ postId, userId, liked, bookmarked }: 
         { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
-        await fetch('http://localhost:8080/api/interaction/postInteraction', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
-        });
+        await fetch('http://localhost:8080/api/interaction/postInteraction', fetchOptions({
+            method: 'POST', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
+        }));
         return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
     }
 );
@@ -118,11 +119,9 @@ export const updateInteraction = createAsyncThunk(
     'update-interaction',
     async ({ postId, userId, liked, bookmarked }: 
         { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
-        await fetch('http://localhost:8080/api/interaction/update', {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
-        });
+        await fetch('http://localhost:8080/api/interaction/update', fetchOptions({
+            method: 'PUT', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
+        }));
         return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
     }
 );
@@ -130,8 +129,9 @@ export const updateInteraction = createAsyncThunk(
 export const deleteInteraction = createAsyncThunk(
     'delete-interaction',
     async ({ postId, userId }: { postId: number; userId: number | undefined }) => {
-        await fetch(`http://localhost:8080/api/interaction/deleteByInputs/${userId}/${postId}`,
-        {method: 'DELETE'});
+        await fetch(`http://localhost:8080/api/interaction/deleteByInputs/${userId}/${postId}`, fetchOptions({
+            method: 'DELETE'
+        }));
         return postId;
     }
 );

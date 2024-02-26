@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchOptions } from "../store";
 
 interface User {
     id: number,
@@ -50,6 +51,7 @@ const userSlice = createSlice({
                 state.loading = false;
                 console.log('User Fetch Successful...');
                 console.log(state.user);
+                console.log(state.token);
             }
         ).addCase(
             fetchUser.rejected, (state: UserState, action) => {
@@ -106,15 +108,16 @@ export const fetchUser = createAsyncThunk(
     'GET-USER',
     async ({ email, isAuthenticated, token }: { email: string; isAuthenticated: boolean, token: string }) => {
         if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...');
-
-        const search = await fetch(`http://localhost:8080/api/person/emailExists/${email}`);
+        const search = await fetch(`http://localhost:8080/api/person/emailExists/${email}`, fetchOptions({
+            method: 'GET',
+        }));
         const exists = await search.json();
-        const response = exists ? await fetch(`http://localhost:8080/api/person/byEmail/${email}`)
-            : await fetch('http://localhost:8080/api/person/new', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: '', email: email, img: '', bio: ''}), 
-            });
+        const response = exists ? await fetch(`http://localhost:8080/api/person/byEmail/${email}`, fetchOptions({
+                method: 'GET',    
+            }))
+            : await fetch('http://localhost:8080/api/person/new', fetchOptions({
+                method: 'POST', body: JSON.stringify({username: '', email: email, img: '', bio: ''}),
+            }));
         const data = await response.json();
         return {user: {id: data.id, username: data.username, email: data.email,
         img: data.img, bio: data.bio, role: data.admin} as User, token};
@@ -124,11 +127,9 @@ export const updateUser = createAsyncThunk(
     'UPDATE-USER',
     async ({id, username, email, img, bio}: {id: number, username: string, email: string, img: string, bio: string}) => {
         console.log({username: username, email: email, img: img, bio: bio});
-        const response = await fetch(`http://localhost:8080/api/person/${id}/edit`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username: username, email: email, img: img, bio: bio}), 
-        });
+        const response = await fetch(`http://localhost:8080/api/person/${id}/edit`, fetchOptions({
+            method: 'PUT', body: JSON.stringify({username: username, email: email, img: img, bio: bio}),
+        }));
         const data = await response.json();
         return {id: data.id, username: data.username, email: data.email, 
             img: data.img, bio: data.bio, role: data.admin} as User;
@@ -137,16 +138,18 @@ export const updateUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
     'DELETE-USER',
     async ({id}: {id: number}) => {
-        await fetch(`http://localhost:8080/api/person/delete/${id}`, {
-            method: 'DELETE'
-        });
+        await fetch(`http://localhost:8080/api/person/delete/${id}`, fetchOptions({
+            method: 'DELETE',
+        }));
     }
 )
 export const fetchLocalUser = createAsyncThunk(
-    '/api/person/username/{username}',
+    'FETCH-LOCAL',
     async ({ username }: { username: string;}) => {
         if(!username) throw new Error('Auth0 Login Failed...');
-        const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`);
+        const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
+            method: 'GET'
+        }));
         const data = await response.json();
         return {user: {id: data.id, username: data.username, email: data.email,
         img: data.img, bio: data.bio, role: data.admin} as User};

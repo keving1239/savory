@@ -19,9 +19,24 @@ const rootReducer = combineReducers({
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+export const fetchOptions = ({method, body}: {method: string, body?: string}) => {
+  const cookies = document.cookie.split('; ');
+  const tokenCookie = cookies.find(cookie => cookie.startsWith('jwtToken='));
+  const token = tokenCookie ? tokenCookie.split('=')[1] : null;
+  const headers: Record<string, string> = {};
+  if(body) headers['Content-Type'] = 'application/json';
+  headers['Authorization'] = `Bearer ${token}`;
+  return body ? {
+    method: method,
+    headers: headers,
+    body: body,
+  } : {
+    method: method,
+    headers: headers,
+  };
+}
+
 export const store = configureStore({reducer: {persistedReducer}, middleware});
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-
