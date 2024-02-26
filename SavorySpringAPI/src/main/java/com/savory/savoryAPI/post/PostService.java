@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -38,8 +39,8 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findPostAndUsername(int offset, int limit) {
-        Pageable pageable = PageRequest.of(offset / limit, limit);
+    public List<PostsUsernameDto> findPostAndUsername(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
         List<PostsUsername> posts = postsURepository.findPostAndUsername(pageable);
         return posts.stream()
                     .map(PostsUtil::buildPostUsernameDto)

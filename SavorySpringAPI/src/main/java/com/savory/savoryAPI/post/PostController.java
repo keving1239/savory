@@ -32,9 +32,9 @@ public class PostController {
 
     @GetMapping("/allWithUsername")
     public List<PostsUsernameDto> getUsernames(
-    @RequestParam(value = "offset", defaultValue = "0") int offset,
-    @RequestParam(value = "limit", defaultValue = "12") int limit) {
-        return postService.findPostAndUsername(offset, limit);
+    @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
+    @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
+        return postService.findPostAndUsername(pageNumber, pageSize);
     }
 
     @GetMapping("/byUserId/{userID}")

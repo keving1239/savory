@@ -6,22 +6,17 @@ import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
-import { fetchRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, loadPage } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
-const LoadingAccount = () => {
+const LoadingPage = () => {
     // redux state
-    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
-    // auth0 state
-    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // loading resources
     const [status, setStatus] = useState('Loading...');
-    async function loadProfile() {
-        setStatus('Loading Profile...');
-        await loadUser();
-    }
     async function loadFeed() {
         setStatus('Loading Recipes...');
         await loadRecipes();
@@ -30,24 +25,9 @@ const LoadingAccount = () => {
         setStatus('Loading Complete...');
     }
     // loading functions
-    async function loadUser() {
-        const email = (user ? user?.email : '') as string;
-        try {
-            const token = await getAccessTokenSilently({
-                // authorizationParams: {
-                    // audience: 'http://localhost:8080/api/person/all',
-                // },
-                cacheMode: 'off',
-                timeoutInSeconds: 86400,
-            });
-            await dispatch(fetchUser({ email, isAuthenticated, token }));
-        } catch(error){console.error("Error Fetching User: ", error)}
-    }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
-        dispatch(changePage({pageNumber: 1}));
         dispatch(loadPage({loaded: true}))
-        const pageNumber = 1;
         try {
             await dispatch(fetchRecipes({userId, pageNumber}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
@@ -60,27 +40,22 @@ const LoadingAccount = () => {
     }
     // effect
     useEffect(() => {
-        if(!isAuthenticated || !user) return;
-        loadProfile();
-    }, [isAuthenticated, user]);
-    useEffect(() => {
         if(!savoryUser || !savoryUser.user) return;
         loadFeed();
     }, [savoryUser]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
-        console.log("LOADED")
-        const page = savoryUser.user?.username ? '/feed' : '/profile/edit'
+        const page = savoryUser.user?.username ? `/feed` : '/profile/edit'
         navigate(`${page}`);
     },[status]);
     // display
     return(
       <Box>
-        <Typography variant='h2' mt='10vh'>Welcome</Typography>
+        <Typography variant='h2' mt='10vh'>Loading</Typography>
         <Typography mb='10vh'>{status}</Typography>
         <CircularProgress />
       </Box>
     );
 };
   
-export default LoadingAccount;
+export default LoadingPage;
