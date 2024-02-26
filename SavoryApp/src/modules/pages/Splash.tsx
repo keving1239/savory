@@ -45,9 +45,12 @@ const SplashPage = () => {
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
-            <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
-                Log in
-            </Button>}
+            // <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
+            //     Log in
+            // </Button>}
+            <Link to='/login'>
+                <Button variant='contained' color='primary'>Log In</Button>
+            </Link>}
         </Grid>
         </Grid>
     );
