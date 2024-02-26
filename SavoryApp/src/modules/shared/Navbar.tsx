@@ -67,7 +67,6 @@ const ResponsiveAppBar = () => {
 
 const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
   const dispatch = useDispatch<AppDispatch>();
-
   function pageHandler(): void {
     dispatch(changePage({pageNumber: 1}))
   }

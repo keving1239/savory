@@ -87,5 +87,5 @@ class PersonControllerTest {
                 .isAdmin(isAdmin)
                 .build();
     }
-    
+
 }

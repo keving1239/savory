@@ -42,6 +42,7 @@ public class PostsUsername {
     @Column(name = "PostDate", nullable = false)
     private String postdate;
 
+    @Transient
     @Column(name = "username", nullable = false)
     private String username;
 }

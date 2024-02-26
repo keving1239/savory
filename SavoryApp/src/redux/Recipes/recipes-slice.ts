@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchOptions } from "../store";
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from "../store";
 
 export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
-
  
 interface Recipe {
     tags: string[];
@@ -91,8 +91,10 @@ const recipesSlice = createSlice({
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({ userId, pageNumber, pageSize = 12}: {userId: number; pageNumber: number; pageSize?: number}) => {
-         const response = await fetch(`http://localhost:8080/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`);
-         console.log("PAGE: " + pageNumber)
+        const response = await fetch(`http://localhost:8080/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
+            method: 'GET',
+        }));
+        console.log("PAGE: " + pageNumber)
          const data = await response.json();
          console.log(data)
          const recipes: Record<number, Recipe> = {};
