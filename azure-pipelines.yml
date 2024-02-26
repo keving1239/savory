@@ -63,10 +63,10 @@ stages:
                 buildType: 'current'
                 downloadType: 'single'
                 artifactName: 'drop'
-                downloadPath: '$(System.DefaultWorkingDirectory)'
+                downloadPath: '$(Build.ArtifactStagingDirectory)'
             - task: AzureWebApp@1
               inputs:
                 azureSubscription: 'SavoryServiceConnection'
                 appName: 'Savory'
                 appType: 'webApp'
-                package: '$(System.DefaultWorkingDirectory)/drop'
+                package: '$(Build.ArtifactStagingDirectory)/drop'
