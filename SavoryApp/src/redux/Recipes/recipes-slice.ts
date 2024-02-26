@@ -2,6 +2,7 @@ import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchOptions } from "../store";
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from "../store";
+import { fetchUser } from "../User/user-slice";
 
 export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
  
@@ -105,6 +106,28 @@ const recipesSlice = createSlice({
                 console.log("error: " + state.error + "here")
             }
         );
+
+        builder
+        .addCase(
+            fetchUserPosts.pending, (state: LocalRecipesState) => {
+                state.loading = true;
+                console.log('My Posts Fetch Started...');
+            }
+        ).addCase(
+            fetchUserPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+                state.recipes = action.payload;
+                state.loading = false;
+                console.log('My Posts Fetch Successful...');
+                console.log(state.recipes);
+            }
+        ).addCase(
+            fetchUserPosts.rejected, (state: LocalRecipesState, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                console.log('My Posts Fetch Failed...');
+                console.log("error: " + state.error + "here")
+            }
+        );
     },
 });
 
@@ -157,6 +180,32 @@ export const fetchBookmarks = createAsyncThunk(
                 ingredients: item?.ingredients?.split(' ') || [],
                 recipe: item.recipe,
                 author: item.username,
+            }
+         });
+        return recipes;
+    },
+);
+
+export const fetchUserPosts = createAsyncThunk(
+    '/api/recipes/myPosts',
+    async ({ userId, username }: {userId: number; username: string | undefined;}) => {
+        const response = await fetch(`http://localhost:8080/api/posts/byUserId/${userId}`, fetchOptions({
+            method: 'GET',
+        }));
+         const data = await response.json();
+         console.log(data)
+         const recipes: Record<number, Recipe> = {};
+         data.forEach((item: any) => {
+            recipes[item.postId] = {
+                tags: item?.tags?.split(' ') || [],
+                id: item.postId,
+                ownerId: item.userID,
+                title: item.headline,
+                img: item.img,                 
+                date: item.postdate,
+                ingredients: item?.ingredients?.split(' ') || [],
+                recipe: item.recipe,
+                author: username || '',
             }
          });
         return recipes;

@@ -17,7 +17,6 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { fetchBookmarks } from '../../redux/Recipes/recipes-slice';
 
 export default function Bookmarks({ id }: { id?: number }) {
     var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
@@ -28,8 +27,6 @@ export default function Bookmarks({ id }: { id?: number }) {
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
-    const interactions = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions);
-
 
     // Handlers
     const openHandler = (id: number) => {

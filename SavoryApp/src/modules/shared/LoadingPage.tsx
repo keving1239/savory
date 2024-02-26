@@ -6,11 +6,11 @@ import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
-import { fetchRecipes, loadPage, fetchBookmarks } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, loadPage, fetchBookmarks, fetchUserPosts } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingPage = () => {
-    const {nextPage} = useParams();
+    const {nextPage, userId} = useParams();
     console.log("NEXT PAGE: " + nextPage)
     // redux state
     const dispatch = useDispatch<AppDispatch>();
@@ -33,13 +33,25 @@ const LoadingPage = () => {
         setStatus('Loading Complete...');
     }
 
+    async function loadProfile() {
+        setStatus('Loading Profile...');
+        await loadUserPosts();
+        setStatus('Loading Complete...');
+    }
+
+        // loading functions
     async function loadBooks() {
         const userId = savoryUser?.user?.id || -1;
         try {
             await dispatch(fetchBookmarks({userId}));
         } catch(error){console.error("Error Fetching Bookmarks: ", error)}
     }
-    // loading functions
+
+    async function loadUserPosts() {
+        try {
+            await dispatch(fetchUserPosts({userId: Number(userId), username: nextPage}));
+        } catch(error){console.error("Error Fetching Bookmarks: ", error)}
+    }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
         dispatch(loadPage({loaded: true}))
@@ -59,8 +71,10 @@ const LoadingPage = () => {
         if(!savoryUser || !savoryUser.user) return;
         if (nextPage === "bookmarks"){
             loadBookmarks();
-        } else {
+        } else if (nextPage === "feed") {
             loadFeed();
+        } else {
+            loadProfile();
         }
     }, [savoryUser]);
     useEffect(() => {
@@ -68,8 +82,10 @@ const LoadingPage = () => {
         var page = "";
         if (nextPage === "bookmarks") {
             page = savoryUser.user?.username ? `/feed/bookmarks` : '/profile/edit'
-        } else {
+        } else if (nextPage === "feed") {
             page = savoryUser.user?.username ? `/feed` : '/profile/edit'
+        } else {
+            page = savoryUser.user?.username ? `/profile/${nextPage}` : '/profile/edit'
         }
         navigate(`${page}`);
     },[status]);

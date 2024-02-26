@@ -7,6 +7,8 @@ import ProfileFeed from '../../shared/ProfileFeed';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store';
 import { fetchLocalUser } from '../../../redux/User/user-slice';
+import { fetchUserPosts } from '../../../redux/Recipes/recipes-slice';
+import Bookmarks from '../../shared/Bookmarks';
 
 const Profile = () => {
     const {username, post} = useParams();
@@ -23,10 +25,12 @@ const Profile = () => {
             } catch(error){console.error("Error Fetching Local User: ", error)}
         }
     }
+
         useEffect(() => {
           const loader = async () => {
             // Perform asynchronous operations
             await loadLocalUser();
+            
             setStatus(false); // Set isLoading to false when loading completes
           };
           loader();
@@ -77,7 +81,7 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            <ProfileFeed id = {displayedUser?.id}></ProfileFeed>
+            <Bookmarks></Bookmarks>
         </Box>
     );
 }

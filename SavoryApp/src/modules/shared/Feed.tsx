@@ -15,7 +15,7 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { fetchRecipes, selectRecipes, changePage, loadPage } from '../../redux/Recipes/recipes-slice';
+import { changePage } from '../../redux/Recipes/recipes-slice';
 
 export default function Feed({ id }: { id?: number }) {
     const navigate = useNavigate();
@@ -111,7 +111,7 @@ export default function Feed({ id }: { id?: number }) {
                 {Object.values(filteredRecipes).map((recipe) => {
                     console.log("PAGE NUMBER: " + pageNumber)
                     if (recipe.id > 0 && recipes[recipe.id]) {
-                        return <RecipeItem {...{ id: recipe.id, key: recipe.title, openHandler }} />
+                        return <RecipeItem {...{ id: recipe.id, userId: recipe.ownerId, key: recipe.title, openHandler }} />
                     } else {
                         return null;
                     }
@@ -129,10 +129,10 @@ export default function Feed({ id }: { id?: number }) {
     );
 }
 
-const RecipeAvatar = ({ author }: { author: string }) => {
+const RecipeAvatar = ({ author, userId }: { author: string, userId: number }) => {
     return (
         <Tooltip title={author}>
-            <Link to={`/profile/${author}`}><IconButton>
+            <Link to={`/load/${author}/${String(userId)}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
@@ -150,7 +150,7 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
     );
 }
 
-const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number) => void }) => {
+const RecipeItem = ({ id, userId, openHandler }: { id: number, userId: number, openHandler: (id: number) => void }) => {
     // state
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const recipe = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes[id]);
@@ -193,7 +193,7 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
                 <CardHeader
                     title={
                         <Grid container justifyContent='space-between' alignItems='center'>
-                            <Grid item><RecipeAvatar author={recipe.author} /></Grid>
+                            <Grid item><RecipeAvatar author={recipe.author} userId={userId}/></Grid>
                             <Grid item xs={8}><Typography variant='h5' noWrap>{recipe.title}</Typography></Grid>
                             <Grid item><RecipeExpandButton {...{ id, openHandler }} /></Grid>
                         </Grid>
