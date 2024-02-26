@@ -16,11 +16,30 @@ const LoadingAccount = () => {
     const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenWithPopup, getAccessTokenSilently } = useAuth0();
-    // const [token, setToken] = useState('');
+    const [token, setToken] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     // loading resources
-    const [status, setStatus] = useState('Loading...');
+    const [status, setStatus] = useState('Waiting for Login...');
+    async function login() {
+        const token = await getAccessTokenWithPopup({
+            authorizationParams: {
+                audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                scope: "email",
+                prompt: 'login',
+            },
+            cacheMode: 'off',
+        }) || '';
+        Cookies.set('jwtToken', token, {
+            htppOnly: true,
+            expires: 1,
+            path: '/',
+            secure: true,
+            sameSite: 'strict',
+        });
+        setStatus('Loading...');
+        setToken(token);
+    }
     async function loadProfile() {
         setStatus('Loading Profile...');
         await loadUser();
@@ -36,44 +55,6 @@ const LoadingAccount = () => {
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            const token = await getAccessTokenWithPopup({
-                authorizationParams: {
-                    audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-                    scope: "email",
-                },
-                cacheMode: 'off',
-            }) || '';
-            // try {
-            //     const accessToken = await getAccessTokenSilently({
-            //         authorizationParams: {
-            //             audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-            //             scope: "email",
-            //         },
-            //         cacheMode: 'off',
-            //     }) || '';
-            //     setToken(accessToken);
-            // } catch(error) {
-            //     console.log('Token Error: +')
-            //     console.error(error);
-                // try {
-                //     const accessToken = await getAccessTokenWithPopup({
-                //         authorizationParams: {
-                //             audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-                //             scope: "email",
-                //             prompt: 'consent',
-                //         },
-                //         cacheMode: 'off',
-                //     }) || '';
-                //     setToken(accessToken);
-                // } catch(e) {console.error(e);}
-            // }
-            Cookies.set('jwtToken', token, {
-                htppOnly: true,
-                expires: 1,
-                path: '/',
-                secure: true,
-                sameSite: 'strict',
-            });
             await dispatch(fetchUser({ email, isAuthenticated, token }));
         } catch(error){console.error("Error Fetching User: ", error)}
     }
@@ -93,6 +74,9 @@ const LoadingAccount = () => {
         } catch(error){console.error("Error Fetching Interactions: ", error)}
     }
     // effect
+    useEffect(() => {
+        login();
+    }, []);
     useEffect(() => {
         if(!isAuthenticated || !user || status != 'Loading...') return;
         loadProfile();

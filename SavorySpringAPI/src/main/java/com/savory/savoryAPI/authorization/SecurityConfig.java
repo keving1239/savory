@@ -44,6 +44,7 @@ public class SecurityConfig {
     public SecurityFilterChain appFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
             authorizationManagerRequestMatcherRegistry
+//                    .requestMatchers("api/**").permitAll())
                     .requestMatchers("api/swagger-ui/**", "api/v3/api-docs/**").permitAll()
                     .requestMatchers("api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated())

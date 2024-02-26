@@ -40,8 +40,8 @@ public class AuthVerifier {
         if(roles.isEmpty()) roles = "ANONYMOUS";
         List<String> rolesList = List.of(roles);
         List<SimpleGrantedAuthority> authorities = rolesList.stream()
-            .map(SimpleGrantedAuthority::new)
-            .toList();
+                .map(SimpleGrantedAuthority::new)
+                .toList();
         User principal = new User(email, "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
