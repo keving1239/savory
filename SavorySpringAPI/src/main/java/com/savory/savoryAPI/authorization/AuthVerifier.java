@@ -37,6 +37,7 @@ public class AuthVerifier {
     public Authentication getAuthentication(String token) {
         Jwt jwt = validateJwtToken(token);
         String email = getEmail(jwt), roles = getRoles(jwt);
+        if(roles.isEmpty()) roles = "ANONYMOUS";
         List<String> rolesList = List.of(roles);
         List<SimpleGrantedAuthority> authorities = rolesList.stream()
             .map(SimpleGrantedAuthority::new)
