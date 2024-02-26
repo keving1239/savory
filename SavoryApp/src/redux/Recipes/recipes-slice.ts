@@ -83,6 +83,28 @@ const recipesSlice = createSlice({
                 console.log("error: " + state.error + "here")
             }
         );
+
+        builder
+        .addCase(
+            fetchBookmarks.pending, (state: LocalRecipesState) => {
+                state.loading = true;
+                console.log('Bookmark Fetch Started...');
+            }
+        ).addCase(
+            fetchBookmarks.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+                state.recipes = action.payload;
+                state.loading = false;
+                console.log('Bookmark Fetch Successful...');
+                console.log(state.recipes);
+            }
+        ).addCase(
+            fetchBookmarks.rejected, (state: LocalRecipesState, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                console.log('Bookmark Fetch Failed...');
+                console.log("error: " + state.error + "here")
+            }
+        );
     },
 });
 
@@ -91,10 +113,36 @@ const recipesSlice = createSlice({
 export const fetchRecipes = createAsyncThunk(
     '/api/recipes/fetch',
     async ({ userId, pageNumber, pageSize = 12}: {userId: number; pageNumber: number; pageSize?: number}) => {
-        const response = await fetch(`http://localhost:8080/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
+        const response = await fetch(`http://localhost:8080/api/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
             method: 'GET',
         }));
         console.log("PAGE: " + pageNumber)
+         const data = await response.json();
+         console.log(data)
+         const recipes: Record<number, Recipe> = {};
+         data.forEach((item: any) => {
+            recipes[item.postId] = {
+                tags: item?.tags?.split(' ') || [],
+                id: item.postId,
+                ownerId: item.userID,
+                title: item.headline,
+                img: item.img,                 
+                date: item.postdate,
+                ingredients: item?.ingredients?.split(' ') || [],
+                recipe: item.recipe,
+                author: item.username,
+            }
+         });
+        return recipes;
+    },
+);
+
+export const fetchBookmarks = createAsyncThunk(
+    '/api/recipes/bookmarks',
+    async ({ userId }: {userId: number;}) => {
+        const response = await fetch(`http://localhost:8080/api/posts/bookmarkedPosts/${userId}`, fetchOptions({
+            method: 'GET',
+        }));
          const data = await response.json();
          console.log(data)
          const recipes: Record<number, Recipe> = {};

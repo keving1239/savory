@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
-import { fetchRecipes, loadPage } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, loadPage, fetchBookmarks } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingPage = () => {
+    const {nextPage} = useParams();
+    console.log("NEXT PAGE: " + nextPage)
     // redux state
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -24,6 +26,19 @@ const LoadingPage = () => {
         await loadInteractions();
         setStatus('Loading Complete...');
     }
+
+    async function loadBookmarks() {
+        setStatus('Loading Bookmarks...');
+        await loadBooks();
+        setStatus('Loading Complete...');
+    }
+
+    async function loadBooks() {
+        const userId = savoryUser?.user?.id || -1;
+        try {
+            await dispatch(fetchBookmarks({userId}));
+        } catch(error){console.error("Error Fetching Bookmarks: ", error)}
+    }
     // loading functions
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
@@ -32,6 +47,7 @@ const LoadingPage = () => {
             await dispatch(fetchRecipes({userId, pageNumber}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
+
     async function loadInteractions() {
         const userId = savoryUser?.user?.id || -1;
         try {
@@ -41,11 +57,20 @@ const LoadingPage = () => {
     // effect
     useEffect(() => {
         if(!savoryUser || !savoryUser.user) return;
-        loadFeed();
+        if (nextPage === "bookmarks"){
+            loadBookmarks();
+        } else {
+            loadFeed();
+        }
     }, [savoryUser]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
-        const page = savoryUser.user?.username ? `/feed` : '/profile/edit'
+        var page = "";
+        if (nextPage === "bookmarks") {
+            page = savoryUser.user?.username ? `/feed/bookmarks` : '/profile/edit'
+        } else {
+            page = savoryUser.user?.username ? `/feed` : '/profile/edit'
+        }
         navigate(`${page}`);
     },[status]);
     // display
