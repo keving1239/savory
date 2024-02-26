@@ -15,7 +15,8 @@ const LoadingAccount = () => {
     // redux state
     const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // auth0 state
-    const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, user, getAccessTokenWithPopup, getAccessTokenSilently } = useAuth0();
+    const [token, setToken] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     // loading resources
@@ -35,14 +36,28 @@ const LoadingAccount = () => {
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            const token = await getAccessTokenSilently({
-                authorizationParams: {
-                    audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
-                    scope: "email",
-                },
-                cacheMode: 'off',
-            }) || '';
-            
+            try {
+                const accessToken = await getAccessTokenWithPopup({
+                    authorizationParams: {
+                        audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                        scope: "email",
+                    },
+                    cacheMode: 'off',
+                });
+                if(accessToken) setToken(accessToken);
+            } catch(error) {
+                try {
+                    const accessToken = await getAccessTokenWithPopup({
+                        authorizationParams: {
+                            audience: 'https://dev-t6vspuc8qrssaarc.us.auth0.com/api/v2/',
+                            scope: "email",
+                            prompt: 'consent',
+                        },
+                        cacheMode: 'off',
+                    });
+                    if(accessToken) setToken(accessToken);
+                } catch(e) {console.error(e);}
+            }
             Cookies.set('jwtToken', token, {
                 htppOnly: true,
                 expires: 1,
