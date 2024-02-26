@@ -47,6 +47,13 @@ public class PostService
                     .collect(Collectors.toList());
     }
 
+    public List<PostsUsernameDto> findBookmarks(int userId) {
+        List<PostsUsername> posts = postsURepository.findBookmarks(userId);
+        return posts.stream()
+                .map(PostsUtil::buildPostUsernameDto)
+                .collect(Collectors.toList());
+    }
+
     public List<Posts> findPosts(List<Integer> ids) {
         return postRepository.findAllBypostIdIn(ids);
     }
