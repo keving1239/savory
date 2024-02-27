@@ -43,7 +43,7 @@ public class PostController {
     }
 
     @GetMapping("/byUserId/{userID}")
-    public List<PostsDto> getUserPosts(int userID)
+    public List<PostsDto> getUserPosts(@PathVariable int userID)
     {
         return postService.findPostByUserID(userID);
     }
