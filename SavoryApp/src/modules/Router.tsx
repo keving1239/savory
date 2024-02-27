@@ -22,6 +22,7 @@ const StandardLayoutRouter = () => (
                 <Route path='profile/edit' element={<ProfileEdit/>}/>
                 <Route path="login" element={<LoadingAccount/>}/>
                 <Route path="feed" element={<Feed/>}/>
+                <Route path="load/:nextPage/:userId" element={<LoadingPage/>}/>
                 <Route path="load/:nextPage" element={<LoadingPage/>}/>
                 <Route path='feed/:filters' element={<Feed/>}/>
                 <Route path='feed/bookmarks' element={<Bookmarks/>}/>

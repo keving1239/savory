@@ -42,7 +42,6 @@ const interactionsSlice = createSlice({
                 state.interactions = action.payload;
                 state.loading = false;
                 console.log('Interaction Fetch Successful...');
-                console.log(state.interactions);
             }
         ).addCase(
             fetchInteractions.rejected, (state: InteractionsState, action) => {

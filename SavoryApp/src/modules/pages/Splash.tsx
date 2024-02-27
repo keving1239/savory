@@ -41,7 +41,7 @@ const SplashPage = () => {
         </Grid>
         <Grid item>
             {savoryAuth ?             
-            <Link to='/feed'>
+            <Link to='/load/feed'>
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
