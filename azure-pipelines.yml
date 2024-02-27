@@ -86,6 +86,13 @@ stages:
                 downloadType: 'single'
                 artifactName: 'jarArtifact'
                 downloadPath: '$(Build.ArtifactStagingDirectory)'
+            
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: 'drop'
+                downloadPath: '$(Build.ArtifactStagingDirectory)'
 
             - task: AzureWebApp@1
               inputs:
