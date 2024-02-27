@@ -34,11 +34,6 @@ stages:
       displayName: 'npm install'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
 
-    - script: |
-        npm run build
-      displayName: 'npm run build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
-
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
