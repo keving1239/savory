@@ -13,7 +13,7 @@ trigger:
       - SavorySpringAPI/*
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
   
 stages:
 - stage: Build
@@ -94,12 +94,13 @@ stages:
                 artifactName: 'drop'
                 downloadPath: '$(Build.ArtifactStagingDirectory)'
 
-            - task: AzureWebApp@1
+            - task: AzureRmWebAppDeployment@4
               inputs:
+                ConnectionType: 'AzureRM'
                 azureSubscription: 'SavoryServiceConnection'
                 appType: 'webApp'
-                appName: 'Savory'
-                package: '$(Build.ArtifactStagingDirectory)/drop'
+                WebAppName: 'Savory'
+                packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
             
             # Copy files to wwwroot directory using FTP
             # - task: FtpUpload@2
