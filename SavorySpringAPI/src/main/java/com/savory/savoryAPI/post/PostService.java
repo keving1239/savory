@@ -54,6 +54,14 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
+    public List<PostsUsernameDto> findPostsByTag(String tag, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
+        List<PostsUsername> posts = postsURepository.findPostsByTag(tag, pageable);
+        return posts.stream()
+                .map(PostsUtil::buildPostUsernameDto)
+                .collect(Collectors.toList());
+    }
+
     public List<Posts> findPosts(List<Integer> ids) {
         return postRepository.findAllBypostIdIn(ids);
     }
