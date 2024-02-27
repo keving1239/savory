@@ -14,7 +14,6 @@ const Profile = () => {
     const navigate = useNavigate();
     const isOwner = user?.username === username;
     const [status, setStatus] = useState(true);
-  //  const displayedUser = {id: 420, username: 'you.found.me', img: 'logo512.png', bio: 'I am the one you have been searching for', role: false};
     const dispatch = useDispatch<AppDispatch>();
     async function loadLocalUser() {
         if (username) {
