@@ -103,15 +103,15 @@ stages:
                 package: '$(Build.ArtifactStagingDirectory)/drop'
             
             # Copy files to wwwroot directory using FTP
-            - task: FtpUpload@2
-              displayName: 'FTP Upload'
-              inputs:
-                credentialsOption: 'inputs'
-                serverUrl: 'ftps://waws-prod-blu-511.ftp.azurewebsites.windows.net/site/wwwroot'
-                username: 'Savory\$Savory'
-                password: 'AQLq02zRsqNvQoZJRad4bVFlAyWjsgE.m3Cb5i5covTRiQEtPsM-RdE3v-z8b6XKIPv-f6nQWXA'
-                rootDirectory: '$(Build.ArtifactStagingDirectory)/drop'
-                remoteDirectory: 'site/wwwroot'
+            # - task: FtpUpload@2
+            #   displayName: 'FTP Upload'
+            #   inputs:
+            #     credentialsOption: 'inputs'
+            #     serverUrl: 'ftps://waws-prod-blu-511.ftp.azurewebsites.windows.net/site/wwwroot'
+            #     username: 'Savory\$Savory'
+            #     password: 'AQLq02zRsqNvQoZJRad4bVFlAyWjsgE.m3Cb5i5covTRiQEtPsM-RdE3v-z8b6XKIPv-f6nQWXA'
+            #     rootDirectory: '$(Build.ArtifactStagingDirectory)/drop'
+            #     remoteDirectory: 'site/wwwroot'
             
             # # Additional step to deploy the frontend React application
             # - task: AzureRmWebAppDeployment@4
