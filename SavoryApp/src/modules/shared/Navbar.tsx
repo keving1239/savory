@@ -157,8 +157,10 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
 const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
   function handleSearch() {
-    navigate(`/feed`);
+    dispatch(changePage({pageNumber: 1}))
+    navigate(`/load/${query}`);
   }
 
   return (

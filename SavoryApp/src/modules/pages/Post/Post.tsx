@@ -97,7 +97,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
         <Grid container justifyContent='center' alignItems='center'>
             {visibleTags.map((tag, index) => (
                 <Grid item key={index}>
-                    <Link to={`/feed/${tag}`}><Button variant='text'>
+                    <Link to={`/load/${tag}`}><Button variant='text'>
                         <Typography textTransform='none'>{`#${tag}`}</Typography>
                     </Button></Link>
                 </Grid>
@@ -115,7 +115,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
             >
                 {hiddenTags.map((tag, index) => (
                     <MenuItem key={index} onClick={hideHiddenTags} sx={{ p: 0, m: '.25vw' }}>
-                        <Link to={`/feed/${tag}`}><Button variant='text' sx={{ p: 0 }}>
+                        <Link to={`/load/${tag}`}><Button variant='text' sx={{ p: 0 }}>
                             <Typography textTransform='none'>{`#${tag}`}</Typography>
                         </Button></Link>
                     </MenuItem>

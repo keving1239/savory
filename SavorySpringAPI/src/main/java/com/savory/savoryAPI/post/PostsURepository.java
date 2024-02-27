@@ -27,5 +27,8 @@ public interface PostsURepository extends JpaRepository<PostsUsername, Integer> 
     @Query("SELECT NEW com.savory.savoryAPI.post.entity.PostsUsername(p.postId, p.userID, p.headline, p.ingredients, p.recipe, p.img, p.tags, p.postdate, u.username) FROM Posts p JOIN Person u ON p.userID = u.id WHERE p.postId IN (SELECT i.postId FROM Interaction i WHERE i.userId = :userId AND i.isBookmarked = true)")
     List<PostsUsername> findBookmarks(int userId);
 
+    @Query("SELECT NEW com.savory.savoryAPI.post.entity.PostsUsername(p.postId, p.userID, p.headline, p.ingredients, p.recipe, p.img, p.tags, p.postdate, u.username) FROM Posts p JOIN Person u ON p.userID = u.id WHERE p.tags LIKE CONCAT('%', :tag, '%') or p.headline LIKE CONCAT('%', :tag, '%')")
+    List<PostsUsername> findPostsByTag(String tag, Pageable pageable);
+
 }
 

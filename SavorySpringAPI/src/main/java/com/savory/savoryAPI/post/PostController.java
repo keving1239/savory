@@ -42,6 +42,14 @@ public class PostController {
         return postService.findBookmarks(userId);
     }
 
+    @GetMapping("/taggedPosts/{tag}")
+    public List<PostsUsernameDto> getUsernames(@PathVariable String tag,
+                                               @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
+                                               @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
+        return postService.findPostsByTag(tag, pageNumber, pageSize);
+    }
+
+
     @GetMapping("/byUserId/{userID}")
     public List<PostsDto> getUserPosts(@PathVariable int userID)
     {
