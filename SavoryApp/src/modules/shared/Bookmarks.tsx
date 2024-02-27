@@ -21,7 +21,6 @@ import { postInteraction, updateInteraction, deleteInteraction } from '../../red
 export default function Bookmarks({ id }: { id?: number }) {
     var recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     // State
-    console.log("RECIPES: " + JSON.stringify(recipes))
     const { post } = useParams();
     const { filters } = useParams();
     const [filteredRecipes, setFilteredRecipes] = useState(recipes);
