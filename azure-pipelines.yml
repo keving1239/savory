@@ -62,6 +62,12 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish JAR'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/SavorySpringAPI/.mvn/wrapper/maven-wrapper.jar'
+        ArtifactName: 'jarArtifact'
         
 - stage: Deploy
   displayName: 'Deploy Stage'
@@ -78,8 +84,9 @@ stages:
               inputs:
                 buildType: 'current'
                 downloadType: 'single'
-                artifactName: 'drop'
+                artifactName: 'jarArtifact'
                 downloadPath: '$(Build.ArtifactStagingDirectory)'
+
             - task: AzureWebApp@1
               inputs:
                 azureSubscription: 'SavoryServiceConnection'
