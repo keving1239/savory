@@ -106,8 +106,6 @@ stages:
               inputs:
                 ConnectionType: 'AzureRM'
                 azureSubscription: 'SavoryServiceConnection'
-                appType: 'webApp'
-                WebAppName: 'Savory'  # Update with your Azure Web App name
+                appType: 'webAppLinux'
+                WebAppName: 'Savory'
                 packageForLinux: '$(Build.ArtifactStagingDirectory)/drop'
-                enableCustomDeployment: true
-                DeploymentType: 'webDeploy'
