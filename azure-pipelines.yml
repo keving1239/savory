@@ -94,12 +94,11 @@ stages:
                 artifactName: 'drop'
                 downloadPath: '$(Build.ArtifactStagingDirectory)'
 
-            - task: AzureRmWebAppDeployment@4
+            - task: AzureWebApp@1
               inputs:
-                ConnectionType: 'AzureRM'
                 azureSubscription: 'SavoryServiceConnection'
-                appType: 'webAppLinux'
-                WebAppName: 'Savory'
+                appType: 'webApp'
+                appName: 'Savory'
                 package: '$(Build.ArtifactStagingDirectory)/drop'
             
             # Copy files to wwwroot directory using FTP
