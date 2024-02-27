@@ -35,6 +35,10 @@ stages:
         npm run build
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+    
+    - script: ./mvnw clean install
+      displayName: 'Run Maven Build'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI'
 
     - task: CopyFiles@2
       inputs:
