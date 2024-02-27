@@ -124,6 +124,27 @@ const recipesSlice = createSlice({
                 console.log("error: " + state.error + "here")
             }
         );
+        builder
+        .addCase(
+            fetchTaggedPosts.pending, (state: LocalRecipesState) => {
+                state.loading = true;
+                console.log('Tagged Posts Fetch Started...');
+            }
+        ).addCase(
+            fetchTaggedPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+                state.recipes = action.payload;
+                state.loading = false;
+                console.log('Tagged Posts Fetch Successful...');
+                console.log(state.recipes);
+            }
+        ).addCase(
+            fetchTaggedPosts.rejected, (state: LocalRecipesState, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                console.log('Tagged Posts Fetch Failed...');
+                console.log("error: " + state.error + "here")
+            }
+        );
     },
 });
 
@@ -140,13 +161,13 @@ export const fetchRecipes = createAsyncThunk(
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
-                tags: item?.tags?.split(' ') || [],
+                tags: item?.tags?.split(',#') || [],
                 id: item.postId,
                 ownerId: item.userID,
                 title: item.headline,
                 img: item.img,                 
                 date: item.postdate,
-                ingredients: item?.ingredients?.split(' ') || [],
+                ingredients: item?.ingredients?.split(',') || [],
                 recipe: item.recipe,
                 author: item.username,
             }
@@ -165,13 +186,13 @@ export const fetchBookmarks = createAsyncThunk(
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
-                tags: item?.tags?.split(' ') || [],
+                tags: item?.tags?.split(',#') || [],
                 id: item.postId,
                 ownerId: item.userID,
                 title: item.headline,
                 img: item.img,                 
                 date: item.postdate,
-                ingredients: item?.ingredients?.split(' ') || [],
+                ingredients: item?.ingredients?.split(',') || [],
                 recipe: item.recipe,
                 author: item.username,
             }
@@ -190,15 +211,42 @@ export const fetchUserPosts = createAsyncThunk(
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
-                tags: item?.tags?.split(' ') || [],
+                tags: item?.tags?.split(',') || [],
                 id: item.postId,
                 ownerId: item.userID,
                 title: item.headline,
                 img: item.img,                 
                 date: item.postdate,
-                ingredients: item?.ingredients?.split(' ') || [],
+                ingredients: item?.ingredients?.split(',') || [],
                 recipe: item.recipe,
                 author: username || '',
+            }
+         });
+        return recipes;
+    },
+);
+
+export const fetchTaggedPosts = createAsyncThunk(
+    '/api/recipes/tagged',
+    async ({ tag, pageNumber, pageSize = 12}: {tag: string | undefined; pageNumber: number; pageSize?: number}) => {
+        console.log("TAG " + tag)
+        console.log("PAGE " + pageNumber )
+        const response = await fetch(`http://localhost:8080/api/posts/taggedPosts/${tag}?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
+            method: 'GET',
+        }));
+         const data = await response.json();
+         const recipes: Record<number, Recipe> = {};
+         data.forEach((item: any) => {
+            recipes[item.postId] = {
+                tags: item?.tags?.split(',#') || [],
+                id: item.postId,
+                ownerId: item.userID,
+                title: item.headline,
+                img: item.img,                 
+                date: item.postdate,
+                ingredients: item?.ingredients?.split(',') || [],
+                recipe: item.recipe,
+                author: item.username,
             }
          });
         return recipes;

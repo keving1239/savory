@@ -21,11 +21,11 @@ export default function Feed({ id }: { id?: number }) {
     const navigate = useNavigate();
     
     const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
+    const length = Object.keys(recipes).length;
     var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     // State
     const { post } = useParams();
     const { filters } = useParams();
-    const [filteredRecipes, setFilteredRecipes] = useState(recipes);
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
     const dispatch = useDispatch<AppDispatch>();
@@ -43,15 +43,30 @@ export default function Feed({ id }: { id?: number }) {
     const handleNextPage = () => {
         pageNumber = pageNumber + 1
         dispatch(changePage({ pageNumber: pageNumber }));
-        navigate(`/load/feed`);
+        var page = '';
+        if (filters) {
+            page = `/load/${filters}`;
+        } else {
+            page = `/load/feed`
+        }
+        navigate(`${page}`);
 
     };
 
     const handlePreviousPage = () => {
         pageNumber = pageNumber - 1;
+        console.log(pageNumber)
         dispatch(changePage({ pageNumber: pageNumber }));
-        navigate(`/load/feed`);
+        var page = '';
+        if (filters) {
+            page = `/load/${filters}`;
+        } else {
+            page = `/load/feed`
+        }
+        navigate(`${page}`);
     };
+
+    /*
     // filter
     function parseFilters() {
         if (!filters) return recipes;
@@ -103,12 +118,14 @@ export default function Feed({ id }: { id?: number }) {
     useEffect(() => {
         setFilteredRecipes(parseFilters());
     }, [filters]);
+    */
+
 
     return (
         <Box>
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
-                {Object.values(filteredRecipes).map((recipe) => {
+                {Object.values(recipes).map((recipe) => {
                     if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, userId: recipe.ownerId, key: recipe.title, openHandler }} />
                     } else {
@@ -121,9 +138,10 @@ export default function Feed({ id }: { id?: number }) {
                     null : (
                         <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
                     )}
-                <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
+                {length === 12 ?
+                    <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
+                    : null }
             </Box>
-            {/* <CircularProgress sx={{ mt: '2vh' }} /> */}
         </Box>
     );
 }

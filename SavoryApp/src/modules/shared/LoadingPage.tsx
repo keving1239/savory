@@ -4,7 +4,7 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
-import { fetchRecipes, loadPage, fetchBookmarks, fetchUserPosts } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes, loadPage, fetchBookmarks, fetchUserPosts, fetchTaggedPosts } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingPage = () => {
@@ -19,8 +19,6 @@ const LoadingPage = () => {
     async function loadFeed() {
         setStatus('Loading Recipes...');
         await loadRecipes();
-        setStatus('Loading Interactions...');
-        await loadInteractions();
         setStatus('Loading Complete...');
     }
 
@@ -35,6 +33,13 @@ const LoadingPage = () => {
         await loadUserPosts();
         setStatus('Loading Complete...');
     }
+
+    async function loadFilteredFeed() {
+        setStatus('Loading Recipes...');
+        await loadFilters();
+        setStatus('Loading Complete...');
+    }
+
 
         // loading functions
     async function loadBooks() {
@@ -57,12 +62,15 @@ const LoadingPage = () => {
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
 
-    async function loadInteractions() {
-        const userId = savoryUser?.user?.id || -1;
+
+    async function loadFilters() {
+        const tag = nextPage
+        dispatch(loadPage({loaded: true}))
         try {
-            await dispatch(fetchInteractions({userId}));
-        } catch(error){console.error("Error Fetching Interactions: ", error)}
+            await dispatch(fetchTaggedPosts({tag, pageNumber}));
+        } catch(error){console.error("Error Fetching Tagged Recipes: ", error)}
     }
+
     // effect
     useEffect(() => {
         if(!savoryUser || !savoryUser.user) return;
@@ -70,8 +78,10 @@ const LoadingPage = () => {
             loadBookmarks();
         } else if (nextPage === "feed") {
             loadFeed();
-        } else {
+        } else if (userId) {
             loadProfile();
+        } else {
+            loadFilteredFeed();
         }
     }, [savoryUser]);
     useEffect(() => {
@@ -81,8 +91,10 @@ const LoadingPage = () => {
             page = savoryUser.user?.username ? `/feed/bookmarks` : '/profile/edit'
         } else if (nextPage === "feed") {
             page = savoryUser.user?.username ? `/feed` : '/profile/edit'
-        } else {
+        } else if (userId) {
             page = savoryUser.user?.username ? `/profile/${nextPage}` : '/profile/edit'
+        } else {
+            page = savoryUser.user?.username ? `/feed/${nextPage}` : '/load/feed'
         }
         navigate(`${page}`);
     },[status]);
