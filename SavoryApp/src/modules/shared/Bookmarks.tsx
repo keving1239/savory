@@ -105,10 +105,10 @@ export default function Bookmarks({ id }: { id?: number }) {
     );
 }
 
-const RecipeAvatar = ({ author }: { author: string }) => {
+const RecipeAvatar = ({ author, userId }: { author: string, userId: number }) => {
     return (
         <Tooltip title={author}>
-            <Link to={`/profile/${author}`}><IconButton>
+            <Link to={`/load/${author}/${String(userId)}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
@@ -169,7 +169,7 @@ const RecipeItem = ({ id, openHandler }: { id: number, openHandler: (id: number)
                 <CardHeader
                     title={
                         <Grid container justifyContent='space-between' alignItems='center'>
-                            <Grid item><RecipeAvatar author={recipe.author} /></Grid>
+                            <Grid item><RecipeAvatar author={recipe.author} userId={recipe.ownerId} /></Grid>
                             <Grid item xs={8}><Typography variant='h5' noWrap>{recipe.title}</Typography></Grid>
                             <Grid item><RecipeExpandButton {...{ id, openHandler }} /></Grid>
                         </Grid>

@@ -1,8 +1,6 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchOptions } from "../store";
-import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from "../store";
-import { fetchUser } from "../User/user-slice";
 
 export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
  
@@ -74,7 +72,6 @@ const recipesSlice = createSlice({
                 state.recipes = action.payload;
                 state.loading = false;
                 console.log('Recipe Fetch Successful...');
-                console.log(state.recipes);
             }
         ).addCase(
             fetchRecipes.rejected, (state: LocalRecipesState, action) => {
@@ -96,7 +93,6 @@ const recipesSlice = createSlice({
                 state.recipes = action.payload;
                 state.loading = false;
                 console.log('Bookmark Fetch Successful...');
-                console.log(state.recipes);
             }
         ).addCase(
             fetchBookmarks.rejected, (state: LocalRecipesState, action) => {
@@ -141,7 +137,6 @@ export const fetchRecipes = createAsyncThunk(
         }));
         console.log("PAGE: " + pageNumber)
          const data = await response.json();
-         console.log(data)
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
@@ -167,7 +162,6 @@ export const fetchBookmarks = createAsyncThunk(
             method: 'GET',
         }));
          const data = await response.json();
-         console.log(data)
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
@@ -193,7 +187,6 @@ export const fetchUserPosts = createAsyncThunk(
             method: 'GET',
         }));
          const data = await response.json();
-         console.log(data)
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {

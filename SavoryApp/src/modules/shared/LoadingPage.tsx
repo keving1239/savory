@@ -4,14 +4,11 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { AppDispatch, RootState } from '../../redux/store';
-import { useAuth0 } from '@auth0/auth0-react';
-import { fetchUser } from '../../redux/User/user-slice';
 import { fetchRecipes, loadPage, fetchBookmarks, fetchUserPosts } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingPage = () => {
     const {nextPage, userId} = useParams();
-    console.log("NEXT PAGE: " + nextPage)
     // redux state
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();

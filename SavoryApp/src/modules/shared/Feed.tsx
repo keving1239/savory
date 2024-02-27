@@ -109,7 +109,6 @@ export default function Feed({ id }: { id?: number }) {
             <RecipePopup {...{ open, id: currentPost, closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {Object.values(filteredRecipes).map((recipe) => {
-                    console.log("PAGE NUMBER: " + pageNumber)
                     if (recipe.id > 0 && recipes[recipe.id]) {
                         return <RecipeItem {...{ id: recipe.id, userId: recipe.ownerId, key: recipe.title, openHandler }} />
                     } else {

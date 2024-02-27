@@ -2,12 +2,10 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Typography, Grid, Paper, Box, IconButton } from '@mui/material';
-import {Favorite, FavoriteBorder, Link, Edit} from '@mui/icons-material';
-import ProfileFeed from '../../shared/ProfileFeed';
+import {FavoriteBorder, Link, Edit} from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store';
 import { fetchLocalUser } from '../../../redux/User/user-slice';
-import { fetchUserPosts } from '../../../redux/Recipes/recipes-slice';
 import Bookmarks from '../../shared/Bookmarks';
 
 const Profile = () => {
