@@ -25,6 +25,21 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
+    
+    - task: Maven@3
+      inputs:
+        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
+        goals: 'clean package'
+        options: '-Dmaven.test.skip'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.17'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
 
     - script: |
         npm install
@@ -35,10 +50,6 @@ stages:
         npm run build
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
-    
-    - script: ./mvnw clean install
-      displayName: 'Run Maven Build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI'
 
     - task: CopyFiles@2
       inputs:
