@@ -10,6 +10,7 @@ trigger:
   paths:
     include:
       - SavoryApp/*
+      - SavorySpringAPI/*
 
 pool:
   vmImage: ubuntu-latest
@@ -25,10 +26,8 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
     
-    - task: Maven@3
-      inputs:
-        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean install package'
+    - script: './mvnw clean install package'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI'
 
     - script: |
         npm install
