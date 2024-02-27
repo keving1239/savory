@@ -100,3 +100,14 @@ stages:
                 appName: 'Savory'
                 appType: 'webApp'
                 package: '$(Build.ArtifactStagingDirectory)/drop'
+            
+            # Additional step to deploy the frontend React application
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: 'SavoryServiceConnection'
+                appType: 'webApp'
+                WebAppName: 'Savory'  # Update with your Azure Web App name
+                packageForLinux: '$(Build.ArtifactStagingDirectory)/drop'
+                enableCustomDeployment: true
+                DeploymentType: 'webDeploy'
