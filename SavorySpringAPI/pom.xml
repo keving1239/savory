@@ -14,7 +14,7 @@
 	<name>savoryAPI</name>
 	<description>SpringApplication for Savory</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>21.0.2</java.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -149,8 +149,8 @@
 			<artifactId>maven-compiler-plugin</artifactId>
 			<version>3.9.0</version>
 			<configuration>
-				<source>21</source>
-				<target>21</target>
+				<source>21.0.2</source>
+				<target>21.0.2</target>
 			</configuration>
 			</plugin>
 
