@@ -6,9 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.jwt.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AuthVerifier {
     @Value("${auth0.namespace}")
