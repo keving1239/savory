@@ -24,6 +24,11 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
+    
+    - task: Maven@3
+      inputs:
+        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
+        goals: 'clean install package'
 
     - script: |
         npm install
