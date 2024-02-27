@@ -24,7 +24,7 @@ const Post = ({ id }: { id: number }) => {
                     </Grid>
                     <Grid container item justifyContent='center' alignItems='center'>
                         <Grid item><Typography>Posted by</Typography></Grid>
-                        <Grid item><Link to={`/profile/${recipe.author}/${recipe.id}`}>
+                        <Grid item><Link to={`/load/${recipe.author}/${recipe.ownerId}`}>
                             <Button variant='text' fullWidth>
                                 <Typography noWrap textTransform='none' maxWidth='50vw'>{recipe.author}</Typography>
                             </Button>

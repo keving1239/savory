@@ -30,6 +30,7 @@ const ResponsiveAppBar = () => {
   }
 
   const username = user?.username || '';
+  const userId = String(user?.id) || '';
   const img = user?.img || '';
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null); 
   const openProfileOptions = (event: React.MouseEvent<HTMLElement>) => {
@@ -56,7 +57,7 @@ const ResponsiveAppBar = () => {
             </Grid>
             <Grid item xs={1}>
               <ProfileButton {...{username, img, openProfileOptions}}/>
-              <ProfileOptions {...{username, profileAnchor, closeProfileOptions, isAuthenticated: savoryAuth, logoutHandler, loginHandler}}/>
+              <ProfileOptions {...{username, userId, profileAnchor, closeProfileOptions, isAuthenticated: savoryAuth, logoutHandler, loginHandler}}/>
             </Grid>
           </Grid>
         </Grid>
@@ -119,13 +120,13 @@ const ProfileButton = ({username, img, openProfileOptions} :
   );
 }
 
-const ProfileOptions = ({username, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler} :
-   {username: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, isAuthenticated: boolean,
+const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler} :
+   {username: string, userId: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, isAuthenticated: boolean,
      logoutHandler: () => void, loginHandler: () => void}) => {
 
     const dropDownOptions = isAuthenticated ? 
     [
-      { to: `/profile/${username}`, text: 'Profile' },
+      { to: `/load/${username}/${userId}`, text: 'Profile' },
       { to: `/settings`, text: 'Settings' },
     ] : [];
     return(
