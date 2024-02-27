@@ -38,18 +38,12 @@ class PostControllerTest
 
                 postsDto, postsDto2, postsDto3
         );
-
         // Mock the behavior of the postService
         when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedPosts);
-
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
-
         // Assert
         assertEquals(expectedPosts, actualPosts);
-
-        System.out.println(actualPosts);
-        System.out.println(expectedPosts);
         // Verify that the findPostByUserID method of postService is called with the correct argument
         verify(postService, times(1)).findPostByUserID(userId);
 
@@ -68,18 +62,12 @@ class PostControllerTest
 
                 postsDto, postsDto2, postsDto3
         );
-
         // Mock the behavior of the postService
         when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedPosts);
-
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
-
         // Assert
         assertEquals(0, actualPosts.size());
-
-//        System.out.println(actualPosts);
-//        System.out.println(expectedPosts);
         // Verify that the findPostByUserID method of postService is called with the correct argument
         verify(postService, times(1)).findPostByUserID(userId);
 
@@ -98,21 +86,13 @@ class PostControllerTest
 
                 postsDto, postsDto2, postsDto3
         );
-
         List<PostsDto> expectedSpecifics = Arrays.asList(expectedPosts.get(0), expectedPosts.get(1));
-
-
         // Mock the behavior of the postService
         when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedSpecifics);
-
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
-
         // Assert
         assertEquals(expectedSpecifics, actualPosts);
-
-        System.out.println(actualPosts);
-        System.out.println(expectedSpecifics);
         // Verify that the findPostByUserID method of postService is called with the correct argument
         verify(postService, times(1)).findPostByUserID(userId);
 

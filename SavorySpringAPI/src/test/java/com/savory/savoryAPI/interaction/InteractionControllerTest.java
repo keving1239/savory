@@ -3,14 +3,12 @@ package com.savory.savoryAPI.interaction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.savory.savoryAPI.interaction.dto.InteractionDto;
 
 @ExtendWith(SpringExtension.class)
