@@ -148,10 +148,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.9.0</version> <!-- or later version that supports Java 17 -->
 				<configuration>
-					<source>17</source>
-					<target>17</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
