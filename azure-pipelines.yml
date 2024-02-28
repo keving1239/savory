@@ -59,10 +59,10 @@ stages:
         
     - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: 'build'
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
         includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
 
     ## Publish the zip file
     - task: PublishBuildArtifacts@1
