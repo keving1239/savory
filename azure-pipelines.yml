@@ -55,7 +55,7 @@ stages:
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
         Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/myZip.zip'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
     - task: ArchiveFiles@2
       inputs:
@@ -67,7 +67,7 @@ stages:
     ## Publish the zip file
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/myZip.zip'
         ArtifactName: 'drop'
     
     - task: PublishBuildArtifacts@1
