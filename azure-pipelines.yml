@@ -100,7 +100,7 @@ stages:
                 azureSubscription: 'SavoryServiceConnection'
                 appType: 'webApp'
                 WebAppName: 'Savory'
-                packageForLinux: '$(System.DefaultWorkingDirectory)/drop'
+                packageForLinux: '$(Build.ArtifactStagingDirectory)/drop'
             
             # Copy files to wwwroot directory using FTP
             # - task: FtpUpload@2
