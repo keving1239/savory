@@ -55,7 +55,7 @@ stages:
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
         Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/myZip.zip'
         
     - task: ArchiveFiles@2
       inputs:
