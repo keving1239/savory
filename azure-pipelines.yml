@@ -75,7 +75,7 @@ stages:
   jobs: 
   - deployment: DeployJob
     displayName: 'Deployment Job'
-    environment: 'Production'
+    environment: 'Development'
     strategy:
       runOnce:
         deploy:
