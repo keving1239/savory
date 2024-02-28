@@ -11,7 +11,7 @@ const Error404 = () => {
       navigate('/');
     }, 2500);
     return () => clearTimeout(timeout);
-  });
+  },[]);
   return(
     <Box>
       <Typography variant='h2' mt='10vh'>Nothing Here</Typography>
