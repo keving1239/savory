@@ -10,7 +10,7 @@ trigger:
   paths:
     include:
       - SavoryApp/*
-      - SavorySpringAPI/*
+      # - SavorySpringAPI/*
 
 pool:
   vmImage: windows-latest
@@ -26,20 +26,20 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
     
-    - task: Maven@3
-      inputs:
-        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean package'
-        options: '-Dmaven.test.skip'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.17'
-        mavenVersionOption: 'Default'
-        mavenOptions: '-Xmx3072m'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
+    # - task: Maven@3
+    #   inputs:
+    #     mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
+    #     goals: 'clean package'
+    #     options: '-Dmaven.test.skip'
+    #     publishJUnitResults: true
+    #     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    #     javaHomeOption: 'JDKVersion'
+    #     jdkVersionOption: '1.17'
+    #     mavenVersionOption: 'Default'
+    #     mavenOptions: '-Xmx3072m'
+    #     mavenAuthenticateFeed: false
+    #     effectivePomSkip: false
+    #     sonarQubeRunAnalysis: false
 
     - script: |
         npm install
@@ -57,22 +57,22 @@ stages:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
+    # - task: ArchiveFiles@2
+    #   inputs:
+    #     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    #     includeRootFolder: false
+    #     archiveType: 'zip'
+    #     archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
 
     ## Publish the zip file
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)/myZip.zip'
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
     
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish JAR'
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
-        ArtifactName: 'jarArtifact'
+    # - task: PublishBuildArtifacts@1
+    #   displayName: 'Publish JAR'
+    #   inputs:
+    #     PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
+    #     ArtifactName: 'jarArtifact'
         
