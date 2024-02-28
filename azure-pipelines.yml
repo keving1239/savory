@@ -51,11 +51,11 @@ stages:
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
 
-    # - task: CopyFiles@2
-    #   inputs:
-    #     SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
     - task: ArchiveFiles@2
       inputs:
