@@ -136,7 +136,7 @@ export const fetchRecipes = createAsyncThunk(
                 userId: item.userId,
                 title: item.headline,
                 img: item.img,                 
-                date: item.postdate,
+                date: item.postdate?.substring(0, 10),
                 ingredients: item.ingredients?.split(',') || [],
                 recipe: item.recipe,
                 author: item.username,

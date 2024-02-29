@@ -66,6 +66,9 @@ public class InteractionService {
     public Integer getLikeCount(int postId) {
         return interactionRepository.getLikeCount(postId);
     }
+    public Integer getShareCount(int postId) {
+        return interactionRepository.getShareCount(postId);
+    }
 
     public Integer getBookmarkCount(int postId) {
         return interactionRepository.getBookmarkCount(postId);

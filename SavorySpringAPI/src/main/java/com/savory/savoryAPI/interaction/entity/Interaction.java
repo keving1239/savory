@@ -27,6 +27,9 @@ public class Interaction {
     @Column(name = "liked", nullable = false)
     boolean isLiked;
 
+    @Column(name = "shared", nullable = false)
+    boolean isShared;
+
     @Column(name = "bookmarked", nullable = false)
     boolean isBookmarked;
 }

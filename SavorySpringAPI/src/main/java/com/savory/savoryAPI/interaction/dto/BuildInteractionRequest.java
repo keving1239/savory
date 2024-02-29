@@ -9,5 +9,6 @@ public class BuildInteractionRequest {
     int postId;
     int userId;
     boolean isLiked;
+    boolean isShared;
     boolean isBookmarked;
 }

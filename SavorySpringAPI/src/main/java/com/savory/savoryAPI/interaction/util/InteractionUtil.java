@@ -10,6 +10,7 @@ public class InteractionUtil {
                 .userId(interaction.getUserId())
                 .postId(interaction.getPostId())
                 .isLiked(interaction.isLiked())
+                .isShared(interaction.isShared())
                 .isBookmarked(interaction.isBookmarked())
                 .build();
     }

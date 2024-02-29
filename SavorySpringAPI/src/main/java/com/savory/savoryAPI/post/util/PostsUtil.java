@@ -35,6 +35,7 @@ public class PostsUtil
        .ingredients(post.getIngredients())
        .recipe(post.getRecipe())
        .img(post.getImg())
+       .postdate(post.getPostdate())
        .tags(post.getTags())
        .build();
    }
@@ -42,15 +43,16 @@ public class PostsUtil
     public static PostsUsernameDto buildPostUsernameDto(PostsUsername post)
     {
         return PostsUsernameDto.builder()
-                .postId(post.getPostId())
-                .userId(post.getUserId())
-                .headline(post.getHeadline())
-                .ingredients(post.getIngredients())
-                .recipe(post.getRecipe())
-                .img(post.getImg())
-                .tags(post.getTags())
-                .username(post.getUsername())
-                .build();
+        .postId(post.getPostId())
+        .userId(post.getUserId())
+        .headline(post.getHeadline())
+        .ingredients(post.getIngredients())
+        .recipe(post.getRecipe())
+        .img(post.getImg())
+        .tags(post.getTags())
+        .postdate(post.getPostdate())
+        .username(post.getUsername())
+        .build();
     }
 
 

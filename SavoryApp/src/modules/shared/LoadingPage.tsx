@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect,useState } from 'react';
+import { useNavigate,useParams } from 'react-router-dom';
+import { Box,Typography,CircularProgress } from '@mui/material';
+import { useDispatch,useSelector } from 'react-redux';
 import React from 'react';
-import { AppDispatch, RootState } from '../../redux/store';
+import { AppDispatch,RootState } from '../../redux/store';
 
 const LoadingPage = () => {
-    const {nextPage, userId} = useParams();
+    const {nextPage,userId} = useParams();
     // redux state
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
     // loading resources
-    const [status, setStatus] = useState('Loading...');
+    const [status,setStatus] = useState('Loading...');
     async function loadFeed() {
         setStatus('Loading Recipes...');
         await loadRecipes();
@@ -44,20 +44,20 @@ const LoadingPage = () => {
         const userId = savoryUser?.user?.id || -1;
         // try {
         //     await dispatch(fetchBookmarks({userId}));
-        // } catch(error){console.error("Error Fetching Bookmarks: ", error)}
+        // } catch(error){console.error("Error Fetching Bookmarks: ",error)}
     }
 
     async function loadUserPosts() {
         // try {
-        //     await dispatch(fetchUserPosts({userId: Number(userId), username: nextPage}));
-        // } catch(error){console.error("Error Fetching Bookmarks: ", error)}
+        //     await dispatch(fetchUserPosts({userId: Number(userId),username: nextPage}));
+        // } catch(error){console.error("Error Fetching Bookmarks: ",error)}
     }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
         // dispatch(loadPage({loaded: true}))
         // try {
-        //     await dispatch(fetchRecipes({userId, pageNumber}));
-        // } catch(error){console.error("Error Fetching Recipes: ", error)}
+        //     await dispatch(fetchRecipes({userId,pageNumber}));
+        // } catch(error){console.error("Error Fetching Recipes: ",error)}
     }
 
 
@@ -65,8 +65,8 @@ const LoadingPage = () => {
         const tag = nextPage
         // dispatch(loadPage({loaded: true}))
         // try {
-        //     await dispatch(fetchTaggedPosts({tag, pageNumber}));
-        // } catch(error){console.error("Error Fetching Tagged Recipes: ", error)}
+        //     await dispatch(fetchTaggedPosts({tag,pageNumber}));
+        // } catch(error){console.error("Error Fetching Tagged Recipes: ",error)}
     }
 
     // effect
@@ -81,7 +81,7 @@ const LoadingPage = () => {
         } else {
             loadFilteredFeed();
         }
-    }, [savoryUser]);
+    },[savoryUser]);
     useEffect(() => {
         if(status != 'Loading Complete...') return;
         var page = "";

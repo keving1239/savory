@@ -6,6 +6,7 @@ import com.savory.savoryAPI.post.entity.PostsUsername;
 import com.savory.savoryAPI.post.util.PostsUtil;
 import com.savory.savoryAPI.post.dto.PostsDto;
 import com.savory.savoryAPI.post.entity.Posts;
+import com.sun.jna.platform.win32.Sspi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,10 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +27,6 @@ public class PostService
 {
     private final PostRepository postRepository;
     private final PostsURepository postsURepository;
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public PostService(PostRepository postRepository, PostsURepository postsURepository) {
@@ -56,9 +57,14 @@ public class PostService
 
     public List<PostsUsernameDto> findSearchedPosts(String query, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
-        List<Object[]> q = postsURepository.findSearchedPosts(query, pageable);
-        for(Object qq : q) System.out.println(qq.toString());
-        List<PostsUsername> posts = new ArrayList<>();
+        List<Object[]> search = postsURepository.findSearchedPosts(query, pageable);
+        List<PostsUsername> posts = search.stream().map((row) -> {
+            int postId = (int) row[0], userId = (int) row[1];
+            String headline = (String) row[2], ingredients = (String) row[3], recipe = (String) row[4];
+            String img = (String) row[5], tags = (String) row[6], username = (String) row[8];
+            Timestamp postdate = (Timestamp) row[7];
+            return new PostsUsername(postId,userId,headline,ingredients,recipe,img,tags,postdate,username);
+        }).toList();
         return posts.stream()
                 .map(PostsUtil::buildPostUsernameDto)
                 .collect(Collectors.toList());
@@ -106,6 +112,8 @@ public class PostService
     }
 
     private Posts reify(BuildPostRequest request, Posts target) {
+        Date clock = new Date();
+        Timestamp time = new Timestamp(clock.getTime());
         target.setUserId(request.getUserId());
         target.setHeadline(request.getHeadline());
         target.setIngredients(request.getIngredients()
@@ -115,7 +123,7 @@ public class PostService
         target.setImg(request.getImg());
         target.setTags(request.getTags()
             .replaceAll("#",""));
-        target.setPostdate(LocalDateTime.now().format(dtf));
+        target.setPostdate(time);
         return postRepository.save(target);
     }
 }
