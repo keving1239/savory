@@ -60,7 +60,7 @@ const PostCreate = () => {
       label: 'Title', placeholder: 'Southwest Salad', required: true, variant: 'outlined', margin: 'dense', fullWidth: true}},
     {tip: 'URL for a picture of your food', size: 12,
       fieldProps: {value: img, type: 'text', onChange: (e) => setImg(e.target.value),
-      label: 'Image', placeholder: 'https://images.unsplash.com/...', required: true,}},
+      label: 'Image', placeholder: 'https://images.unsplash.com/...', required: true, fullWidth: true}},
     {tip: 'Ingredients in this food (list each ingredient seperated by new line or commas)', size: 5.9,
       fieldProps: {value: ingredients, type: 'text', onChange: (e) => setIngredients(e.target.value), error: ingredientsError.error, helperText: ingredientsError.helperText,
       label: 'Ingredients', placeholder: '1 Head Romaine Lettuce\n12 Cherry Tomatoes\n1 Can Black Beans\n...', 
@@ -97,3 +97,4 @@ const PostCreate = () => {
 }
 
 export default PostCreate;
+<PostCreate/>

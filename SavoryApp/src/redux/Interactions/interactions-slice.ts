@@ -1,8 +1,9 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchOptions } from "../store";
+import { BackdropProps } from "@mui/material";
 
 
-interface RecipeInteraction {
+export interface RecipeInteraction {
     recipeId: number,
     liked: boolean,
     shared: boolean,
@@ -85,7 +86,7 @@ export const fetchInteractions = createAsyncThunk(
             interactions[item.postId] = {
                 recipeId: item.postId,
                 liked: item.liked,
-                shared: false,
+                shared: item.shared,
                 bookmarked: item.bookmarked,
             };
         });
@@ -95,23 +96,23 @@ export const fetchInteractions = createAsyncThunk(
 
 export const postInteraction = createAsyncThunk(
     'post-interaction',
-    async ({ postId, userId, liked, bookmarked }: 
-        { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
+    async ({ postId, userId, liked, shared, bookmarked }: 
+        { postId: number; userId: number, liked: boolean, shared:boolean, bookmarked: boolean }) => {
         await fetch('http://localhost:8080/api/interaction/postInteraction', fetchOptions({
-            method: 'POST', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
+            method: 'POST', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked, isShared: shared }),
         }));
-        return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
+        return {recipeId: postId, bookmarked, liked, shared} as RecipeInteraction;
     }
 );
 
 export const updateInteraction = createAsyncThunk(
     'update-interaction',
-    async ({ postId, userId, liked, bookmarked }: 
-        { postId: number; userId: number, liked: boolean, bookmarked: boolean }) => {
+    async ({ postId, userId, liked, bookmarked, shared }: 
+        { postId: number; userId: number, liked: boolean, shared:boolean, bookmarked: boolean }) => {
         await fetch('http://localhost:8080/api/interaction/update', fetchOptions({
-            method: 'PUT', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked}),
+            method: 'PUT', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked, isShared: shared }),
         }));
-        return {recipeId: postId, bookmarked, liked} as RecipeInteraction;
+        return {recipeId: postId, bookmarked, liked, shared} as RecipeInteraction;
     }
 );
 

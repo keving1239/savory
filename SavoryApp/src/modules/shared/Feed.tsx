@@ -6,9 +6,10 @@ import {
 } from '@mui/material';
 import React from 'react';
 import {
-    CropFree, Share, Bookmark, BookmarkBorder,
+    CropFree, Bookmark, BookmarkBorder, Report,
     Favorite, Assistant, FavoriteBorder, Close, Edit
 } from '@mui/icons-material';
+import LinkIcon from '@mui/icons-material/Link';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import Post from '../pages/Post/Post';
@@ -16,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 import { Recipe, changePage } from '../../redux/Recipes/recipes-slice';
+import PostCreate from '../pages/Post/Post.create';
 
 export default function Feed({id}: {id?: number}) {
     const navigate = useNavigate();
@@ -33,12 +35,14 @@ export default function Feed({id}: {id?: number}) {
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
+    const [status, setStatus] = useState('Loading Recipes...');
     const [page, setPage] = useState(0);
 
     const length = Object.keys(recipes).length;
+
     // load recipes
     function loadRecipes() {
-        if(username) loadProfile()
+        if(username) loadProfile();
         else if(interaction) loadBookmarks();
         else if(query) loadSearch();
         else setRecipes(feed);
@@ -57,7 +61,7 @@ export default function Feed({id}: {id?: number}) {
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
-                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: username || '',
+                    img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: username || '',
                 }
              });
             setRecipes(recipeItems);
@@ -74,7 +78,7 @@ export default function Feed({id}: {id?: number}) {
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
-                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
+                    img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
                 }
              });
             setRecipes(recipeItems);
@@ -82,7 +86,7 @@ export default function Feed({id}: {id?: number}) {
     }
     async function loadSearch() {
         try {
-            const response = await fetch(`http://localhost:8080/api/posts/search/${query}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/search/${query}?pageNumber=${pageNumber}&pageSize=${12}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -90,20 +94,21 @@ export default function Feed({id}: {id?: number}) {
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
-                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
+                    img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
                 }
              });
-             console.log(recipeItems)
             setRecipes(recipeItems);
         } catch(error) {console.error(error);}
     }
     useEffect(() => {
+        setRecipes({});
+        setStatus('Loading Recipes...');
         loadRecipes();
     }, [query, interaction, username]);
     useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
-            if (Object.keys(recipes).length === 0) navigate('/');
+            if (Object.keys(recipes).length === 0) setStatus('Nothing Here...');
         }, 10000);
         return () => clearTimeout(timer);
     }, [recipes]);
@@ -163,9 +168,8 @@ export default function Feed({id}: {id?: number}) {
             </Box></>
             :
             <Box>
-              <Typography variant='h3' mt='5vh'>Loading...</Typography>
-              <Typography mb='5vh'>Fetching Recipes...</Typography>
-              <CircularProgress />
+              <Typography margin='5vh 0' variant='h3'>{status}</Typography>
+              {status === 'Loading Recipes...' ? <CircularProgress /> : <></>}
             </Box>
             }
         </Box>
@@ -202,18 +206,14 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
     
     // handlers
     const likeHandler = () => {
-        if (!interaction) return dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false }))
-        else if (interaction.liked && !interaction.bookmarked) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
-        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked }));
+        if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: false }));
+        else if (interaction.liked && !interaction.bookmarked && !interaction.shared) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked, shared: interaction.shared }));
     }
     const bookmarkHandler = () => {
-        if (!interaction) return dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: false, bookmarked: true }))
-        else if (!interaction.liked && interaction.bookmarked) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
-        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked }));
-    }
-    const exploreHandler = () => {
-        if(!recipe) return;
-        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
+        if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: false, bookmarked: true, shared: false }));
+        else if (!interaction.liked && interaction.bookmarked && !interaction.shared) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked, shared: interaction.shared }));
     }
     const shareHandler = async () => {
         try {
@@ -222,6 +222,12 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
             const url = feed > 0 ? location.substring(0, feed) + '/profile/' + recipe.author : location;
             await navigator.clipboard.writeText(url + '/' + recipe.id);
         } catch (error) {console.error(error);}
+        if(!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
+        else if(!interaction.shared) dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
+    }
+    const exploreHandler = () => {
+        if(!recipe) return;
+        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
     }
     // Recipe Card
     return (
@@ -253,7 +259,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
                                 <Assistant />
                             </IconButton></Grid>
                             <Grid item><IconButton onClick={shareHandler}>
-                                <Share />
+                                <LinkIcon/>
                             </IconButton></Grid>
                         </Grid></Grid>
                         <Grid item><IconButton onClick={bookmarkHandler}>
@@ -272,9 +278,9 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
             open={open}
             onClose={closeHandler}
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
-                {recipe && username === recipe.author ? 
-                <Link to = {`post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
+            {recipe ? <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
+                {username === recipe.author ? 
+                <Link to = {`/post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
                     <Edit />
                 </IconButton></Link>
                 : <></>
@@ -283,7 +289,80 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
                     <Close />
                 </IconButton>
                 <Post recipe={recipe} />
-            </div>
+                <div style={{ position: 'absolute' , bottom: 0}}>
+                    <PopupInteractions {...{id: recipe.id, author: recipe.author}}/>
+                </div>
+            </div> : <></>}
         </Modal>
+    );
+}
+
+const PopupInteractions = ({id, author} :{id: number, author: string}) => {
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    // interaction handlers
+    const likeHandler = () => {
+        if (!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: false }));
+        else if (interaction.liked && !interaction.bookmarked && !interaction.shared) dispatch(deleteInteraction({ postId: id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked, shared: interaction.shared }));
+    }
+    const bookmarkHandler = () => {
+        if (!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: false, bookmarked: true, shared: false }));
+        else if (!interaction.liked && interaction.bookmarked && !interaction.shared) dispatch(deleteInteraction({ postId: id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked, shared: interaction.shared }));
+    }
+    const shareHandler = async () => {
+        try {
+            const location = window.location.href;
+            const feed = location.search('/feed');
+            const url = feed > 0 ? location.substring(0, feed) + '/profile/' + author : location;
+            await navigator.clipboard.writeText(url + '/' + id);
+        } catch (error) {console.error(error);}
+        if(!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
+        else if(!interaction.shared) dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
+    }
+    const reportHandler = () => {
+        navigate('/report');
+    }
+    
+    const [metrics, setMetrics] = useState({likes: 0, shares: 0, bookmarks: 0});
+    useEffect(() => {
+        loadMetrics();
+    },[interaction]);
+    async function loadMetrics() {
+        const getLikes = await fetch(`http://localhost:8080/api/interaction/post/likes/${id}`,fetchOptions({method: 'GET'}));
+        const getShares = await fetch(`http://localhost:8080/api/interaction/post/shares/${id}`,fetchOptions({method: 'GET'}));
+        const getBookmarks = await fetch(`http://localhost:8080/api/interaction/post/bookmarks/${id}`,fetchOptions({method: 'GET'}));
+        const likeCount = await getLikes.json();
+        const shareCount = await getShares.json();
+        const bookmarkCount = await getBookmarks.json();
+        setMetrics({likes: likeCount, shares: shareCount, bookmarks: bookmarkCount});
+    }
+    return (
+        <Grid container justifyContent={'space-between'} sx={{width: '75vw', backgroundColor: 'white'}}>
+            <Grid container item xs={5} md={4} lg={3} xl={2.5}>
+                <Grid container item alignItems='center' xs={4}>
+                    <Grid><IconButton onClick={likeHandler}>
+                        {interaction && interaction.liked ? <Favorite color='error' /> : <FavoriteBorder />}
+                    </IconButton></Grid>
+                    <Grid item><Typography variant='h6' noWrap align='center'>{metrics.likes}</Typography></Grid>
+                </Grid>
+                <Grid container item alignItems='center' xs={4}>
+                    <Grid item><IconButton onClick={shareHandler}><LinkIcon/></IconButton></Grid>
+                    <Grid item><Typography variant='h6' noWrap align='center'>{metrics.shares}</Typography></Grid>
+                </Grid>
+                <Grid container item alignItems='center' xs={4}>
+                    <Grid item><IconButton onClick={bookmarkHandler}>
+                        {interaction && interaction.bookmarked ? <Bookmark color='secondary' /> : <BookmarkBorder />}
+                    </IconButton></Grid>
+                    <Grid item><Typography variant='h6' noWrap align='center'>{metrics.bookmarks}</Typography></Grid>
+                </Grid>
+            </Grid>
+            <Grid item>
+                <IconButton onClick={reportHandler}><Report/></IconButton>
+            </Grid>
+        </Grid>
     );
 }

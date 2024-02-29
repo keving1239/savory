@@ -42,4 +42,6 @@ public interface InteractionRepository extends JpaRepository<Interaction, Intege
 
     @Query("SELECT COUNT(*) FROM Interaction i WHERE i.postId = :pid AND i.isBookmarked = true")
     Integer getBookmarkCount(int pid);
+    @Query("SELECT COUNT(*) FROM Interaction i WHERE i.postId = :pid AND i.isShared = true")
+    Integer getShareCount(int pid);
 }

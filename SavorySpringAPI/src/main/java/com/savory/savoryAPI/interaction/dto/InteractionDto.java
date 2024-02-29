@@ -10,5 +10,6 @@ public class InteractionDto {
     int postId;
     int userId;
     boolean isLiked;
+    boolean isShared;
     boolean isBookmarked;
 }

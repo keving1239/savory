@@ -3,6 +3,8 @@ package com.savory.savoryAPI.post.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @ToString
@@ -40,7 +42,7 @@ public class PostsUsername {
 //   private String tag2;
 
     @Column(name = "PostDate", nullable = false)
-    private String postdate;
+    private Timestamp postdate;
 
     @Transient
     @Column(name = "username", nullable = false)

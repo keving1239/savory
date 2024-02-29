@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem } from '@mui/material';
+import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem, IconButton } from '@mui/material';
 import { Recipe } from '../../../redux/Recipes/recipes-slice'
+import { RootState, fetchOptions } from '../../../redux/store';
+import { RecipeInteraction } from '../../../redux/Interactions/interactions-slice';
+import { Report, Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@mui/icons-material';
+import LinkIcon from '@mui/icons-material/Link'
+import { useSelector } from 'react-redux';
+import { margin } from '@mui/system';
 
 const Post = ({ recipe }: { recipe: Recipe }) => {
     const chunkedIngredients = recipe.ingredients.reduce<string[][]>((chunkResult, ingredient, index) => {
@@ -10,7 +16,7 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
         if (!chunkResult[chunkIndex]) chunkResult[chunkIndex] = [];
         chunkResult[chunkIndex].push(ingredient);
         return chunkResult;
-    }, []);  
+    }, []);
     return (
         <Paper sx={{ height: '80vh', width: '75vw', overflowY: 'auto' }}>
             <Grid container direction='column'>
@@ -26,9 +32,7 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
                             </Button>
                         </Link></Grid>
                         <Grid item>
-                            <Typography>
-                                {recipe.date}
-                            </Typography>
+                            <Typography>on {recipe.date}</Typography>
                         </Grid>
                     </Grid>
                     <Grid item><RecipeTags tags={recipe.tags} /></Grid>
@@ -113,5 +117,4 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
         </Grid>
     );
 }
-
 export default Post;

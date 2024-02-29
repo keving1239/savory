@@ -59,6 +59,8 @@ package com.savory.savoryAPI.post.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @ToString
@@ -93,7 +95,7 @@ public class Posts {
    private String tags;
 
    @Column(name = "PostDate", nullable = false)
-   private String postdate;
+   private Timestamp postdate;
 
 
 }

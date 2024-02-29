@@ -34,6 +34,10 @@ public class InteractionController {
     public Integer getLikeCount(@PathVariable int postId) {
         return interactionService.getLikeCount(postId);
     }
+    @GetMapping("/post/shares/{postId}")
+    public Integer getShareCount(@PathVariable int postId) {
+        return interactionService.getShareCount(postId);
+    }
     @GetMapping("/post/bookmarks/{postId}")
     public Integer getBookmarkCount(@PathVariable int postId) {
         return interactionService.getBookmarkCount(postId);
