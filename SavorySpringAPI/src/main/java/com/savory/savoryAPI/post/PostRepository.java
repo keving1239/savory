@@ -16,22 +16,20 @@ import java.util.Optional;
 
 
 @Repository
-public interface PostRepository extends JpaRepository<Posts, Long>
+public interface PostRepository extends JpaRepository<Posts, Integer>
 {
-
-   //Delete Still Under Construction
    @Transactional
    @Modifying
    @Query("DELETE FROM Posts WHERE postId = :postId")
-   void deleteBypostId(@Param("postId") int postId);
+   void deleteByPostId(@Param("postId") Integer postId);
    @Query("SELECT p FROM Posts p WHERE p.postId = :postId")
-   Optional<Posts> findBypostId(@Param("postId") int postId);
+   Optional<Posts> findByPostId(@Param("postId") Integer postId);
 
    @Query("SELECT p FROM Posts p WHERE p.postId IN :ids")
-   List<Posts> findAllBypostIdIn(@Param("ids") Collection<Integer> ids);
+   List<Posts> findAllByPostIdIn(@Param("ids") Collection<Integer> ids);
 
-   @Query("SELECT p FROM Posts p WHERE p.userID = :userID")
-   List<Posts> findByUserID(@Param("userID") int userID);
+   @Query("SELECT p FROM Posts p WHERE p.userId = :userId")
+   List<Posts> findByUserId(@Param("userId") Integer userId);
 
 
 }

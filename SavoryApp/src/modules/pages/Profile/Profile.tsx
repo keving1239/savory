@@ -3,49 +3,35 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Typography, Grid, Paper, Box, IconButton } from '@mui/material';
 import {FavoriteBorder, Link, Edit} from '@mui/icons-material';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../redux/store';
-import { fetchLocalUser } from '../../../redux/User/user-slice';
-import Bookmarks from '../../shared/Bookmarks';
+import { useSelector } from 'react-redux';
+import { RootState, fetchOptions } from '../../../redux/store';
+import Feed from '../../shared/Feed';
 
 const Profile = () => {
-    const {username, post} = useParams();
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const navigate = useNavigate();
+    const {username} = useParams();
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const isOwner = user?.username === username;
-    const [status, setStatus] = useState(true);
-    const dispatch = useDispatch<AppDispatch>();
-    async function loadLocalUser() {
-        if (username) {
-            try {
-                await dispatch(fetchLocalUser({ username }));
-            } catch(error){console.error("Error Fetching Local User: ", error)}
-        }
+    const [profile, setProfile] = useState(user ? user : {id: 0, username: 'savory', img: '', bio: 'Welcome to Savory!'});
+
+    // viewed profile retrieval
+    async function retrieveUser() {
+        try {
+            const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
+                method: 'GET'
+            }));
+            const data = await response.json();
+            setProfile({id: data.id, username: data.username, img: data.img, bio: data.bio});
+        } catch(error) {console.error(error);}
     }
-
-        useEffect(() => {
-          const loader = async () => {
-            // Perform asynchronous operations
-            await loadLocalUser();
-            
-            setStatus(false); // Set isLoading to false when loading completes
-          };
-          loader();
-          if (!status) {
-            const page = `/profile/${username}`
-            navigate(`${page}`);
-          }
-        }, []);
-
+    useEffect(() => {
+        if(username != user?.username) retrieveUser();
+    }, [username])
 
     function handleProfileAction() {
         if(isOwner) return navigate(`/profile/edit`);
         console.log(`Liked ${username}'s blog`);
     }
-    const localUser = useSelector((state: RootState) => state.persistedReducer.userReducer.localUser);
-    const displayedUser = isOwner ? user : localUser;
-    console.log(displayedUser);
-
 
     return(
         <Box>
@@ -54,15 +40,15 @@ const Profile = () => {
                     <Grid item xs={6}>
                     <Paper 
                             component='img'
-                            alt={displayedUser?.username}
-                            src={displayedUser?.img}
+                            alt={profile?.username}
+                            src={profile?.img}
                             sx={{minHeight: '37vh', minWidth: '34vw', 
                             maxHeight: '37vh', maxWidth: '34vw', objectFit: 'cover'}}/>
                     </Grid>
                     <Grid item xs={5.5}><Grid container direction={'column'} justifyContent={'space-between'}>
-                        <Typography maxWidth='100%' variant='h4' noWrap>{displayedUser?.username}</Typography>
+                        <Typography maxWidth='100%' variant='h4' noWrap>{profile?.username}</Typography>
                         <br></br>
-                        <Typography maxWidth='100%' maxHeight='37vh' overflow='hidden'>{displayedUser?.bio}</Typography>
+                        <Typography maxWidth='100%' maxHeight='37vh' overflow='hidden'>{profile?.bio}</Typography>
                     </Grid></Grid>
                     <Grid item xs={0.5}><Grid container direction={'column'} justifyContent={'space-between'}>
                         <Grid item>
@@ -78,7 +64,7 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            <Bookmarks></Bookmarks>
+            <Feed/>
         </Box>
     );
 }

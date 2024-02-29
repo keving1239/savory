@@ -2,33 +2,111 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
-    CardMedia, Avatar, IconButton, Modal, Button
+    CardMedia, Avatar, IconButton, Modal, Button, CircularProgress
 } from '@mui/material';
 import React from 'react';
 import {
     CropFree, Share, Bookmark, BookmarkBorder,
-    Favorite, Assistant, FavoriteBorder, Close
+    Favorite, Assistant, FavoriteBorder, Close, Edit
 } from '@mui/icons-material';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
+import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { changePage } from '../../redux/Recipes/recipes-slice';
+import { Recipe, changePage } from '../../redux/Recipes/recipes-slice';
 
-export default function Feed({ id }: { id?: number }) {
+export default function Feed({id}: {id?: number}) {
     const navigate = useNavigate();
-    
-    const recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    const length = Object.keys(recipes).length;
+    const dispatch = useDispatch<AppDispatch>();
+    // redux
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
-    // State
+    // params
+    const { username } = useParams();
     const { post } = useParams();
-    const { filters } = useParams();
+    const { query } = useParams();
+    const { interaction } = useParams();
+    // state
     const [open, setOpen] = useState(Boolean(id) && Boolean(post));
     const [currentPost, setcurrentPost] = useState(id || -1);
-    const dispatch = useDispatch<AppDispatch>();
+    const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
+    const [page, setPage] = useState(0);
+
+    const length = Object.keys(recipes).length;
+    // load recipes
+    function loadRecipes() {
+        if(username) loadProfile()
+        else if(interaction) loadBookmarks();
+        else if(query) loadSearch();
+        else setRecipes(feed);
+    }
+    async function loadProfile() {
+        try {
+            const findProfile = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
+                method: 'GET'
+            }));
+            const profile = await findProfile.json();
+            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}`, fetchOptions({
+                method: 'GET'
+            }));
+            const data = await response.json();
+            const recipeItems:Record<number, Recipe> = {};
+            data.forEach((item: any) => {
+                recipeItems[item.postId] = {
+                    tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
+                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: username || '',
+                }
+             });
+            setRecipes(recipeItems);
+        } catch(error) {console.error(error);}
+    }
+    async function loadBookmarks() {
+        try {
+            if(!user) return;
+            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}`, fetchOptions({
+                method: 'GET',
+            }));
+            const data = await response.json();
+            const recipeItems:Record<number, Recipe> = {};
+            data.forEach((item: any) => {
+                recipeItems[item.postId] = {
+                    tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
+                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
+                }
+             });
+            setRecipes(recipeItems);
+        } catch(error){console.error(error);}
+    }
+    async function loadSearch() {
+        try {
+            const response = await fetch(`http://localhost:8080/api/posts/search/${query}`, fetchOptions({
+                method: 'GET',
+            }));
+            const data = await response.json();
+            const recipeItems:Record<number, Recipe> = {};
+            data.forEach((item: any) => {
+                recipeItems[item.postId] = {
+                    tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
+                    img: item.img, date: item.postdate, ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
+                }
+             });
+             console.log(recipeItems)
+            setRecipes(recipeItems);
+        } catch(error) {console.error(error);}
+    }
+    useEffect(() => {
+        loadRecipes();
+    }, [query, interaction, username]);
+    useEffect(() => {
+        // Check if the object is still empty after 10 seconds
+        const timer = setTimeout(() => {
+            if (Object.keys(recipes).length === 0) navigate('/');
+        }, 10000);
+        return () => clearTimeout(timer);
+    }, [recipes]);
 
     // Handlers
     const openHandler = (id: number) => {
@@ -42,95 +120,36 @@ export default function Feed({ id }: { id?: number }) {
 
     const handleNextPage = () => {
         pageNumber = pageNumber + 1
-        dispatch(changePage({ pageNumber: pageNumber }));
-        var page = '';
-        if (filters) {
-            page = `/load/${filters}`;
-        } else {
-            page = `/load/feed`
-        }
-        navigate(`${page}`);
-
+        // dispatch(changePage({ pageNumber: pageNumber }));
+        // var page = '';
+        // if (filters) {
+        //     page = `/load/${filters}`;
+        // } else {
+        //     page = `/load/feed`
+        // }
+        // navigate(`${page}`);
     };
-
     const handlePreviousPage = () => {
         pageNumber = pageNumber - 1;
-        console.log(pageNumber)
-        dispatch(changePage({ pageNumber: pageNumber }));
-        var page = '';
-        if (filters) {
-            page = `/load/${filters}`;
-        } else {
-            page = `/load/feed`
-        }
-        navigate(`${page}`);
+        // dispatch(changePage({ pageNumber: pageNumber }));
+        // var page = '';
+        // if (filters) {
+        //     page = `/load/${filters}`;
+        // } else {
+        //     page = `/load/feed`
+        // }
+        // navigate(`${page}`);
     };
-
-    /*
-    // filter
-    function parseFilters() {
-        if (!filters) return recipes;
-        let filterBookmarks = false;
-        let filterLikes = false;
-        let filterTagGroup = ''
-        const spaceRemoved = filters?.split(' ');
-        const lowerCased = spaceRemoved?.map(f => f.toLowerCase());
-        lowerCased?.forEach(filter => {
-            if (filter === 'bookmarks' || filter === 'bookmark' || filter === 'bookmarked') {
-                filterBookmarks = true;
-            } else if (filter === 'likes' || filter === 'like' || filter === 'liked') {
-                filterLikes = true;
-            } else {
-                filterTagGroup += filter + ','
-            }
-        });
-        const filterWords = filterTagGroup.split(',').slice(0, -1);
-        const applyFilters = ({ title, tags, ingredients, isBookmarked, isLiked }:
-            { title: string, tags: string[], ingredients: string[], isBookmarked: boolean, isLiked: boolean }) => {
-            if ((filterBookmarks && isBookmarked) || (filterLikes && isLiked)) return true;
-            for (const tag of tags) {
-                if (filterWords.includes(tag.toLowerCase())) return true;
-            }
-            const titleWords = title.split(' ');
-            for (const word of titleWords) {
-                if (filterWords.includes(word.toLowerCase())) return true;
-            }
-            for (const ingredient of ingredients) {
-                const ingredientWords = ingredient.toLowerCase().replace(/[^a-z ]/g, '').split(' ')
-                for (const word of ingredientWords) {
-                    if (filterWords.includes(word)) return true;
-                }
-            }
-            return false;
-        }
-        const validRecipes = Object.values(recipes).filter(recipe => {
-            return applyFilters({
-                title: recipe.title, tags: recipe.tags, ingredients: recipe.ingredients,
-                isBookmarked: false, isLiked: false
-            });
-        });
-        const result: typeof filteredRecipes = {};
-        validRecipes.forEach((item: typeof validRecipes[0]) => {
-            result[item.id] = item;
-        });
-        return result;
-    }
-    useEffect(() => {
-        setFilteredRecipes(parseFilters());
-    }, [filters]);
-    */
-
 
     return (
         <Box>
-            <RecipePopup {...{ open, id: currentPost, closeHandler }} />
+            { (Object.keys(recipes).length > 0) ? 
+            <><RecipePopup {...{ open, username: user?.username || '', recipe: recipes[currentPost], closeHandler }} />
             <Grid container rowGap={5} justifyContent={'space-around'}>
                 {Object.values(recipes).map((recipe) => {
-                    if (recipe.id > 0 && recipes[recipe.id]) {
-                        return <RecipeItem {...{ id: recipe.id, userId: recipe.ownerId, key: recipe.title, openHandler }} />
-                    } else {
-                        return null;
-                    }
+                    return (recipe.id > 0 && recipes[recipe.id]) ?
+                        <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
+                        : null;
                 })}
             </Grid>
             <Box sx={{ marginTop: "50px" }}>
@@ -141,15 +160,22 @@ export default function Feed({ id }: { id?: number }) {
                 {length === 12 ?
                     <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
                     : null }
+            </Box></>
+            :
+            <Box>
+              <Typography variant='h3' mt='5vh'>Loading...</Typography>
+              <Typography mb='5vh'>Fetching Recipes...</Typography>
+              <CircularProgress />
             </Box>
+            }
         </Box>
     );
 }
 
-const RecipeAvatar = ({ author, userId }: { author: string, userId: number }) => {
+const RecipeAvatar = ({ author }: { author: string }) => {
     return (
         <Tooltip title={author}>
-            <Link to={`/load/${author}/${String(userId)}`}><IconButton>
+            <Link to={`/feed/${author}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
@@ -167,52 +193,46 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
     );
 }
 
-const RecipeItem = ({ id, userId, openHandler }: { id: number, userId: number, openHandler: (id: number) => void }) => {
+const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id: number) => void }) => {
     // state
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const recipe = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes[id]);
-    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
+    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[recipe.id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    // copy
-    const [copySuccess, setCopySuccess] = useState('');
-    useEffect(() => {
-        copySuccess && console.log(copySuccess);
-    }, [copySuccess]);
+    
     // handlers
     const likeHandler = () => {
-        if (!interaction) return dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false }))
-        else if (interaction.liked && !interaction.bookmarked) dispatch(deleteInteraction({ postId: id, userId: user ? user.id : -1 }));
-        else dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked }));
+        if (!interaction) return dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false }))
+        else if (interaction.liked && !interaction.bookmarked) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked }));
     }
     const bookmarkHandler = () => {
-        if (!interaction) return dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: false, bookmarked: true }))
-        else if (!interaction.liked && interaction.bookmarked) dispatch(deleteInteraction({ postId: id, userId: user ? user.id : -1 }));
-        else dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked }));
+        if (!interaction) return dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: false, bookmarked: true }))
+        else if (!interaction.liked && interaction.bookmarked) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
+        else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked }));
     }
     const exploreHandler = () => {
-        navigate(`/feed/${recipe?.title + recipe?.tags?.join(' ') + recipe?.ingredients?.join(' ')}`);
+        if(!recipe) return;
+        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
     }
     const shareHandler = async () => {
         try {
             const location = window.location.href;
-            const profile = location.search('/profile');
-            const feed = profile > 0 ? profile : location.search('/feed');
-            const url = profile > 0 ? location : location.substring(0, feed) + '/profile/' + recipe.author;
-            await navigator.clipboard.writeText(url + '/' + id);
-            setCopySuccess('Copy Link Successful: ' + id);
-        } catch (err) { setCopySuccess('Copy Link Failed: ' + id); }
+            const feed = location.search('/feed');
+            const url = feed > 0 ? location.substring(0, feed) + '/profile/' + recipe.author : location;
+            await navigator.clipboard.writeText(url + '/' + recipe.id);
+        } catch (error) {console.error(error);}
     }
     // Recipe Card
     return (
-        <Grid item xs={9} sm={5.75} md={3.5} key={id}>
+        <Grid item xs={9} sm={5.75} md={3.5} key={recipe.id}>
             <Card elevation={4}>
                 <CardHeader
                     title={
                         <Grid container justifyContent='space-between' alignItems='center'>
-                            <Grid item><RecipeAvatar author={recipe.author} userId={userId}/></Grid>
+                            <Grid item><RecipeAvatar author={recipe.author}/></Grid>
                             <Grid item xs={8}><Typography variant='h5' noWrap>{recipe.title}</Typography></Grid>
-                            <Grid item><RecipeExpandButton {...{ id, openHandler }} /></Grid>
+                            <Grid item><RecipeExpandButton {...{ id: recipe.id, openHandler }} /></Grid>
                         </Grid>
                     }
                     style={{ height: '6.5vh', padding: '.5vh', display: 'block' }}
@@ -246,17 +266,23 @@ const RecipeItem = ({ id, userId, openHandler }: { id: number, userId: number, o
     );
 }
 
-const RecipePopup = ({ open, id, closeHandler }: { open: boolean, id: number, closeHandler: () => void }) => {
+const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, username: string, recipe: Recipe, closeHandler: () => void }) => {
     return (
         <Modal
             open={open}
             onClose={closeHandler}
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
+                {recipe && username === recipe.author ? 
+                <Link to = {`post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
+                    <Edit />
+                </IconButton></Link>
+                : <></>
+                }
                 <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, right: 5 }}>
                     <Close />
                 </IconButton>
-                <Post id={id} />
+                <Post recipe={recipe} />
             </div>
         </Modal>
     );

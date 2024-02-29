@@ -7,60 +7,45 @@ interface User {
     email: string,
     img: string,
     bio: string,
-    role: boolean,
 }
 export interface UserState {
     isAuthenticated: boolean,
+    isAdmin: boolean,
     user: User | null,
-    token: string | null,
-    loading: boolean,
     error?: string,
-    localUser: User | null
 }
 
 const initialState: UserState = {
     isAuthenticated: false,
+    isAdmin: false,
     user: null,
-    token: null,
-    loading: false,
-    localUser: null
 };
 
 const userSlice = createSlice({
     name: 'user-slice',
     initialState,
     reducers: {
-        removeLocalUser(state: UserState) {
+        clearUser(state: UserState) {
             state.isAuthenticated = false;
+            state.isAdmin = false;
             state.user = null;
-            state.token = null;
         },
     },
     extraReducers: (builder) => {
         builder
-        .addCase(
-            fetchUser.pending, (state: UserState) => {
-                state.loading = true;
-                console.log('User Fetch Started...');
-            }    
-        ).addCase(
-            fetchUser.fulfilled, (state: UserState, action: PayloadAction<{user: User, token: string}>) => {
+.addCase(
+            fetchUser.fulfilled, (state: UserState, action: PayloadAction<{user: User, isAdmin: boolean}>) => {
                 state.user = action.payload.user;
+                state.isAdmin = action.payload.isAdmin;
                 state.isAuthenticated = true;
-                state.token = action.payload.token;
-                state.loading = false;
-                console.log('User Fetch Successful...');
-                console.log(state.user);
             }
         ).addCase(
             fetchUser.rejected, (state: UserState, action) => {
                 state.user = null;
                 state.isAuthenticated = false;
-                state.token = null;
-                state.loading = false;
-                state.error = action.error.message;
-                console.log('User Fetch Failed...');
-                console.error(state.error);
+                state.isAdmin = false;
+                state.error = action.error.message
+                console.error('Error Fetching User', state.error);
             }
         );
         builder.addCase(
@@ -68,14 +53,16 @@ const userSlice = createSlice({
                 state.user = action.payload;
             }
         ).addCase(
-            updateUser.rejected, (state: UserState, action) => {
-                state.error = action.error.message;
-                console.error('Error Updating User: ',state.error);
+            updateUser.rejected, (state, action) => {
+                state.error = action.error.message
+                console.error('Error Updating User', state.error);
             }
         );
         builder.addCase(
-            deleteUser.fulfilled, (state: UserState, action) => {
+            deleteUser.fulfilled, (state: UserState) => {
                 state.user = null;
+                state.isAuthenticated = false;
+                state.isAdmin = false;
             } 
         ).addCase(
             deleteUser.rejected, (state: UserState, action) => {
@@ -83,30 +70,14 @@ const userSlice = createSlice({
                 console.error('Error Deleting User: ', state.error);
             }
         );
-        builder.addCase(
-            fetchLocalUser.pending, (state: UserState) => {
-                state.loading = true;
-                console.log('Fetching Local User...')
-            }
-        ).addCase(
-            fetchLocalUser.rejected, (state: UserState, action) => {
-                console.log('Local User Fetch Failed...');
-                console.error(state.error)
-            }
-        ).addCase(
-            fetchLocalUser.fulfilled, (state: UserState, action: PayloadAction<{user: User}>) => {
-            state.localUser = action.payload.user;
-            console.log('Local User Fetch Successful...');
-            console.log(JSON.stringify(state.localUser));
-            }
-        )
     },
 });
 
 export const fetchUser = createAsyncThunk(
-    'GET-USER',
-    async ({ email, isAuthenticated, token }: { email: string; isAuthenticated: boolean, token: string }) => {
-        if(!isAuthenticated || !email || !token) throw new Error('Auth0 Login Failed...');
+    'FETCH-USER',
+    async ({ email, isAuthenticated, isAdmin }: 
+        { email: string; isAuthenticated: boolean, isAdmin: boolean }) => {
+        if(!isAuthenticated || !email) throw new Error('Auth0 Login Failed...');
         const search = await fetch(`http://localhost:8080/api/person/emailExists/${email}`, fetchOptions({
             method: 'GET',
         }));
@@ -119,21 +90,20 @@ export const fetchUser = createAsyncThunk(
             }));
         const data = await response.json();
         return {user: {id: data.id, username: data.username, email: data.email,
-        img: data.img, bio: data.bio, role: data.admin} as User, token};
+        img: data.img, bio: data.bio} as User, isAdmin};
     },
 );
 export const updateUser = createAsyncThunk(
     'UPDATE-USER',
     async ({id, username, email, img, bio}: {id: number, username: string, email: string, img: string, bio: string}) => {
-        console.log({username: username, email: email, img: img, bio: bio});
-        const response = await fetch(`http://localhost:8080/api/person/${id}/edit`, fetchOptions({
+        const response = await fetch(`http://localhost:8080/api/person/edit/${id}`, fetchOptions({
             method: 'PUT', body: JSON.stringify({username: username, email: email, img: img, bio: bio}),
         }));
         const data = await response.json();
         return {id: data.id, username: data.username, email: data.email, 
-            img: data.img, bio: data.bio, role: data.admin} as User;
+            img: data.img, bio: data.bio} as User;
     }
-)
+);
 export const deleteUser = createAsyncThunk(
     'DELETE-USER',
     async ({id}: {id: number}) => {
@@ -141,19 +111,7 @@ export const deleteUser = createAsyncThunk(
             method: 'DELETE',
         }));
     }
-)
-export const fetchLocalUser = createAsyncThunk(
-    'FETCH-LOCAL',
-    async ({ username }: { username: string;}) => {
-        if(!username) throw new Error('Auth0 Login Failed...');
-        const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
-            method: 'GET'
-        }));
-        const data = await response.json();
-        return {user: {id: data.id, username: data.username, email: data.email,
-        img: data.img, bio: data.bio, role: data.admin} as User};
-    },
 );
 
-export const { removeLocalUser } = userSlice.actions;
+export const { clearUser } = userSlice.actions;
 export default userSlice.reducer;

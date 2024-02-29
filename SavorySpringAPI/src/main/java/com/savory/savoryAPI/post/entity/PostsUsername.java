@@ -19,7 +19,7 @@ public class PostsUsername {
     private int postId;
 
     @Column(name = "userId", nullable = false)
-    private int userID;
+    private int userId;
 
     @Column(name = "Headline", nullable = false)
     private String headline;

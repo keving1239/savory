@@ -39,13 +39,13 @@ class PostControllerTest
                 postsDto, postsDto2, postsDto3
         );
         // Mock the behavior of the postService
-        when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedPosts);
+        when(postService.findPostByUserId(eq(postsDto.getUserId()))).thenReturn(expectedPosts);
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
         // Assert
         assertEquals(expectedPosts, actualPosts);
-        // Verify that the findPostByUserID method of postService is called with the correct argument
-        verify(postService, times(1)).findPostByUserID(userId);
+        // Verify that the findPostByUserId method of postService is called with the correct argument
+        verify(postService, times(1)).findPostByUserId(userId);
 
 
     }
@@ -63,13 +63,13 @@ class PostControllerTest
                 postsDto, postsDto2, postsDto3
         );
         // Mock the behavior of the postService
-        when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedPosts);
+        when(postService.findPostByUserId(eq(postsDto.getUserId()))).thenReturn(expectedPosts);
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
         // Assert
         assertEquals(0, actualPosts.size());
-        // Verify that the findPostByUserID method of postService is called with the correct argument
-        verify(postService, times(1)).findPostByUserID(userId);
+        // Verify that the findPostByUserId method of postService is called with the correct argument
+        verify(postService, times(1)).findPostByUserId(userId);
 
 
     }
@@ -88,13 +88,13 @@ class PostControllerTest
         );
         List<PostsDto> expectedSpecifics = Arrays.asList(expectedPosts.get(0), expectedPosts.get(1));
         // Mock the behavior of the postService
-        when(postService.findPostByUserID(eq(postsDto.getUserID()))).thenReturn(expectedSpecifics);
+        when(postService.findPostByUserId(eq(postsDto.getUserId()))).thenReturn(expectedSpecifics);
         // Act
         List<PostsDto> actualPosts = postController.getUserPosts(userId);
         // Assert
         assertEquals(expectedSpecifics, actualPosts);
-        // Verify that the findPostByUserID method of postService is called with the correct argument
-        verify(postService, times(1)).findPostByUserID(userId);
+        // Verify that the findPostByUserId method of postService is called with the correct argument
+        verify(postService, times(1)).findPostByUserId(userId);
 
 
     }
@@ -103,7 +103,7 @@ class PostControllerTest
         // Use reflection or other methods to create an instance of PostsDto
         return PostsDto.builder()
                 .postId(postId)
-                .userID(userId)
+                .userId(userId)
                 .headline(headline)
                 .ingredients(ingredients)
                 .recipe(recipe)

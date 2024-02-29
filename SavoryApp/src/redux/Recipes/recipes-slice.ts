@@ -4,145 +4,115 @@ import { RootState } from "../store";
 
 export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
  
-interface Recipe {
-    tags: string[];
+export interface Recipe {
     id: number,
-    ownerId: number,
+    userId: number,
     title: string;
     img: string;
-    date: Date,
-    ingredients: string[],
-    recipe: string,
+    date: string,
     author: string
+    recipe: string,
+    ingredients: string[],
+    tags: string[];
 }
 export interface LocalRecipesState {
     recipes: Record<number, Recipe>,
-    loading: boolean,
     error?: string,
     page: number,
-    pageLoaded: boolean
 }
  
 const initialState: LocalRecipesState = {
     recipes: {},
-    loading: false,
     page: 1,
-    pageLoaded: false
 };
  
 const recipesSlice = createSlice({
     name: 'recipes-slice',
     initialState,
     reducers: {
-        removeLocalRecipes(state: LocalRecipesState) {
+        clearRecipes(state: LocalRecipesState) {
             state.recipes = {};
-        },
-        addRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
-            state.recipes[action.payload.recipe.id] = action.payload.recipe;
         },
         changePage(state: LocalRecipesState, action: PayloadAction<{pageNumber: number}>) {
             state.page = action.payload.pageNumber;
-        },
-        updateRecipes(state: LocalRecipesState, action: PayloadAction<{recipe: Recipe}>) {
-            const update = action.payload.recipe;
-           // const index = state.recipes.findIndex(recipe => recipe.id === update.id);
-            if (String(update.id) in state.recipes) {
-                state.recipes[update.id] = update;
-            };
-        },
-        loadPage(state: LocalRecipesState, action: PayloadAction<{loaded: boolean}>) {
-            state.pageLoaded = action.payload.loaded;
-        },
-        deleteRecipes(state: LocalRecipesState, action: PayloadAction<{recipeId: number}>) {
-            if (String(action.payload.recipeId) in state.recipes) {
-                delete state.recipes[action.payload.recipeId]
-            }
-          //  state.recipes = state.recipes.filter(recipe => recipe.id !== action.payload.recipeId);
         },
     },
     extraReducers: (builder) => {
         builder
         .addCase(
-            fetchRecipes.pending, (state: LocalRecipesState) => {
-                state.loading = true;
-                console.log('Recipe Fetch Started...');
-            }
-        ).addCase(
             fetchRecipes.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
                 state.recipes = action.payload;
-                state.loading = false;
-                console.log('Recipe Fetch Successful...');
             }
         ).addCase(
             fetchRecipes.rejected, (state: LocalRecipesState, action) => {
-                state.loading = false;
                 state.error = action.error.message;
-                console.log('Recipe Fetch Failed...');
-                console.log("error: " + state.error + "here")
+                console.error('Error Fetching Interactions: ',state.error);
             }
         );
-
+        // builder
+        // .addCase(
+        //     fetchBookmarks.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+        //         state.recipes = action.payload;
+        //     }
+        // ).addCase(
+        //     fetchBookmarks.rejected, (state: LocalRecipesState, action) => {
+        //         state.error = action.error.message;
+        //         console.error('Error Fetching Bookmarks: ', state.error);
+        //     }
+        // );
+        // builder
+        // .addCase(
+        //     fetchUserPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+        //         state.recipes = action.payload;
+        //     }
+        // ).addCase(
+        //     fetchUserPosts.rejected, (state: LocalRecipesState, action) => {
+        //         state.error = action.error.message;
+        //         console.error('Error Fetching User Posts: ', state.error);
+        //     }
+        // );
+        // builder
+        // .addCase(
+        //     fetchTaggedPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
+        //         state.recipes = action.payload;
+        //     }
+        // ).addCase(
+        //     fetchTaggedPosts.rejected, (state: LocalRecipesState, action) => {
+        //         state.error = action.error.message;
+        //         console.error('Error Fetching Tagged Posts: ', state.error);
+        //     }
+        // );
         builder
         .addCase(
-            fetchBookmarks.pending, (state: LocalRecipesState) => {
-                state.loading = true;
-                console.log('Bookmark Fetch Started...');
+            createRecipe.fulfilled, (state: LocalRecipesState, action: PayloadAction<Recipe>) => {
+                state.recipes[action.payload.id] = action.payload;
             }
         ).addCase(
-            fetchBookmarks.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
-                state.recipes = action.payload;
-                state.loading = false;
-                console.log('Bookmark Fetch Successful...');
-            }
-        ).addCase(
-            fetchBookmarks.rejected, (state: LocalRecipesState, action) => {
-                state.loading = false;
+            createRecipe.rejected, (state: LocalRecipesState, action) => {
                 state.error = action.error.message;
-                console.log('Bookmark Fetch Failed...');
-                console.log("error: " + state.error + "here")
+                console.error('Error Creating Recipe: ',state.error);
             }
         );
-
         builder
         .addCase(
-            fetchUserPosts.pending, (state: LocalRecipesState) => {
-                state.loading = true;
-                console.log('My Posts Fetch Started...');
+            updateRecipe.fulfilled, (state: LocalRecipesState, action: PayloadAction<Recipe>) => {
+                state.recipes[action.payload.id] = action.payload;
             }
         ).addCase(
-            fetchUserPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
-                state.recipes = action.payload;
-                state.loading = false;
-                console.log('My Posts Fetch Successful...');
-                console.log(state.recipes);
-            }
-        ).addCase(
-            fetchUserPosts.rejected, (state: LocalRecipesState, action) => {
-                state.loading = false;
+            updateRecipe.rejected, (state: LocalRecipesState, action) => {
                 state.error = action.error.message;
-                console.log('My Posts Fetch Failed...');
-                console.log("error: " + state.error + "here")
+                console.error('Error Updating Recipe: ',state.error);
             }
         );
         builder
         .addCase(
-            fetchTaggedPosts.pending, (state: LocalRecipesState) => {
-                state.loading = true;
-                console.log('Tagged Posts Fetch Started...');
+            deleteRecipe.fulfilled, (state: LocalRecipesState, action: PayloadAction<number>) => {
+                if (action.payload in state.recipes) delete state.recipes[action.payload];
             }
         ).addCase(
-            fetchTaggedPosts.fulfilled, (state: LocalRecipesState, action: PayloadAction<Record<string, Recipe>>) => {
-                state.recipes = action.payload;
-                state.loading = false;
-                console.log('Tagged Posts Fetch Successful...');
-                console.log(state.recipes);
-            }
-        ).addCase(
-            fetchTaggedPosts.rejected, (state: LocalRecipesState, action) => {
-                state.loading = false;
+            deleteRecipe.rejected, (state: LocalRecipesState, action) => {
                 state.error = action.error.message;
-                console.log('Tagged Posts Fetch Failed...');
-                console.log("error: " + state.error + "here")
+                console.error('Error Deleting Recipe: ', state.error);
             }
         );
     },
@@ -151,23 +121,23 @@ const recipesSlice = createSlice({
 
 
 export const fetchRecipes = createAsyncThunk(
-    '/api/recipes/fetch',
+    'FETCH-RECIPES',
     async ({ userId, pageNumber, pageSize = 12}: {userId: number; pageNumber: number; pageSize?: number}) => {
+        // for now fetch all in paginated style
         const response = await fetch(`http://localhost:8080/api/posts/allWithUsername?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
             method: 'GET',
         }));
-        console.log("PAGE: " + pageNumber)
          const data = await response.json();
          const recipes: Record<number, Recipe> = {};
          data.forEach((item: any) => {
             recipes[item.postId] = {
-                tags: item?.tags?.split(',#') || [],
+                tags: item.tags?.split(',') || [],
                 id: item.postId,
-                ownerId: item.userID,
+                userId: item.userId,
                 title: item.headline,
                 img: item.img,                 
                 date: item.postdate,
-                ingredients: item?.ingredients?.split(',') || [],
+                ingredients: item.ingredients?.split(',') || [],
                 recipe: item.recipe,
                 author: item.username,
             }
@@ -176,82 +146,69 @@ export const fetchRecipes = createAsyncThunk(
     },
 );
 
-export const fetchBookmarks = createAsyncThunk(
-    '/api/recipes/bookmarks',
-    async ({ userId }: {userId: number;}) => {
-        const response = await fetch(`http://localhost:8080/api/posts/bookmarkedPosts/${userId}`, fetchOptions({
-            method: 'GET',
-        }));
-         const data = await response.json();
-         const recipes: Record<number, Recipe> = {};
-         data.forEach((item: any) => {
-            recipes[item.postId] = {
-                tags: item?.tags?.split(',#') || [],
-                id: item.postId,
-                ownerId: item.userID,
-                title: item.headline,
-                img: item.img,                 
-                date: item.postdate,
-                ingredients: item?.ingredients?.split(',') || [],
-                recipe: item.recipe,
-                author: item.username,
-            }
-         });
-        return recipes;
-    },
-);
 
-export const fetchUserPosts = createAsyncThunk(
-    '/api/recipes/myPosts',
-    async ({ userId, username }: {userId: number; username: string | undefined;}) => {
-        const response = await fetch(`http://localhost:8080/api/posts/byUserId/${userId}`, fetchOptions({
-            method: 'GET',
-        }));
-         const data = await response.json();
-         const recipes: Record<number, Recipe> = {};
-         data.forEach((item: any) => {
-            recipes[item.postId] = {
-                tags: item?.tags?.split(',') || [],
-                id: item.postId,
-                ownerId: item.userID,
-                title: item.headline,
-                img: item.img,                 
-                date: item.postdate,
-                ingredients: item?.ingredients?.split(',') || [],
-                recipe: item.recipe,
-                author: username || '',
-            }
-         });
-        return recipes;
-    },
-);
-
-export const fetchTaggedPosts = createAsyncThunk(
-    '/api/recipes/tagged',
-    async ({ tag, pageNumber, pageSize = 12}: {tag: string | undefined; pageNumber: number; pageSize?: number}) => {
-        console.log("TAG " + tag)
-        console.log("PAGE " + pageNumber )
-        const response = await fetch(`http://localhost:8080/api/posts/taggedPosts/${tag}?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
-            method: 'GET',
-        }));
-         const data = await response.json();
-         const recipes: Record<number, Recipe> = {};
-         data.forEach((item: any) => {
-            recipes[item.postId] = {
-                tags: item?.tags?.split(',#') || [],
-                id: item.postId,
-                ownerId: item.userID,
-                title: item.headline,
-                img: item.img,                 
-                date: item.postdate,
-                ingredients: item?.ingredients?.split(',') || [],
-                recipe: item.recipe,
-                author: item.username,
-            }
-         });
-        return recipes;
-    },
-);
+// export const fetchTaggedPosts = createAsyncThunk(
+//     '/api/recipes/tagged',
+//     async ({ tag, pageNumber, pageSize = 12}: {tag: string | undefined; pageNumber: number; pageSize?: number}) => {
+//         const response = await fetch(`http://localhost:8080/api/posts/taggedPosts/${tag}?pageNumber=${pageNumber}&pageSize=${pageSize}`, fetchOptions({
+//             method: 'GET',
+//         }));
+//          const data = await response.json();
+//          const recipes: Record<number, Recipe> = {};
+//          data.forEach((item: any) => {
+//             recipes[item.postId] = {
+//                 tags: item?.tags?.split(',') || [],
+//                 id: item.postId,
+//                 userId: item.userId,
+//                 title: item.headline,
+//                 img: item.img,                 
+//                 date: item.postdate,
+//                 ingredients: item?.ingredients?.split(',') || [],
+//                 recipe: item.recipe,
+//                 author: item.username,
+//             }
+//          });
+//         return recipes;
+//     },
+// );
  
-export const { addRecipes, updateRecipes, deleteRecipes, removeLocalRecipes, changePage, loadPage } = recipesSlice.actions;
+export const createRecipe = createAsyncThunk(
+    'CREATE-RECIPE',
+    async ({userId, headline, ingredients, recipe, img, tags}: 
+        {userId: number, headline: string, ingredients: string, recipe: string, img: string, tags: string}) => {
+        const response = await fetch('http://localhost:8080/api/posts/new', fetchOptions({
+            method: 'POST', 
+            body: JSON.stringify({userId: userId, headline: headline, ingredients: ingredients, recipe: recipe, img: img, tags: tags}),
+        }));
+        const data = await response.json();
+        return {id:data.postId, userId:data.userId, title:data.headline, img:data.img, 
+            date:data.postDate, ingredients:data.ingredients.split(','), 
+            tags: data.tags.split(',') || [], recipe:data.recipe, author:data.username} as Recipe;
+    }
+);
+export const updateRecipe = createAsyncThunk(
+    'UPDATE-RECIPE',
+    async ({postId, userId, headline, ingredients, recipe, img, tags}: 
+        {postId: number, userId: number, headline: string, ingredients: string, recipe: string, img: string, tags: string}) => {
+        const response = await fetch(`http://localhost:8080/api/posts/edit/${postId}`, fetchOptions({
+            method: 'PUT',
+            body: JSON.stringify({userId: userId, headline: headline, ingredients: ingredients, recipe: recipe, img: img, tags: tags}),
+        }));
+        const data = await response.json();
+        return {tags:data.tags, id:data.postId, userId:data.userId, title:data.headline, img:data.img, 
+            date:data.postDate, ingredients:data.ingredients, recipe:data.recipe, author:data.username} as Recipe;
+    }
+);
+export const deleteRecipe = createAsyncThunk(
+    'DELETE-RECIPE',
+    async ({postId}: {postId: number}) => {
+        const response = await fetch(`http://localhost:8080/api/posts/delete/${postId}`, fetchOptions({
+            method: 'DELETE',
+        }));
+        if(!response.ok) throw new Error(`Unable to delete post ${postId}`); 
+        return postId;
+    }
+);
+
+export const { clearRecipes, changePage } = recipesSlice.actions;
 export default recipesSlice.reducer;

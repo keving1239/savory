@@ -5,20 +5,18 @@ import { fetchOptions } from "../store";
 interface RecipeInteraction {
     recipeId: number,
     liked: boolean,
+    shared: boolean,
     bookmarked: boolean,
 }
 export interface InteractionsState {
     interactions: Record<number, RecipeInteraction>,
-    loading: boolean,
     error?: string,
 }
 
 
 const initialState: InteractionsState = {
     interactions: {},
-    loading: false,
 };
-
 
 const interactionsSlice = createSlice({
     
@@ -26,29 +24,20 @@ const interactionsSlice = createSlice({
     initialState,
     
     reducers: {
-        removeLocalInteractions(state: InteractionsState) {
+        clearInteractions(state: InteractionsState) {
             state.interactions = {};
         },
     },
     extraReducers: (builder) => {
         builder
         .addCase(
-            fetchInteractions.pending, (state: InteractionsState) => {
-                state.loading = true;
-                console.log('Interaction Fetch Started...');
-            }
-        ).addCase(
             fetchInteractions.fulfilled, (state: InteractionsState, action: PayloadAction<Record<number, RecipeInteraction>>) => {
                 state.interactions = action.payload;
-                state.loading = false;
-                console.log('Interaction Fetch Successful...');
             }
         ).addCase(
             fetchInteractions.rejected, (state: InteractionsState, action) => {
-                state.loading = false;
                 state.error = action.error.message;
-                console.log('Interaction Fetch Failed... ');
-                console.error(state.error);
+                console.error('Error Fetching Interactions', state.error);
             }
         );
         builder.addCase(
@@ -58,17 +47,17 @@ const interactionsSlice = createSlice({
         ).addCase(
             postInteraction.rejected, (state: InteractionsState, action) => {
                 state.error = action.error.message;
-                console.error('Error Posting Interaction: ',state.error);
+                console.error('Error Posting Interaction: ', state.error);
             }
         );
         builder.addCase(
             deleteInteraction.fulfilled, (state: InteractionsState, action: PayloadAction<number>) => {
-                delete state.interactions[action.payload];
+                if(action.payload in state.interactions) delete state.interactions[action.payload];
             }
         ).addCase(
             deleteInteraction.rejected, (state: InteractionsState, action) => {
                 state.error = action.error.message;
-                console.error('Error Deleting Interaction: ',state.error);
+                console.error('Error Deleting Interaction: ', state.error);
             }
         );
         builder.addCase(
@@ -78,7 +67,7 @@ const interactionsSlice = createSlice({
         ).addCase(
             updateInteraction.rejected, (state: InteractionsState, action) => {
                 state.error = action.error.message;
-                console.error('Error Updating Interaction: ',state.error);
+                console.error('Error Updating Interaction: ', state.error);
             }
         );
     }
@@ -96,6 +85,7 @@ export const fetchInteractions = createAsyncThunk(
             interactions[item.postId] = {
                 recipeId: item.postId,
                 liked: item.liked,
+                shared: false,
                 bookmarked: item.bookmarked,
             };
         });
@@ -135,5 +125,5 @@ export const deleteInteraction = createAsyncThunk(
     }
 );
 
-export const { removeLocalInteractions } = interactionsSlice.actions;
+export const { clearInteractions } = interactionsSlice.actions;
 export default interactionsSlice.reducer;

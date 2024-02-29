@@ -12,7 +12,6 @@ public class PersonUtil {
                 .email(person.getEmail())
                 .img(person.getImg())
                 .bio(person.getBio())
-                .isAdmin(person.isAdmin())
                 .build();
     }
 }

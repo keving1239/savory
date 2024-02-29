@@ -11,5 +11,4 @@ public class PersonDto {
     String email;
     String img;
     String bio;
-    boolean isAdmin;
 }
