@@ -2,65 +2,77 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Box, Grid, Tooltip, Typography, TextField, Card, Button, CardContent, TextFieldProps } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { RootState, fetchOptions } from '../../../redux/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../redux/store';
+import { createRecipe } from '../../../redux/Recipes/recipes-slice'
 
 const PostCreate = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id);
   const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
   useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
+  // form states
   const [title, setTitle] = useState('');
   const [img, setImg] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [recipe, setRecipe] = useState('');
   const [tags, setTags] = useState('');
-  const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id); 
+  // error states
+  const [titleError, setTitleError] = useState({error: false, helperText: ''});
+  const [ingredientsError, setIngredientsError] = useState({error: false, helperText: ''});
+  const [tagsError, setTagsError] = useState({error: false, helperText: ''});
+
+  // form validation
+  const validateFields = () => {
+    const titleRegex = /^[\w /\(\)\-\.]{3,100}$/.test(title);
+    setTitleError((!titleRegex) ? 
+      {error: true, helperText: 'Must be 3-100 characters & only contain letters, numbers, space, _-./()'}
+      : {error: false, helperText: ''}
+    );
+    const ingredientsRegex = /^(([\w /\(\)\-\.]){1,63}(\n|,|$)){1,63}$/.test(ingredients);
+    setIngredientsError((!ingredientsRegex) ? 
+      {error: true, helperText: 'Must follow the format in ingredients tool tip only contain letters, numbers, space, _-./()'}
+      : {error: false, helperText: ''}
+    );
+    const tagsRegex = /^((#([a-zA-Z0-9\-]){1,31}),{0,1}){1,63}$/.test(tags);
+    setTagsError((tags && !tagsRegex) ?  
+      {error: true, helperText: 'Must follow the format in tags tool tip & contain only letters, numbers, -'}
+      : {error: false, helperText: ''}
+    );
+    return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
+  }
+  // form submission
+  const handlePostCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const isValid = validateFields();
+    if(!isValid || !userId) return;
+    await dispatch(createRecipe(
+      {userId: userId, headline: title, ingredients: ingredients, recipe: recipe, img: img, tags: tags}
+    ));
+    navigate('/feed');
+  }
 
   // props for each textfield
   const fields: {tip: string, size: number, fieldProps: TextFieldProps}[] = [
     {tip: 'Name of your food', size: 12, 
-      fieldProps: {value: title, type: 'text', onChange: (e) => setTitle(e.target.value), label: 'Title',}},
-    {tip: 'Picture of your food', size: 12,
-      fieldProps: {value: img, type: 'file', onChange: (e) => setImg(e.target.value), label: 'Photo', InputLabelProps: {shrink: true},}},
-    {tip: 'Ingredients in this food (list each ingredient seperated by new line or spaces)', size: 5.9,
-      fieldProps: {value: ingredients, type: 'text', onChange: (e) => setIngredients(e.target.value), label: 'Ingredients', multiline: true, minRows: 4, maxRows: 4,}},
+      fieldProps: {value: title, type: 'text', onChange: (e) => setTitle(e.target.value), error: titleError.error, helperText: titleError.helperText,
+      label: 'Title', placeholder: 'Southwest Salad', required: true, variant: 'outlined', margin: 'dense', fullWidth: true}},
+    {tip: 'URL for a picture of your food', size: 12,
+      fieldProps: {value: img, type: 'text', onChange: (e) => setImg(e.target.value),
+      label: 'Image', placeholder: 'https://images.unsplash.com/...', required: true,}},
+    {tip: 'Ingredients in this food (list each ingredient seperated by new line or commas)', size: 5.9,
+      fieldProps: {value: ingredients, type: 'text', onChange: (e) => setIngredients(e.target.value), error: ingredientsError.error, helperText: ingredientsError.helperText,
+      label: 'Ingredients', placeholder: '1 Head Romaine Lettuce\n12 Cherry Tomatoes\n1 Can Black Beans\n...', 
+      required: true, multiline: true, minRows: 4, maxRows: 4, variant: 'outlined', margin: 'dense', fullWidth: true}},
     {tip: 'Instructions to make this food', size: 5.9,
-      fieldProps: {value: recipe, type: 'text', onChange: (e) => setRecipe(e.target.value), label: 'Recipe', multiline: true, minRows: 4, maxRows: 4,}},
-    {tip: 'Hashtags (each tag starts with "#" and seperated by spaces)', size: 12,
-      fieldProps: {value: tags, type: 'text', onChange: (e) => setTags(e.target.value), label: 'Tags',}},
-  ]
-  fields.forEach((field => {
-    field.fieldProps['variant']='outlined';
-    field.fieldProps['margin']='dense';
-    field.fieldProps['fullWidth']=true;
-  }));
-
-
-    //Handle Form Submit
-    // const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-    //   e.preventDefault();
-    //   const newRecipe = [title, img, ingredients, recipe, tags];
-    //   console.log(`Recipe has been created! ${newRecipe}`);
-    //   navigate('/feed');
-    // }
-
-  //     //Handle Form Submit
-  const handlePostCreate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    //userID field is filler. Need to figure out how to retrieve it for Posts table. postdate is also filler
-    
-    const newRecipe = {userID: userId, headline: title, ingredients: ingredients, recipe: recipe, img: "https://images.unsplash.com/...", tags: tags, postdate: new Date()};
-    // console.log(`Recipe has been created! ${newRecipe}`);
-    // navigate('/feed');
-    fetch('http://localhost:8080/posts/addNewPost', fetchOptions({
-      method: 'POST', body: JSON.stringify(newRecipe),
-    })).then(() => {
-    console.log(`Recipe has been created! ${newRecipe}`);
-    navigate('/feed');
-    });
-  }
-
-
+      fieldProps: {value: recipe, type: 'text', onChange: (e) => setRecipe(e.target.value),
+      label: 'Recipe', placeholder: 'First, prepare your vegetables. Next, Drain and rinse the black beans.', 
+      required: true, multiline: true, minRows: 4, maxRows: 4, variant: 'outlined', margin: 'dense', fullWidth: true}},
+    {tip: 'One word hashtags seperated by commas', size: 12,
+      fieldProps: {value: tags, type: 'text', onChange: (e) => setTags(e.target.value), error: tagsError.error, helperText: tagsError.helperText,
+      label: 'Tags', placeholder: '#TexMex, #Refreshing, #Healthy', variant: 'outlined', margin: 'dense', fullWidth: true}},
+  ];
   return (      
     <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>
     <Card elevation={10} sx={{maxWidth: '60vw'}}>
@@ -85,64 +97,3 @@ const PostCreate = () => {
 }
 
 export default PostCreate;
-
-/*<React.Fragment>
-<Box sx = {{height: '100vd', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-<Box component="section" sx={{ p: 8, border: '2px solid black', bgcolor: '#606c38', margin: 10, marginLeft: 15, marginRight: 15, justifyContent: 'center', alignItems: 'center'}}>
-<Grid container spacing={8} direction = "column" justifyContent = "space-between">
-<Typography
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'white',
-              textDecoration: 'none',
-              textAlign: "center"
-            }}
-          >
-            Make A Post!
-</Typography>
-  <Grid item xs={8} sm={6}>
-    <TextField
-      id = "headline"
-      name = "headline"
-  
-      sx = {{bgcolor: 'white', border: '2px solid black'}}
-      
-    />
-  </Grid>
-  <Grid item xs={8} sm={6}>
-    <TextField
-      id = "ingredients"
-      name =  "ingredients"
-  
-      multiline
-      rows = {4}
-      sx = {{bgcolor: 'white', border: '2px solid black'}}
-      
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      id = "recipe"
-      name =  "recipe"
-  
-      multiline
-      rows = {4}
-      sx = {{bgcolor: 'white', border: '2px solid black', width: 500}}
-      margin='dense'
-    />
-  </Grid>
-  <Input type='file' inputfieldProps={{ accept: 'image/*'}} onChange={handleFileChange} style={{margin: '30px'}} />
-</Grid>
-<Link to='/feed'><Button variant="contained" color="success" size = "small">
-        Post
-</Button></Link>
-</Box>
-</Box>
-</React.Fragment>*/

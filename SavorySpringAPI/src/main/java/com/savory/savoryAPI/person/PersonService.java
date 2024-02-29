@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,47 +21,47 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public PersonDto createPerson(BuildPersonRequest personDto) {
-        var newPerson = new Person();
-        var savedPerson = reify(personDto, newPerson);
-        return PersonUtil.buildPersonDto(savedPerson);
+    public PersonDto createPerson(BuildPersonRequest request) {
+        var newPerson = reify(request, new Person());
+        return PersonUtil.buildPersonDto(newPerson);
     }
-
     public PersonDto getPerson(Integer id) {
         var person = personRepository.findById(id).orElse(null);
         if(person == null) throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Resource with id " + id + " not found");
+                HttpStatus.NOT_FOUND, "User with id " + id + " not found");
         return PersonUtil.buildPersonDto(person);
     }
     public PersonDto getPersonByEmail(String email) {
         var person = personRepository.findByEmail(email).orElse(null);
         if(person == null) throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Resource with email " + email + " not found");
+                HttpStatus.NOT_FOUND, "User with email " + email + " not found");
         return PersonUtil.buildPersonDto(person);
     }
     public PersonDto getPersonByUsername(String username) {
         var person =  personRepository.findByUsername(username).orElse(null);
         if(person == null) throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Resource with username " + username + " not found");
+                HttpStatus.NOT_FOUND, "User with username " + username + " not found");
         return PersonUtil.buildPersonDto(person);
     }
-    public PersonDto updatePerson(BuildPersonRequest personDto, Integer id) {
-        var oldPerson = personRepository.findById(id).orElse(new Person());
-        var savedPerson = reify(personDto, oldPerson);
-        return PersonUtil.buildPersonDto(savedPerson);
+    public PersonDto updatePerson(BuildPersonRequest request, Integer id) {
+        var oldPerson = personRepository.findById(id).orElse(null);
+        if(oldPerson == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "User with id " + id + " not found");
+        var newPerson = reify(request, oldPerson);
+        return PersonUtil.buildPersonDto(newPerson);
     }
 
     public Boolean deletePerson(Integer id) {
-        Boolean exists = personRepository.existsById(id);
+        if(!personRepository.existsById(id)) return false;
         personRepository.deleteById(id);
-        return exists;
+        return !personRepository.existsById(id);
     }
 
-    private Person reify(BuildPersonRequest personDto, Person target) {
-        target.setUsername(personDto.getUsername());
-        target.setEmail(personDto.getEmail());
-        target.setImg(personDto.getImg());
-        target.setBio(personDto.getBio());
+    private Person reify(BuildPersonRequest request, Person target) {
+        target.setUsername(request.getUsername());
+        target.setEmail(request.getEmail());
+        target.setImg(request.getImg());
+        target.setBio(request.getBio());
         return personRepository.save(target);
     }
 
@@ -75,8 +72,8 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
-    public Boolean isUsernameAvailable(String username) {
-        return personRepository.findByUsername(username).orElse(null) == null;
+    public Boolean usernameExists(String username) {
+        return personRepository.findByUsername(username).orElse(null) != null;
     }
 
     public Boolean emailExists(String email) {

@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 public class PostsDto {
     int postId;
-    int userID;
+    int userId;
     String headline;
     String ingredients;
     String recipe;

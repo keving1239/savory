@@ -5,28 +5,28 @@ import {Menu, Typography, IconButton, AppBar, Toolbar, Box,
 import {LocalDining, Search } from '@mui/icons-material'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
-import { removeLocalUser } from '../../redux/User/user-slice';
-import { removeLocalRecipes, changePage } from '../../redux/Recipes/recipes-slice';
-import { removeLocalInteractions } from '../../redux/Interactions/interactions-slice';
+import { clearUser } from '../../redux/User/user-slice';
+import { clearRecipes, changePage } from '../../redux/Recipes/recipes-slice';
+import { clearInteractions } from '../../redux/Interactions/interactions-slice';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
   const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
   const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { loginWithRedirect, logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
   const loginHandler = async () => {
     try {
       await loginWithRedirect();
-    } catch(error) {console.log("Error logging out: "+error);}
+    } catch(error) {console.error("Error logging out: ", error);}
   }
   const logoutHandler = async () => {
     try {
+      dispatch(clearUser());
+      dispatch(clearRecipes());
+      dispatch(clearInteractions());
       await logout({ logoutParams: { returnTo: window.location.origin } });
-      dispatch(removeLocalUser());
-      dispatch(removeLocalRecipes());
-      dispatch(removeLocalInteractions());
-    } catch(error) {console.log("Error logging out: "+error);}
+    } catch(error) {console.error("Error logging out: ", error);}
   }
 
   const username = user?.username || '';
@@ -75,7 +75,7 @@ const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
     <>
     {
       savoryAuth ?
-      <Link to='/load/feed'><Button onClick={pageHandler} sx={{p: 0}}>
+      <Link to='/feed'><Button onClick={pageHandler} sx={{p: 0}}>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
       </Button></Link> :
@@ -93,7 +93,7 @@ const NavigationButtons = ({isAuthenticated}: {isAuthenticated: boolean}) => {
   [
     { to: '/', text: 'About' },
     { to: '/post/new', text: 'Add Post' },
-    { to: '/load/bookmarks', text: 'Bookmarks' },
+    { to: '/feed/bookmarks', text: 'Bookmarks' },
   ] : 
   [
     { to: '/', text: 'About' },
@@ -126,7 +126,7 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
 
     const dropDownOptions = isAuthenticated ? 
     [
-      { to: `/load/${username}/${userId}`, text: 'Profile' },
+      { to: `/profile/${username}`, text: 'Profile' },
       { to: `/settings`, text: 'Settings' },
     ] : [];
     return(
@@ -157,10 +157,8 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
 const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
-  const dispatch = useDispatch<AppDispatch>();
   function handleSearch() {
-    dispatch(changePage({pageNumber: 1}))
-    navigate(`/load/${query}`);
+    navigate(`/feed/search/${query}`);
   }
 
   return (

@@ -5,7 +5,7 @@ import lombok.Value;
 @Builder
 @Value
 public class BuildPostRequest {
-    int userID;
+    int userId;
     String headline;
     String ingredients;
     String recipe;

@@ -21,5 +21,5 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE FROM Person WHERE id = :id")
-    void delete(@Param("id") int id);
+    void deleteById(@Param("id") int id);
 }

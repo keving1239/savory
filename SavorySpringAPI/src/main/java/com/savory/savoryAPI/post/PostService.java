@@ -1,30 +1,31 @@
 package com.savory.savoryAPI.post;
 
+import com.savory.savoryAPI.post.dto.BuildPostRequest;
 import com.savory.savoryAPI.post.dto.PostsUsernameDto;
 import com.savory.savoryAPI.post.entity.PostsUsername;
 import com.savory.savoryAPI.post.util.PostsUtil;
 import com.savory.savoryAPI.post.dto.PostsDto;
 import com.savory.savoryAPI.post.entity.Posts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Pageable;
-
-
+import org.springframework.web.server.ResponseStatusException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class PostService
 {
-    private final Logger log = LoggerFactory.getLogger(PostService.class);
     private final PostRepository postRepository;
-
     private final PostsURepository postsURepository;
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public PostService(PostRepository postRepository, PostsURepository postsURepository) {
@@ -32,8 +33,7 @@ public class PostService
         this.postsURepository = postsURepository;
     }
 
-    public List<PostsDto> findAllPosts()
-    {
+    public List<PostsDto> findAllPosts() {
         return postRepository.findAll().stream()
                 .map(PostsUtil::buildPostDto)
                 .collect(Collectors.toList());
@@ -54,114 +54,68 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findPostsByTag(String tag, int pageNumber, int pageSize) {
+    public List<PostsUsernameDto> findSearchedPosts(String query, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
-        List<PostsUsername> posts = postsURepository.findPostsByTag(tag, pageable);
+        List<Object[]> q = postsURepository.findSearchedPosts(query, pageable);
+        for(Object qq : q) System.out.println(qq.toString());
+        List<PostsUsername> posts = new ArrayList<>();
         return posts.stream()
                 .map(PostsUtil::buildPostUsernameDto)
                 .collect(Collectors.toList());
     }
 
     public List<Posts> findPosts(List<Integer> ids) {
-        return postRepository.findAllBypostIdIn(ids);
+        return postRepository.findAllByPostIdIn(ids);
     }
 
-    public List<PostsDto> findPostByUserID(int userID)
-    {
-        List<Posts> posts = postRepository.findByUserID(userID);
+    public List<PostsDto> findPostByUserId(int userId) {
+        List<Posts> posts = postRepository.findByUserId(userId);
         return posts.stream()
                 .map(PostsUtil::buildPostDto)
                 .collect(Collectors.toList());
     }
 
-    public void deletePostByPId(int postId)
-    {
-        postRepository.deleteBypostId(postId);
-
+    public Boolean deletePost(Integer postId) {
+        if(!postRepository.existsById(postId)) return false;
+        postRepository.deleteByPostId(postId);
+        return !postRepository.existsById(postId);
     }
 
-
-    public PostsDto findPostbyPostID(int postId)
-    {
-        var existingPost = postRepository.findBypostId(postId).orElseThrow(() -> {
-            log.warn("Unable to find super power with id {} while trying to update", postId);
-            return null;
-        });
+    public PostsDto findPostByPostID(int postId) {
+        var existingPost = postRepository.findByPostId(postId).orElse(null);
+        if(existingPost == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Post with id " + postId + " not found");
         return PostsUtil.buildPostDto(existingPost);
 
     }
 
-    public PostsDto updatePostPort(PostsDto postsDto, int postId)
-    {
-        var existingPost = postRepository.findBypostId(postId).orElseThrow(() -> {
-            log.warn("Unable to find super power with id {} while trying to update", postId);
-            return null;
-        });
-
-        var updatedPost = reify(postsDto, existingPost);
-        var savedPost = postRepository.save(updatedPost);
-        return PostsUtil.buildPostDto(savedPost);
+    public PostsUsernameDto updatePost(BuildPostRequest request, int postId) {
+        var oldPost = postRepository.findByPostId(postId).orElse(null);
+        if(oldPost == null) throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Post with id " + postId + " not found");
+        var newPost = reify(request, oldPost);
+        var newPostU = postsURepository.retrievePostAndUsername(postId);
+        return PostsUtil.buildPostUsernameDto(newPostU);
     }
 
 
-    public PostsDto createPost(PostsDto postsDto) {
-        var post = reify(postsDto, new Posts());
-        var savedPost = postRepository.save(post);
-        return PostsUtil.buildPostDto(savedPost);
+    public PostsUsernameDto createPost(BuildPostRequest request) {
+        var post = reify(request, new Posts());
+        var postU = postsURepository.retrievePostAndUsername(post.getPostId());
+        return PostsUtil.buildPostUsernameDto(postU);
     }
 
-    public PostsUsernameDto getUsernames(PostsUsernameDto postsDto) {
-        var post = reifyU(postsDto, new PostsUsername());
-        var savedPost = postsURepository.save(post);
-        return PostsUtil.buildPostUsernameDto(savedPost);
+    private Posts reify(BuildPostRequest request, Posts target) {
+        target.setUserId(request.getUserId());
+        target.setHeadline(request.getHeadline());
+        target.setIngredients(request.getIngredients()
+            .replaceAll("\n",", ")
+            .replaceAll(", ",","));
+        target.setRecipe(request.getRecipe());
+        target.setImg(request.getImg());
+        target.setTags(request.getTags()
+            .replaceAll("#",""));
+        target.setPostdate(LocalDateTime.now().format(dtf));
+        return postRepository.save(target);
     }
-
-    public PostsDto createPostbyUserID(PostsDto postsDto, int userID) {
-        var post = reifyByUserID(postsDto, new Posts(), userID);
-        var savedPost = postRepository.save(post);
-        return PostsUtil.buildPostDto(savedPost);
-    }
-
-    private Posts reify(PostsDto postsDto, Posts target)
-    {
-        target.setHeadline(postsDto.getHeadline());
-        target.setUserID(postsDto.getUserID());
-        target.setIngredients(postsDto.getIngredients());
-        target.setRecipe(postsDto.getRecipe());
-        target.setImg(postsDto.getImg());
-        target.setTags(postsDto.getTags());
-        target.setPostdate(postsDto.getPostdate());
-
-        return target;
-    }
-
-    private PostsUsername reifyU(PostsUsernameDto postsDto, PostsUsername target)
-    {
-        target.setHeadline(postsDto.getHeadline());
-        target.setUserID(postsDto.getUserID());
-        target.setIngredients(postsDto.getIngredients());
-        target.setRecipe(postsDto.getRecipe());
-        target.setImg(postsDto.getImg());
-        target.setTags(postsDto.getTags());
-        target.setPostdate(postsDto.getPostdate());
-        target.setUsername(postsDto.getUsername());
-
-        return target;
-    }
-
-    private Posts reifyByUserID(PostsDto postsDto, Posts target, int userID)
-    {
-        target.setHeadline(postsDto.getHeadline());
-        target.setUserID(userID);
-        target.setIngredients(postsDto.getIngredients());
-        target.setRecipe(postsDto.getRecipe());
-        target.setImg(postsDto.getImg());
-        target.setTags(postsDto.getTags());
-        target.setPostdate(postsDto.getPostdate());
-
-        return target;
-
-    }
-
-
 }

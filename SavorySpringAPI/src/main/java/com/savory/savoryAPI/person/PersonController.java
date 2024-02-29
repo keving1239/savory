@@ -38,9 +38,9 @@ public class PersonController {
     public PersonDto getPersonByUsername(@PathVariable("username") String username) {
         return personService.getPersonByUsername(username);
     }
-    @GetMapping("/usernameAvailable/{username}")
+    @GetMapping("/usernameExists/{username}")
     public Boolean isUsernameAvailable(@PathVariable("username") String username) {
-        return personService.isUsernameAvailable(username);
+        return personService.usernameExists(username);
     }
     @GetMapping("/emailExists/{email}")
     public Boolean emailExists(@PathVariable("email") String email) {
@@ -48,21 +48,20 @@ public class PersonController {
     }
 
     @PostMapping("/new")
-    public PersonDto createPerson(@RequestBody BuildPersonRequest personDTO) {
-        return personService.createPerson(personDTO);
+    public PersonDto createPerson(@RequestBody BuildPersonRequest request) {
+        return personService.createPerson(request);
     }
 
-    @PutMapping("/{id}/edit")
-    public PersonDto updatePerson(@RequestBody BuildPersonRequest personDto,@PathVariable("id") Integer id) {
-        return personService.updatePerson(personDto, id);
+    @PutMapping("/edit/{id}")
+    public PersonDto updatePerson(@RequestBody BuildPersonRequest request,@PathVariable("id") Integer id) {
+        return personService.updatePerson(request, id);
     }
-
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePerson(@PathVariable("id") Integer id) {
         return (personService.deletePerson(id)) ?
-                ResponseEntity.ok("Resource with id " + id + " deleted") :
-                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("Resource with id " + id + " not found.");
+                ResponseEntity.ok("User with id " + id + " deleted") :
+                ResponseEntity.status(HTTPResponse.SC_NOT_FOUND).body("User with id " + id + " not found.");
     }
 
 }
