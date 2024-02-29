@@ -25,6 +25,4 @@ public class Person {
     private String img;
     @Column (name = "Bio")
     private String bio;
-    @Column (name = "Role", nullable = false)
-    private boolean isAdmin;
 }

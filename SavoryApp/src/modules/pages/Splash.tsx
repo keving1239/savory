@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Typography, Grid, Button, Card, CardMedia, CardContent } from '@mui/material';
-import { useAuth0 } from '@auth0/auth0-react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
@@ -13,7 +12,6 @@ const teamMembers = [
 
 const SplashPage = () => {
     const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
-    const { loginWithRedirect } = useAuth0();
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>
@@ -22,8 +20,9 @@ const SplashPage = () => {
         <Grid item>
             <Typography variant='h6' maxWidth='80vw'>
                 Hi! Savory is a foodie's social media! Discover recipes, share 
-                your meals, and connect with other food lovers! Create an account,
-                and you can create, like, comment on, save, and share recipe posts.
+                your meals, and connect with other food lovers! 
+                <br></br>
+                Create an account, and you can create, like, save, and share recipe posts.
             </Typography>
         </Grid>
         <Grid container item justifyContent='space-around' rowSpacing={4}>
@@ -41,13 +40,10 @@ const SplashPage = () => {
         </Grid>
         <Grid item>
             {savoryAuth ?             
-            <Link to='/load/feed'>
+            <Link to='/feed'>
                 <Button variant='contained' color='primary'>Continue</Button>
             </Link> 
             :
-            // <Button variant='contained' color='primary' onClick={() => loginWithRedirect()}>
-            //     Log in
-            // </Button>}
             <Link to='/login'>
                 <Button variant='contained' color='primary'>Log In</Button>
             </Link>}

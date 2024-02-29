@@ -2,19 +2,15 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem } from '@mui/material';
-//import { Recipes } from '../../../Recipes';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import { Recipe } from '../../../redux/Recipes/recipes-slice'
 
-const Post = ({ id }: { id: number }) => {
-    const Recipes = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    const recipe = Recipes[id] || { id: 0, img: '', title: '', author: '', ingredients: [''], recipe: '', tags: [''], isBookmarked: false, date: new Date() };
-        const chunkedIngredients = recipe.ingredients.reduce<string[][]>((chunkResult, ingredient, index) => {
-            const chunkIndex = Math.floor(index / 2);
-            if (!chunkResult[chunkIndex]) chunkResult[chunkIndex] = [];
-           chunkResult[chunkIndex].push(ingredient);
-           return chunkResult;
-       }, []);  
+const Post = ({ recipe }: { recipe: Recipe }) => {
+    const chunkedIngredients = recipe.ingredients.reduce<string[][]>((chunkResult, ingredient, index) => {
+        const chunkIndex = Math.floor(index / 2);
+        if (!chunkResult[chunkIndex]) chunkResult[chunkIndex] = [];
+        chunkResult[chunkIndex].push(ingredient);
+        return chunkResult;
+    }, []);  
     return (
         <Paper sx={{ height: '80vh', width: '75vw', overflowY: 'auto' }}>
             <Grid container direction='column'>
@@ -24,14 +20,14 @@ const Post = ({ id }: { id: number }) => {
                     </Grid>
                     <Grid container item justifyContent='center' alignItems='center'>
                         <Grid item><Typography>Posted by</Typography></Grid>
-                        <Grid item><Link to={`/load/${recipe.author}/${recipe.ownerId}`}>
+                        <Grid item><Link to={`/load/${recipe.author}/${recipe.userId}`}>
                             <Button variant='text' fullWidth>
                                 <Typography noWrap textTransform='none' maxWidth='50vw'>{recipe.author}</Typography>
                             </Button>
                         </Link></Grid>
                         <Grid item>
                             <Typography>
-                                {/*{recipe.date.toDateString()}*/}
+                                {recipe.date}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -78,26 +74,19 @@ const Post = ({ id }: { id: number }) => {
 };
 
 const RecipeTags = ({ tags }: { tags: string[] }) => {
-
     const [tagsAnchorEl, setTagsAnchorEl] = useState<null | HTMLElement>(null);
-
-    if (!tags) {
-        return <Typography></Typography>
-    }
     const maxTags = 5;
     const visibleTags = tags.slice(0, maxTags);
     const hiddenTags = tags.slice(maxTags);
-
-    
     const open = Boolean(tagsAnchorEl);
     const showHiddenTags = (event: React.MouseEvent<HTMLElement>) => { setTagsAnchorEl(event.currentTarget); };
     const hideHiddenTags = () => { setTagsAnchorEl(null); };
-
+    if (!tags) return <Typography></Typography>
     return (
         <Grid container justifyContent='center' alignItems='center'>
             {visibleTags.map((tag, index) => (
                 <Grid item key={index}>
-                    <Link to={`/load/${tag}`}><Button variant='text'>
+                    <Link to={`/load/${tag.substring(1)}`}><Button variant='text'>
                         <Typography textTransform='none'>{`#${tag}`}</Typography>
                     </Button></Link>
                 </Grid>
@@ -115,7 +104,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
             >
                 {hiddenTags.map((tag, index) => (
                     <MenuItem key={index} onClick={hideHiddenTags} sx={{ p: 0, m: '.25vw' }}>
-                        <Link to={`/load/${tag}`}><Button variant='text' sx={{ p: 0 }}>
+                        <Link to={`/load/${tag.substring(1)}`}><Button variant='text' sx={{ p: 0 }}>
                             <Typography textTransform='none'>{`#${tag}`}</Typography>
                         </Button></Link>
                     </MenuItem>

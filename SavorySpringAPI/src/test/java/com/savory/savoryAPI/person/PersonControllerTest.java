@@ -72,7 +72,6 @@ class PersonControllerTest {
                 .email(email)
                 .img("")
                 .bio(bio)
-                .isAdmin(isAdmin)
                 .build();
     }
 
