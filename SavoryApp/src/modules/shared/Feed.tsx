@@ -274,7 +274,7 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
                 {recipe && username === recipe.author ? 
-                <Link to = {`post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
+                <Link to = {`/post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
                     <Edit />
                 </IconButton></Link>
                 : <></>
