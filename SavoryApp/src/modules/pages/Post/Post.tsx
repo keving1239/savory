@@ -33,7 +33,7 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
                     </Grid>
                     <Grid container item justifyContent='center' alignItems='center'>
                         <Grid item><Typography>Posted by</Typography></Grid>
-                        <Grid item><Link to={`/load/${recipe.author}/${recipe.userId}`}>
+                        <Grid item><Link to={`/profile/${recipe.author}/${recipe.userId}`}>
                             <Button variant='text' fullWidth>
                                 <Typography noWrap textTransform='none' maxWidth='50vw'>{recipe.author}</Typography>
                             </Button>
@@ -96,7 +96,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
         <Grid container justifyContent='center' alignItems='center'>
             {visibleTags.map((tag, index) => (
                 <Grid item key={index}>
-                    <Link to={`/load/${tag.substring(1)}`}><Button variant='text'>
+                    <Link to={`/feed/search/${tag}`}><Button variant='text'>
                         <Typography textTransform='none'>{`#${tag}`}</Typography>
                     </Button></Link>
                 </Grid>
@@ -114,7 +114,7 @@ const RecipeTags = ({ tags }: { tags: string[] }) => {
             >
                 {hiddenTags.map((tag, index) => (
                     <MenuItem key={index} onClick={hideHiddenTags} sx={{ p: 0, m: '.25vw' }}>
-                        <Link to={`/load/${tag.substring(1)}`}><Button variant='text' sx={{ p: 0 }}>
+                        <Link to={`/feed/search/${tag}`}><Button variant='text' sx={{ p: 0 }}>
                             <Typography textTransform='none'>{`#${tag}`}</Typography>
                         </Button></Link>
                     </MenuItem>
