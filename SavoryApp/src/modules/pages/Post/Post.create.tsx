@@ -97,4 +97,3 @@ const PostCreate = () => {
 }
 
 export default PostCreate;
-<PostCreate/>
