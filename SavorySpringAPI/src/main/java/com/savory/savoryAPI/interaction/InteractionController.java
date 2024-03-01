@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/interaction")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"https://savory.azurewebsites.net", "http://localhost:3000"})
 public class InteractionController {
     private final InteractionService interactionService;
 

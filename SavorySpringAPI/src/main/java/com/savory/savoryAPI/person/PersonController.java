@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"https://savory.azurewebsites.net", "http://localhost:3000"})
 @RequestMapping("/api/person")
 public class PersonController {
 

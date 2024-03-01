@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"https://savory.azurewebsites.net", "http://localhost:3000"})
 @RequestMapping("/api/posts")
 public class PostController {
 
