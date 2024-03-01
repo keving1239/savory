@@ -34,7 +34,11 @@ export default function Feed({id}: {id?: number}) {
     const [currentPost, setcurrentPost] = useState(id || -1);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
-    const [hasPageChanged, setHasPageChanged] = useState(false);
+    // local page state
+    const [bookmarkPage, setBookmarkPage] = useState(1);
+    const [profilePage, setProfilePage] = useState(1);
+    const [searchPage, setSearchPage] = useState(1);
+    const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
 
     // load recipes
     async function loadRecipes() {
@@ -44,7 +48,7 @@ export default function Feed({id}: {id?: number}) {
         else await loadFeed();
     }
     async function loadFeed() {
-        if(hasPageChanged) {
+        if(hasFeedPageChanged) {
             await dispatch(fetchRecipes({pageNumber: page}));
         } else setRecipes(feed);
     }
@@ -54,7 +58,7 @@ export default function Feed({id}: {id?: number}) {
                 method: 'GET'
             }));
             const profile = await findProfile.json();
-            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${page}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${profilePage}`, fetchOptions({
                 method: 'GET'
             }));
             const data = await response.json();
@@ -71,7 +75,7 @@ export default function Feed({id}: {id?: number}) {
     async function loadBookmarks() {
         try {
             if(!user) return;
-            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${page}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${bookmarkPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -87,7 +91,7 @@ export default function Feed({id}: {id?: number}) {
     }
     async function loadSearch() {
         try {
-            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}?pageNumber=${page}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}?pageNumber=${searchPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -132,11 +136,17 @@ export default function Feed({id}: {id?: number}) {
         setOpen(false);
     }
     const handleNextPage = () => {
-        setHasPageChanged(true);
+        if(username) return setProfilePage(profilePage+1);
+        else if(interaction) return setBookmarkPage(bookmarkPage+1);
+        else if(query) return setSearchPage(searchPage+1)
+        setHasFeedPageChanged(true);
         dispatch(changePage(page+1));
     };
     const handlePreviousPage = () => {
-        setHasPageChanged(true);
+        if(username) return setProfilePage(profilePage-1);
+        else if(interaction) return setBookmarkPage(bookmarkPage-1);
+        else if(query) return setSearchPage(searchPage-1)
+        setHasFeedPageChanged(true);
         dispatch(changePage(page-1));
     };
 

@@ -108,10 +108,10 @@ const PostEdit = () => {
                     }}
                   />
                   <Grid item>
-                  <Button color='error' variant='contained' onClick={() => setOpen(true)} sx={{margin: '0 35px 35px 0'}}>
+                  <Button color='error' variant='contained' onClick={() => setOpen(true)} sx={{margin: '34px 40px 34px 0'}}>
                     <Typography>Delete this Post</Typography>
                   </Button>
-                  <Button color='secondary' variant='contained' onClick={() => navigate('/feed')} sx={{margin: '0 0 35px 35px'}}>
+                  <Button color='secondary' variant='contained' onClick={() => navigate('/feed')} sx={{margin: '34px 0 34px 40px'}}>
                     <Typography>Archive this Post</Typography>
                   </Button>
                   </Grid>
@@ -178,9 +178,6 @@ const PostEdit = () => {
                       required
                       value={img}
                       margin='normal'
-                      multiline
-                      minRows={3}
-                      maxRows={3}
                       onChange={(e) => {setImg(e.target.value)}}
                     />
                     <Button variant='contained' sx={{mb: '1.5vh', mt: '1vh'}} type='submit' size='large'>
