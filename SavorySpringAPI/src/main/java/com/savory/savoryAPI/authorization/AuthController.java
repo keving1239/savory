@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 
 @RestController
-@CrossOrigin(origins = {"https://savory.azurewebsites.net", "http://localhost:3000"})
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class AuthController {
     @GetMapping("/isAdmin")
