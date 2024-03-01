@@ -21,6 +21,7 @@ import { Recipe, fetchRecipes, changePage } from '../../redux/Recipes/recipes-sl
 export default function Feed({id}: {id?: number}) {
     // redux
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     const page = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
@@ -36,7 +37,9 @@ export default function Feed({id}: {id?: number}) {
     const [status, setStatus] = useState('Loading Recipes...');
     const [localPage, setLocalPage] = useState(1);
     const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
-
+    //ensure authentication
+    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     // load recipes
     async function loadRecipes() {
         console.log(localPage);
@@ -191,7 +194,7 @@ export default function Feed({id}: {id?: number}) {
 const RecipeAvatar = ({ author }: { author: string }) => {
     return (
         <Tooltip title={author}>
-            <Link to={`/feed/${author}`}><IconButton>
+            <Link to={`/profile/${author}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
