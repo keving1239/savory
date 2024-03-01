@@ -36,7 +36,7 @@ const standardTheme = createTheme({
             light: '#fca311',
             main: '#ca7d02',
             dark: '#8d5801',
-            contrastText: '#000',
+            contrastText: '#fff',
         },
         background: {
             default: '#fefae0',
