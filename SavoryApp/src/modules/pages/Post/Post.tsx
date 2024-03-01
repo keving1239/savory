@@ -17,6 +17,13 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
         chunkResult[chunkIndex].push(ingredient);
         return chunkResult;
     }, []);
+
+    async function copyIngredient(ingredient: string) {
+        try {
+            await navigator.clipboard.writeText(ingredient);
+        } catch (error) {console.error(error);}
+    }
+
     return (
         <Paper sx={{ height: '80vh', width: '75vw', overflowY: 'auto' }}>
             <Grid container direction='column'>
@@ -54,11 +61,10 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
                                     <Grid container item spacing={'1vh'} justifyContent='flex-start' key={chunk[0]}>
                                         {chunk.map((ingredient) => (
                                             <Grid item key={ingredient}>
-                                                <Tooltip arrow title={ingredient} placement='right'>
-                                                    <Button variant='text' sx={{ width: '16vw', justifyContent: "flex-start" }}>
+                                                    <Button variant='text' sx={{ width: '16vw', justifyContent: "flex-start" }} 
+                                                    onClick={() => {copyIngredient(ingredient)}}>
                                                         <Typography noWrap textTransform='none'>{ingredient}</Typography>
                                                     </Button>
-                                                </Tooltip>
                                             </Grid>))}
                                     </Grid>
                                 ))}
