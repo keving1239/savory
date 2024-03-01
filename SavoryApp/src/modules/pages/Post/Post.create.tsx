@@ -13,15 +13,12 @@ const PostCreate = () => {
   const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
   useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
   // form states
+  // form states
   const [title, setTitle] = useState('');
   const [img, setImg] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [recipe, setRecipe] = useState('');
   const [tags, setTags] = useState('');
-  // error states
-  const [titleError, setTitleError] = useState({error: false, helperText: ''});
-  const [ingredientsError, setIngredientsError] = useState({error: false, helperText: ''});
-  const [tagsError, setTagsError] = useState({error: false, helperText: ''});
 
   // form validation
   const validateFields = () => {
@@ -42,6 +39,12 @@ const PostCreate = () => {
     );
     return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
   }
+
+  // error states
+  const [titleError, setTitleError] = useState({error: false, helperText: ''});
+  const [ingredientsError, setIngredientsError] = useState({error: false, helperText: ''});
+  const [tagsError, setTagsError] = useState({error: false, helperText: ''});
+
   // form submission
   const handlePostCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
