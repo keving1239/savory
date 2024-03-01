@@ -5,21 +5,18 @@ import { Box, Grid, Tooltip, Typography, TextField, Card,Dialog, DialogActions, 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../../redux/store';
 import { updateRecipe, Recipe, deleteRecipe } from '../../../redux/Recipes/recipes-slice'
-import PostCreate from './Post.create';
 
-const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
+const PostEdit = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();  
+    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const { id } = useParams();
     const [post, setPost] = useState<Recipe | null>(null);
     const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
-    const dispatch = useDispatch<AppDispatch>();
-    const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id);
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    //ensure authentication
     const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
-    // const testValue = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    // // form states
-    // console.log(testValue)
+    // form states
     const [title, setTitle] = useState(post?.title || '');
     const [img, setImg] = useState('');
     const [ingredients, setIngredients] = useState('');
@@ -31,89 +28,61 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
     const [tagsError, setTagsError] = useState({error: false, helperText: ''});
   
     // form validation
-    // const validateFields = () => {
-    //   const titleRegex = /^[\w /\(\)\-\.]{3,100}$/.test(title);
-    //   setTitleError((!titleRegex) ? 
-    //     {error: true, helperText: 'Must be 3-100 characters & only contain letters, numbers, space, _-./()'}
-    //     : {error: false, helperText: ''}
-    //   );
-    //   const ingredientsRegex = /^(([\w /\(\)\-\.]){1,63}(\n|,|$)){1,63}$/.test(ingredients);
-    //   setIngredientsError((!ingredientsRegex) ? 
-    //     {error: true, helperText: 'Must follow the format in ingredients tool tip only contain letters, numbers, space, _-./()'}
-    //     : {error: false, helperText: ''}
-    //   );
-    //   const tagsRegex = /^((#([a-zA-Z0-9\-]){1,31}),{0,1}){1,63}$/.test(tags);
-    //   setTagsError((tags && !tagsRegex) ?  
-    //     {error: true, helperText: 'Must follow the format in tags tool tip & contain only letters, numbers, -'}
-    //     : {error: false, helperText: ''}
-    //   );
-    //   return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
-    // }
+    const validateFields = () => {
+      const titleRegex = /^[\w /\(\)\-\.]{3,100}$/.test(title);
+      setTitleError((!titleRegex) ? 
+        {error: true, helperText: 'Must be 3-100 characters & only contain letters, numbers, space, _-./()'}
+        : {error: false, helperText: ''}
+      );
+      const ingredientsRegex = /^(([\w /\(\)\-\.]){1,63}(\n|,|$)){1,63}$/.test(ingredients);
+      setIngredientsError((!ingredientsRegex) ? 
+        {error: true, helperText: 'Must follow the format in ingredients tool tip only contain letters, numbers, space, _-./()'}
+        : {error: false, helperText: ''}
+      );
+      const tagsRegex = /^((#([a-zA-Z0-9\-]){1,31}),{0,1}){1,63}$/.test(tags);
+      setTagsError((tags && !tagsRegex) ?  
+        {error: true, helperText: 'Must follow the format in tags tool tip & contain only letters, numbers, -'}
+        : {error: false, helperText: ''}
+      );
+      return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
+    }
 
     async function loadRecipe() {
         try {
             const findRecipe = await fetch(`http://localhost:8080/api/posts/byPostID/${id}`, fetchOptions({
                 method: 'GET'
             }));
-            const postData = await findRecipe.json()
-            console.log(postData)
-            const newPostData = { ...postData, title: postData.headline };
+            const postData = await findRecipe.json();
+            const newPostData = { ...postData, title: postData.headline, tags:  '#'+postData.tags.replace(/,/g, ',#')};
             delete newPostData.headline;
-            setPost(newPostData)
-            setTitle(newPostData.title)
-            setImg(newPostData.img)
-            setIngredients(newPostData.ingredients)
-            setTags(newPostData.tags)
-            setRecipe(newPostData.recipe)
-            console.log(post)
-        } catch(error) {
-            console.error(error);
-        }
+            setTitle(newPostData.title);
+            setImg(newPostData.img);
+            setTags(newPostData.tags);
+            setIngredients(newPostData.ingredients);
+            setRecipe(newPostData.recipe);
+            console.log(newPostData);
+            setPost(newPostData);
+        } catch(error) {console.error(error);}
     }
     useEffect(() => {
-        loadRecipe();
-    }, [id]); // Called any time id changes
-      // form validation
-    const validateFields = () => {
-        const titleRegex = /^[\w /\(\)\-\.]{3,100}$/.test(title);
-        setTitleError((!titleRegex) ? 
-        {error: true, helperText: 'Must be 3-100 characters & only contain letters, numbers, space, _-./()'}
-        : {error: false, helperText: ''}
-        );
-        const ingredientsRegex = /^(([\w /\(\)\-\.]){1,63}(\n|,|$)){1,63}$/.test(ingredients);
-        setIngredientsError((!ingredientsRegex) ? 
-        {error: true, helperText: 'Must follow the format in ingredients tool tip only contain letters, numbers, space, _-./()'}
-        : {error: false, helperText: ''}
-        );
-        const tagsRegex = /^((#([a-zA-Z0-9\-]){1,31}),{0,1}){1,63}$/.test(tags);
-        setTagsError((tags && !tagsRegex) ?  
-        {error: true, helperText: 'Must follow the format in tags tool tip & contain only letters, numbers, -'}
-        : {error: false, helperText: ''}
-        );
-        return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
-    }
+      loadRecipe();
+    }, [id]);
 
     // form submission
     const handlePostEdit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const isValid = validateFields();
-      if(!userId || !isValid) return;
-      await dispatch(updateRecipe(
-        {
-            userId: userId, headline: title, ingredients: ingredients, recipe: recipe, img: img, tags: tags,
-            postId: +(id || "-1")
-        }
+      if(!user?.id || !isValid) return;
+      await dispatch(updateRecipe({
+        userId: user?.id, headline: title, ingredients: ingredients, recipe: recipe, img: img, tags: tags,
+        postId: +(id || "-1")
+      }
       ));
       navigate('/feed');
     }
 
     const handleDelete = async () => {
-        console.log("hello")
-        await dispatch(deleteRecipe(
-            {
-                postId: +(id || "-1")
-            }
-        ));
+        await dispatch(deleteRecipe({postId: +(id || "-1")}));
         setOpen(false);
         navigate('/feed');
     }
@@ -122,17 +91,15 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
         post ? (    
             <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>
             <Card elevation={10} sx={{ maxWidth: '85vw' }}>
-                <Button color='error' variant='contained' sx={{mb: '1.5vh', mt: '1vh'}} onClick={() => setOpen(true)}>
-                    <Typography>Delete this Post</Typography>
-                </Button>
               <Grid container>
                 {/* Image on the left */}
-                <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid container item xs={12} md={6} direction='column' alignItems='center' justifyContent='space-between'>
                   <Paper
                     component='img'
-                    alt={user?.email}
+                    alt={post.title}
                     src={post.img}
                     sx={{
+                      margin: 'auto',
                       minHeight: '37vh',
                       minWidth: '34vw',
                       maxHeight: '37vh',
@@ -140,6 +107,14 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       objectFit: 'cover'
                     }}
                   />
+                  <Grid item>
+                  <Button color='error' variant='contained' onClick={() => setOpen(true)} sx={{margin: '0 35px 35px 0'}}>
+                    <Typography>Delete this Post</Typography>
+                  </Button>
+                  <Button color='secondary' variant='contained' onClick={() => navigate('/feed')} sx={{margin: '0 0 35px 35px'}}>
+                    <Typography>Archive this Post</Typography>
+                  </Button>
+                  </Grid>
                 </Grid>
                 {/* Text on the right */}
                 <Grid item xs={12} md={6}>
@@ -151,6 +126,8 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       label='Title'
                       variant="outlined"
                       fullWidth
+                      required
+                      {...titleError}
                       value={title}
                       margin='normal'
                       onChange={(e) => {setTitle(e.target.value)}}
@@ -160,9 +137,11 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       label='Ingredients'
                       variant="outlined"
                       fullWidth
+                      required
                       value={ingredients}
                       margin='normal'
                       multiline
+                      {...ingredientsError}
                       minRows={3}
                       maxRows={3}
                       onChange={(e) => {setIngredients(e.target.value)}}
@@ -172,6 +151,7 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       label='Recipe'
                       variant="outlined"
                       fullWidth
+                      required
                       value={recipe}
                       margin='normal'
                       multiline
@@ -184,6 +164,8 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       label='Tags'
                       variant="outlined"
                       fullWidth
+                      required
+                      {...tagsError}
                       value={tags}
                       margin='normal'
                       onChange={(e) => {setTags(e.target.value)}}
@@ -193,6 +175,7 @@ const PostEdit = ({recipeItem}: {recipeItem?: Recipe}) => {
                       label='Image Link'
                       variant="outlined"
                       fullWidth
+                      required
                       value={img}
                       margin='normal'
                       multiline

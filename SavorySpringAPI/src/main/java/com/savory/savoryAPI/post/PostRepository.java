@@ -4,6 +4,7 @@ import com.savory.savoryAPI.post.entity.Posts;
 import com.savory.savoryAPI.post.entity.PostsUsername;
 import com.savory.savoryAPI.person.entity.Person;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +30,7 @@ public interface PostRepository extends JpaRepository<Posts, Integer>
    List<Posts> findAllByPostIdIn(@Param("ids") Collection<Integer> ids);
 
    @Query("SELECT p FROM Posts p WHERE p.userId = :userId")
-   List<Posts> findByUserId(@Param("userId") Integer userId);
+   List<Posts> findByUserId(@Param("userId") Integer userId, Pageable pageable);
 
 
 }

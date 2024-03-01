@@ -9,7 +9,6 @@ import PostCreate from './pages/Post/Post.create';
 import Settings from './pages/Profile/Settings';
 import Error404 from './shared/Error404';
 import LoadingAccount from './shared/LoadingAccount';
-import LoadingPage from './shared/LoadingPage';
 import PostEdit from './pages/Post/Post.edit';
 
 const StandardLayoutRouter = () => (
@@ -22,8 +21,6 @@ const StandardLayoutRouter = () => (
                 <Route path='profile/edit' element={<ProfileEdit/>}/>
                 <Route path="login" element={<LoadingAccount/>}/>
                 <Route path="feed" element={<Feed/>}/>
-                {/* <Route path="load/:nextPage/:userId" element={<LoadingPage/>}/>
-                <Route path="load/:nextPage" element={<LoadingPage/>}/> */}
                 <Route path='feed/search/:query' element={<Feed/>}/>
                 <Route path='feed/:interaction' element={<Feed/>}/>
                 <Route path='post/new' element={<PostCreate/>}/>

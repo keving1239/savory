@@ -48,8 +48,9 @@ public class PostService
                     .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findBookmarks(int userId) {
-        List<PostsUsername> posts = postsURepository.findBookmarks(userId);
+    public List<PostsUsernameDto> findBookmarks(int userId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
+        List<PostsUsername> posts = postsURepository.findBookmarks(userId, pageable);
         return posts.stream()
                 .map(PostsUtil::buildPostUsernameDto)
                 .collect(Collectors.toList());
@@ -74,8 +75,9 @@ public class PostService
         return postRepository.findAllByPostIdIn(ids);
     }
 
-    public List<PostsDto> findPostByUserId(int userId) {
-        List<Posts> posts = postRepository.findByUserId(userId);
+    public List<PostsDto> findPostByUserId(int userId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
+        List<Posts> posts = postRepository.findByUserId(userId, pageable);
         return posts.stream()
                 .map(PostsUtil::buildPostDto)
                 .collect(Collectors.toList());

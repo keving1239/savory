@@ -6,7 +6,7 @@ import {LocalDining, Search } from '@mui/icons-material'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import { clearUser } from '../../redux/User/user-slice';
-import { clearRecipes, changePage } from '../../redux/Recipes/recipes-slice';
+import { clearRecipes } from '../../redux/Recipes/recipes-slice';
 import { clearInteractions } from '../../redux/Interactions/interactions-slice';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -67,15 +67,11 @@ const ResponsiveAppBar = () => {
 }
 
 const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
-  const dispatch = useDispatch<AppDispatch>();
-  function pageHandler(): void {
-    dispatch(changePage({pageNumber: 1}))
-  }
   return(
     <>
     {
       savoryAuth ?
-      <Link to='/feed'><Button onClick={pageHandler} sx={{p: 0}}>
+      <Link to='/feed'><Button sx={{p: 0}}>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
       </Button></Link> :

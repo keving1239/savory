@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card,
-    CardMedia, Avatar, IconButton, Modal, Button, CircularProgress
+    CardMedia, Avatar, IconButton, Modal, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import React from 'react';
 import {
@@ -16,16 +16,14 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { Recipe, changePage } from '../../redux/Recipes/recipes-slice';
-import PostCreate from '../pages/Post/Post.create';
+import { Recipe, fetchRecipes, changePage } from '../../redux/Recipes/recipes-slice';
 
 export default function Feed({id}: {id?: number}) {
-    const navigate = useNavigate();
-    const dispatch = useDispatch<AppDispatch>();
     // redux
+    const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    var pageNumber = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    const page = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     // params
     const { username } = useParams();
     const { post } = useParams();
@@ -36,16 +34,19 @@ export default function Feed({id}: {id?: number}) {
     const [currentPost, setcurrentPost] = useState(id || -1);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
-    const [page, setPage] = useState(0);
-
-    const length = Object.keys(recipes).length;
+    const [hasPageChanged, setHasPageChanged] = useState(false);
 
     // load recipes
-    function loadRecipes() {
-        if(username) loadProfile();
-        else if(interaction) loadBookmarks();
-        else if(query) loadSearch();
-        else setRecipes(feed);
+    async function loadRecipes() {
+        if(username) await loadProfile();
+        else if(interaction) await  loadBookmarks();
+        else if(query) await loadSearch();
+        else await loadFeed();
+    }
+    async function loadFeed() {
+        if(hasPageChanged) {
+            await dispatch(fetchRecipes({pageNumber: page}));
+        } else setRecipes(feed);
     }
     async function loadProfile() {
         try {
@@ -53,7 +54,7 @@ export default function Feed({id}: {id?: number}) {
                 method: 'GET'
             }));
             const profile = await findProfile.json();
-            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${page}`, fetchOptions({
                 method: 'GET'
             }));
             const data = await response.json();
@@ -70,7 +71,7 @@ export default function Feed({id}: {id?: number}) {
     async function loadBookmarks() {
         try {
             if(!user) return;
-            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${page}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -86,7 +87,7 @@ export default function Feed({id}: {id?: number}) {
     }
     async function loadSearch() {
         try {
-            const response = await fetch(`http://localhost:8080/api/posts/search/${query}?pageNumber=${pageNumber}&pageSize=${12}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}?pageNumber=${page}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -106,12 +107,20 @@ export default function Feed({id}: {id?: number}) {
         loadRecipes();
     }, [query, interaction, username]);
     useEffect(() => {
+        setRecipes({});
+        setStatus('Loading Recipes...');
+        loadRecipes(); 
+    },[page]);
+    useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
             if (Object.keys(recipes).length === 0) setStatus('Nothing Here...');
         }, 10000);
         return () => clearTimeout(timer);
     }, [recipes]);
+    useEffect(() => {
+        setRecipes(feed);
+    },[feed]);
 
     // Handlers
     const openHandler = (id: number) => {
@@ -122,28 +131,13 @@ export default function Feed({id}: {id?: number}) {
         setcurrentPost(0);
         setOpen(false);
     }
-
     const handleNextPage = () => {
-        pageNumber = pageNumber + 1
-        // dispatch(changePage({ pageNumber: pageNumber }));
-        // var page = '';
-        // if (filters) {
-        //     page = `/load/${filters}`;
-        // } else {
-        //     page = `/load/feed`
-        // }
-        // navigate(`${page}`);
+        setHasPageChanged(true);
+        dispatch(changePage(page+1));
     };
     const handlePreviousPage = () => {
-        pageNumber = pageNumber - 1;
-        // dispatch(changePage({ pageNumber: pageNumber }));
-        // var page = '';
-        // if (filters) {
-        //     page = `/load/${filters}`;
-        // } else {
-        //     page = `/load/feed`
-        // }
-        // navigate(`${page}`);
+        setHasPageChanged(true);
+        dispatch(changePage(page-1));
     };
 
     return (
@@ -154,17 +148,18 @@ export default function Feed({id}: {id?: number}) {
                 {Object.values(recipes).map((recipe) => {
                     return (recipe.id > 0 && recipes[recipe.id]) ?
                         <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
-                        : null;
+                        : <></>;
                 })}
             </Grid>
             <Box sx={{ marginTop: "50px" }}>
-                {pageNumber === 1 ?
-                    null : (
-                        <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
-                    )}
-                {length === 12 ?
+                {(page > 1) ?
+                    <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                    : <></>
+                }
+                {(Object.keys(recipes).length < 12) ?
+                    <></> :
                     <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
-                    : null }
+                }
             </Box></>
             :
             <Box>
@@ -227,7 +222,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
     }
     const exploreHandler = () => {
         if(!recipe) return;
-        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
+        navigate(`/feed/search?query=${recipe.title + ' ' + recipe.tags?.join(' ')}`);
     }
     // Recipe Card
     return (
@@ -280,9 +275,11 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {recipe ? <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
                 {username === recipe.author ? 
-                <Link to = {`/post/edit/${recipe.id}`}><IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}>
-                    <Edit />
-                </IconButton></Link>
+                <Link to = {`/post/edit/${recipe.id}`}>
+                <Tooltip title='Edit' placement='right'>
+                    <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}><Edit /></IconButton>
+                </Tooltip>
+                </Link>
                 : <></>
                 }
                 <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, right: 5 }}>
@@ -302,6 +299,7 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
     const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const [open, setOpen] = React.useState(false);
     // interaction handlers
     const likeHandler = () => {
         if (!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: false }));
@@ -322,9 +320,6 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
         } catch (error) {console.error(error);}
         if(!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
         else if(!interaction.shared) dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
-    }
-    const reportHandler = () => {
-        navigate('/report');
     }
     
     const [metrics, setMetrics] = useState({likes: 0, shares: 0, bookmarks: 0});
@@ -361,8 +356,26 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
                 </Grid>
             </Grid>
             <Grid item>
-                <IconButton onClick={reportHandler}><Report/></IconButton>
+                <Tooltip title='Report' placement='left'>
+                <IconButton onClick={() => setOpen(true)}><Report/></IconButton>
+                </Tooltip>
             </Grid>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+                <DialogTitle>{"Report this recipe?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        You are about to report this recipe to Savory administrators. 
+                        Are you sure you want to report this recipe? 
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpen(false)} color='error' variant='outlined'>Cancel</Button>
+                    <Button onClick={() => {
+                        setOpen(false);
+                        navigate(`/report/${id}`);
+                    }} variant='outlined'>Report</Button>
+                </DialogActions>
+            </Dialog>
         </Grid>
     );
 }

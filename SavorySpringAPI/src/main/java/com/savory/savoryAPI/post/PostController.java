@@ -29,24 +29,27 @@ public class PostController {
     }
     @GetMapping("/allWithUsername")
     public List<PostsUsernameDto> getFeed(
-            @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
+            @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
         return postService.findPostAndUsername(pageNumber, pageSize);
     }
     @GetMapping("/bookmarked/{userId}")
-    public List<PostsUsernameDto> getBookmarks(@PathVariable("userId") int userId) {
-        return postService.findBookmarks(userId);
+    public List<PostsUsernameDto> getBookmarks(@PathVariable("userId") int userId,
+            @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
+        return postService.findBookmarks(userId, pageNumber, pageSize);
     }
-    @GetMapping("/search/{query}")
-    public List<PostsUsernameDto> getSearchedPosts(@PathVariable("query") String query,
+    @GetMapping("/search")
+    public List<PostsUsernameDto> getSearchedPosts(@RequestParam("query") String query,
            @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
            @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
         return postService.findSearchedPosts(query, pageNumber, pageSize);
     }
     @GetMapping("/byUserId/{userId}")
-    public List<PostsDto> getUserPosts(@PathVariable int userId)
-    {
-        return postService.findPostByUserId(userId);
+    public List<PostsDto> getUserPosts(@PathVariable int userId,
+           @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
+           @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
+        return postService.findPostByUserId(userId, pageNumber, pageSize);
     }
     @GetMapping("/byPostID/{postId}")
     public PostsDto getPostByPostID(@PathVariable("postId") int postId) {

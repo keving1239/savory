@@ -7,7 +7,7 @@ import React from 'react';
 import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchUser } from '../../redux/User/user-slice';
-import { fetchRecipes, changePage } from '../../redux/Recipes/recipes-slice';
+import { fetchRecipes } from '../../redux/Recipes/recipes-slice';
 import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingAccount = () => {
@@ -55,17 +55,15 @@ const LoadingAccount = () => {
                 method: 'GET',
             }));
             const isAdmin = await response.json();
-            console.log(isAdmin)
             await dispatch(fetchUser({ email, isAuthenticated, isAdmin }));
         } catch(error){console.error("Error Fetching User: ", error)}
     }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
-        dispatch(changePage({pageNumber: 1}));
+        // dispatch(changePage({pageNumber: 1}));
         // dispatch(loadPage({loaded: true}))
-        const pageNumber = 1;
         try {
-            await dispatch(fetchRecipes({userId, pageNumber}));
+            await dispatch(fetchRecipes({pageNumber: 1}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}
     }
     async function loadInteractions() {
