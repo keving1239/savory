@@ -34,14 +34,12 @@ export default function Feed({id}: {id?: number}) {
     const [currentPost, setcurrentPost] = useState(id || -1);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
-    // local page state
-    const [bookmarkPage, setBookmarkPage] = useState(1);
-    const [profilePage, setProfilePage] = useState(1);
-    const [searchPage, setSearchPage] = useState(1);
+    const [localPage, setLocalPage] = useState(1);
     const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
 
     // load recipes
     async function loadRecipes() {
+        console.log(localPage);
         if(username) await loadProfile();
         else if(interaction) await  loadBookmarks();
         else if(query) await loadSearch();
@@ -58,7 +56,7 @@ export default function Feed({id}: {id?: number}) {
                 method: 'GET'
             }));
             const profile = await findProfile.json();
-            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${profilePage}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${localPage}`, fetchOptions({
                 method: 'GET'
             }));
             const data = await response.json();
@@ -75,7 +73,7 @@ export default function Feed({id}: {id?: number}) {
     async function loadBookmarks() {
         try {
             if(!user) return;
-            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${bookmarkPage}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${localPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -91,7 +89,7 @@ export default function Feed({id}: {id?: number}) {
     }
     async function loadSearch() {
         try {
-            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}?pageNumber=${searchPage}`, fetchOptions({
+            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}&pageNumber=${localPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -106,6 +104,7 @@ export default function Feed({id}: {id?: number}) {
         } catch(error) {console.error(error);}
     }
     useEffect(() => {
+        setLocalPage((username || interaction || query) ? 1 : page);
         setRecipes({});
         setStatus('Loading Recipes...');
         loadRecipes();
@@ -114,7 +113,7 @@ export default function Feed({id}: {id?: number}) {
         setRecipes({});
         setStatus('Loading Recipes...');
         loadRecipes(); 
-    },[page]);
+    },[localPage]);
     useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
@@ -136,18 +135,26 @@ export default function Feed({id}: {id?: number}) {
         setOpen(false);
     }
     const handleNextPage = () => {
-        if(username) return setProfilePage(profilePage+1);
-        else if(interaction) return setBookmarkPage(bookmarkPage+1);
-        else if(query) return setSearchPage(searchPage+1)
-        setHasFeedPageChanged(true);
-        dispatch(changePage(page+1));
+        setLocalPage((username || interaction || query) ? localPage+1 : page+1);
+        // if(username) return setProfilePage(profilePage+1);
+        // else if(interaction) return setBookmarkPage(bookmarkPage+1);
+        // else if(query) return setSearchPage(searchPage+1)
+        if(username || interaction || query) {
+            setLocalPage(localPage+1);
+        } else {
+            setHasFeedPageChanged(true);
+            setLocalPage(page+1);
+            dispatch(changePage(page+1));    
+        }
     };
     const handlePreviousPage = () => {
-        if(username) return setProfilePage(profilePage-1);
-        else if(interaction) return setBookmarkPage(bookmarkPage-1);
-        else if(query) return setSearchPage(searchPage-1)
-        setHasFeedPageChanged(true);
-        dispatch(changePage(page-1));
+        if(username || interaction || query) {
+            setLocalPage(localPage-1);
+        } else {
+            setHasFeedPageChanged(true);
+            setLocalPage(page-1);
+            dispatch(changePage(page-1));    
+        }
     };
 
     return (
@@ -162,7 +169,7 @@ export default function Feed({id}: {id?: number}) {
                 })}
             </Grid>
             <Box sx={{ marginTop: "50px" }}>
-                {(page > 1) ?
+                {(localPage > 1) ?
                     <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
                     : <></>
                 }
