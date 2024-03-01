@@ -57,12 +57,12 @@ stages:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
+    # - task: ArchiveFiles@2
+    #   inputs:
+    #     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    #     includeRootFolder: false
+    #     archiveType: 'zip'
+    #     archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
 
     ## Publish the zip file
     - task: PublishBuildArtifacts@1
