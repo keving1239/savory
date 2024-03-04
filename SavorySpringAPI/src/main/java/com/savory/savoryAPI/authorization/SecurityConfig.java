@@ -42,6 +42,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
             authorizationManagerRequestMatcherRegistry
                     .requestMatchers("api/swagger-ui/**", "api/v3/api-docs/**").permitAll()
+                    .requestMatchers("api/posts/**").permitAll()
                     .requestMatchers("api/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated())
             .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(request -> {
