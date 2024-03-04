@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Grid, Tooltip, Typography, TextField, Card,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, CardContent, TextFieldProps, Paper } from '@mui/material';
+import { Box, Grid, Typography, TextField, Card,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, CardContent, Paper } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../../redux/store';
 import { updateRecipe, Recipe, deleteRecipe } from '../../../redux/Recipes/recipes-slice'
@@ -12,7 +12,8 @@ const PostEdit = () => {
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const { id } = useParams();
     const [post, setPost] = useState<Recipe | null>(null);
-    const [open, setOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
     //ensure authentication
     const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
@@ -60,7 +61,6 @@ const PostEdit = () => {
             setTags(newPostData.tags);
             setIngredients(newPostData.ingredients);
             setRecipe(newPostData.recipe);
-            console.log(newPostData);
             setPost(newPostData);
         } catch(error) {console.error(error);}
     }
@@ -83,8 +83,13 @@ const PostEdit = () => {
 
     const handleDelete = async () => {
         await dispatch(deleteRecipe({postId: +(id || "-1")}));
-        setOpen(false);
+        setDeleteDialogOpen(false);
         navigate('/feed');
+    }
+    const handleArchive = async () => {
+      // await dispatch();
+      setArchiveDialogOpen(false);
+      navigate('/feed');
     }
 
     return ( 
@@ -94,6 +99,9 @@ const PostEdit = () => {
               <Grid container>
                 {/* Image on the left */}
                 <Grid container item xs={12} md={6} direction='column' alignItems='center' justifyContent='space-between'>
+                  <Grid item>
+                    <Typography variant='h4' sx={{mt: '16px'}} noWrap maxWidth='34vw'>{title}</Typography>
+                  </Grid>
                   <Paper
                     component='img'
                     alt={post.title}
@@ -108,11 +116,14 @@ const PostEdit = () => {
                     }}
                   />
                   <Grid item>
-                  <Button color='error' variant='contained' onClick={() => setOpen(true)} sx={{margin: '34px 40px 34px 0'}}>
-                    <Typography>Delete this Post</Typography>
+                    <Typography noWrap maxWidth='34vw'>{tags}</Typography>
+                  </Grid>
+                  <Grid item>
+                  <Button color='error' variant='contained' onClick={() => setDeleteDialogOpen(true)} sx={{margin: '34px 40px 34px 0'}}>
+                    <Typography>Delete</Typography>
                   </Button>
-                  <Button color='secondary' variant='contained' onClick={() => navigate('/feed')} sx={{margin: '34px 0 34px 40px'}}>
-                    <Typography>Archive this Post</Typography>
+                  <Button color='secondary' variant='contained' onClick={() => setArchiveDialogOpen(true)} sx={{margin: '34px 0 34px 40px'}}>
+                    <Typography>Archive</Typography>
                   </Button>
                   </Grid>
                 </Grid>
@@ -189,23 +200,44 @@ const PostEdit = () => {
               </Grid>
             </Card>
             <Dialog
-                open={open}
-                onClose={() => setOpen(false)}
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
                 aria-labelledby='alert-dialog-title'
                 aria-describedby='alert-dialog-description'
             >
-                <DialogTitle id='alert-dialog-title'>{"Confirm Delete"}</DialogTitle>
+                <DialogTitle id='alert-dialog-title'>{"Delete this Recipe?"}</DialogTitle>
                 <DialogContent>
                 <DialogContentText id='alert-dialog-description'>
-                    Are you sure you want to delete this post?
+                    Are you sure you want to delete this recipe? This cannot be undone.
                 </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={() => setOpen(false)} color='primary'>
+                <Button onClick={() => setDeleteDialogOpen(false)} color='primary'>
                     Cancel
                 </Button>
                 <Button color='error' autoFocus onClick={() => handleDelete()}>
                     Delete
+                </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={archiveDialogOpen}
+                onClose={() => setArchiveDialogOpen(false)}
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
+            >
+                <DialogTitle id='alert-dialog-title'>{"Archive this Recipe?"}</DialogTitle>
+                <DialogContent>
+                <DialogContentText id='alert-dialog-description'>
+                    Are you sure you want to archive this recipe? It will no longer be seen on by the public.
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={() => setArchiveDialogOpen(false)} color='primary'>
+                    Cancel
+                </Button>
+                <Button color='secondary' autoFocus onClick={() => handleArchive()}>
+                    Archive
                 </Button>
                 </DialogActions>
             </Dialog>
