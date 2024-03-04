@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 import {
-    CropFree, Bookmark, BookmarkBorder, Report,
+    CropFree, Bookmark, BookmarkBorder, Report, RemoveCircle,
     Favorite, Assistant, FavoriteBorder, Close, Edit
 } from '@mui/icons-material';
 import LinkIcon from '@mui/icons-material/Link';
@@ -18,7 +18,7 @@ import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
 import { Recipe, fetchRecipes, changePage } from '../../redux/Recipes/recipes-slice';
 
-export default function Feed({id}: {id?: number}) {
+export default function Feed() {
     // redux
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -31,8 +31,8 @@ export default function Feed({id}: {id?: number}) {
     const { query } = useParams();
     const { interaction } = useParams();
     // state
-    const [open, setOpen] = useState(Boolean(id) && Boolean(post));
-    const [currentPost, setcurrentPost] = useState(id || -1);
+    const [open, setOpen] = useState(Boolean(post));
+    const [currentPost, setcurrentPost] = useState(Number(post) || -1);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
     const [localPage, setLocalPage] = useState(1);
@@ -42,7 +42,6 @@ export default function Feed({id}: {id?: number}) {
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     // load recipes
     async function loadRecipes() {
-        console.log(localPage);
         if(username) await loadProfile();
         else if(interaction) await  loadBookmarks();
         else if(query) await loadSearch();
@@ -195,7 +194,7 @@ const RecipeAvatar = ({ author }: { author: string }) => {
     return (
         <Tooltip title={author}>
             <Link to={`/profile/${author}`}><IconButton>
-                <Avatar aria-label="recipe" src=''>
+                <Avatar aria-label="recipe" src={''}>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
         </Tooltip>
@@ -242,7 +241,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
     }
     const exploreHandler = () => {
         if(!recipe) return;
-        navigate(`/feed/search?query=${recipe.title + ' ' + recipe.tags?.join(' ')}`);
+        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
     }
     // Recipe Card
     return (
@@ -316,6 +315,7 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
 
 const PopupInteractions = ({id, author} :{id: number, author: string}) => {
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const isAdmin = useSelector((state: RootState) => state.persistedReducer.userReducer.isAdmin); 
     const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -341,7 +341,7 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
         if(!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
         else if(!interaction.shared) dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
     }
-    
+    // interaction metrics
     const [metrics, setMetrics] = useState({likes: 0, shares: 0, bookmarks: 0});
     useEffect(() => {
         loadMetrics();
@@ -356,11 +356,11 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
         setMetrics({likes: likeCount, shares: shareCount, bookmarks: bookmarkCount});
     }
     return (
-        <Grid container justifyContent={'space-between'} sx={{width: '75vw', backgroundColor: 'white'}}>
+        <Grid container justifyContent={'space-between'} sx={{width: '75vw', backgroundColor: 'background.paper'}}>
             <Grid container item xs={5} md={4} lg={3} xl={2.5}>
                 <Grid container item alignItems='center' xs={4}>
                     <Grid><IconButton onClick={likeHandler}>
-                        {interaction && interaction.liked ? <Favorite color='error' /> : <FavoriteBorder />}
+                        {interaction && interaction.liked ? <Favorite color='error'/> : <FavoriteBorder/>}
                     </IconButton></Grid>
                     <Grid item><Typography variant='h6' noWrap align='center'>{metrics.likes}</Typography></Grid>
                 </Grid>
@@ -376,9 +376,13 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
                 </Grid>
             </Grid>
             <Grid item>
-                <Tooltip title='Report' placement='left'>
-                <IconButton onClick={() => setOpen(true)}><Report/></IconButton>
-                </Tooltip>
+                {isAdmin ?
+                <Tooltip title='Remove' placement='left'>
+                    <IconButton onClick={() => navigate(`/admin/delete/${id}`)}><RemoveCircle/></IconButton>
+                </Tooltip> 
+                : <Tooltip title='Report' placement='left'>
+                    <IconButton onClick={() => setOpen(true)}><Report/></IconButton>
+                </Tooltip>}
             </Grid>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>{"Report this recipe?"}</DialogTitle>
@@ -389,11 +393,11 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)} color='error' variant='outlined'>Cancel</Button>
+                    <Button onClick={() => setOpen(false)} variant='outlined'>Cancel</Button>
                     <Button onClick={() => {
                         setOpen(false);
                         navigate(`/report/${id}`);
-                    }} variant='outlined'>Report</Button>
+                    }} variant='outlined' color='error'>Report</Button>
                 </DialogActions>
             </Dialog>
         </Grid>
