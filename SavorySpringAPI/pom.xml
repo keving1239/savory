@@ -145,7 +145,7 @@
 		            <region>centralus</region>
 					<runtime>
 						<os>Windows</os>
-						<javaVersion>17</javaVersion> <!-- Correct syntax -->
+						<javaVersion>1.8</javaVersion> <!-- Correct syntax -->
 						<webContainer>Java SE</webContainer>
 					</runtime>
 		            <deployment>
