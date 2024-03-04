@@ -29,7 +29,7 @@ stages:
     - task: Maven@3
       inputs:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean package'
+        goals: 'clean compile package'
         options: '-Dmaven.test.skip'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
@@ -40,6 +40,11 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    
+    # - script: |
+    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+    #   displayName: 'Run SB Application'
+    #   workingDirectory: $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
 
     - script: |
         npm install
@@ -50,19 +55,13 @@ stages:
         npm run build
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
-
+    
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
-    # - task: ArchiveFiles@2
-    #   inputs:
-    #     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/myZip.zip'
 
     ## Publish the zip file
     - task: PublishBuildArtifacts@1

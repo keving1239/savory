@@ -5,6 +5,7 @@ import com.savory.savoryAPI.post.dto.BuildPostRequest;
 import com.savory.savoryAPI.post.dto.PostsDto;
 import com.savory.savoryAPI.post.dto.PostsUsernameDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+
+    public Sort sortBy = Sort.by("postId").descending();
 
     @Autowired
     public PostController(PostService postService) {
@@ -31,7 +34,7 @@ public class PostController {
     public List<PostsUsernameDto> getFeed(
             @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
-        return postService.findPostAndUsername(pageNumber, pageSize);
+        return postService.findPostAndUsername(pageNumber, pageSize, sortBy);
     }
     @GetMapping("/bookmarked/{userId}")
     public List<PostsUsernameDto> getBookmarks(@PathVariable("userId") int userId,
@@ -44,6 +47,19 @@ public class PostController {
            @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber,
            @RequestParam(value = "pageSize", defaultValue = "12") int pageSize) {
         return postService.findSearchedPosts(query, pageNumber, pageSize);
+    }
+
+    @PostMapping("/updateSort")
+    public void updateSort(@RequestParam String sorter) {
+        if (sorter.equals("newest")) {
+            sortBy = Sort.by("postId").descending();
+        } else if (sorter.equals("oldest")){
+            sortBy = Sort.by("postId").ascending();
+        } else if (sorter.equals("A")){
+            sortBy = Sort.by("headline").ascending();
+        } else {
+            sortBy = Sort.by("headline").descending();
+        }
     }
     @GetMapping("/byUserId/{userId}")
     public List<PostsDto> getUserPosts(@PathVariable int userId,
