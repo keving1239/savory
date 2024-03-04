@@ -5,17 +5,19 @@ import { persistReducer, persistStore } from 'redux-persist';
 import userReducer from "./User/user-slice";
 import recipesReducer from './Recipes/recipes-slice';
 import interactionsReducer from "./Interactions/interactions-slice";
+import themeReducer from './Theme/theme-slice'
 
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  whitelist: ['userReducer', 'recipesReducer', 'interactionsReducer'],  
+  whitelist: ['userReducer', 'recipesReducer', 'interactionsReducer', 'themeReducer'],  
 }
 const middleware = getDefaultMiddleware({serializableCheck: false,});
 const rootReducer = combineReducers({
   userReducer,
   recipesReducer,
   interactionsReducer,
+  themeReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

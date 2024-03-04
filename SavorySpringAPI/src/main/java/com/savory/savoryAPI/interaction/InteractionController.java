@@ -42,6 +42,11 @@ public class InteractionController {
     public Integer getBookmarkCount(@PathVariable int postId) {
         return interactionService.getBookmarkCount(postId);
     }
+    @GetMapping("/profile/interactions/{userId}")
+    public Integer getInteractionCount(@PathVariable int userId) {
+        Integer total =  interactionService.getInteractionCount(userId);
+        return total == null ? 0 : total;
+    }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateInteraction(@RequestBody BuildInteractionRequest interactionRequest) {
