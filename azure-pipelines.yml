@@ -41,9 +41,9 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
         
-    - script: |
-        java -jar $(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar
-      displayName: 'Run SB Application'
+    # - script: |
+    #     java -jar $(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar
+    #   displayName: 'Run SB Application'
 
     - script: |
         npm install
