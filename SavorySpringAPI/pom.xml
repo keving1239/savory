@@ -131,8 +131,9 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<release>8</release>
 	        	</configuration>
-		</plugin>
+			</plugin>
 		    <plugin>
 		        <groupId>com.microsoft.azure</groupId>
 		        <artifactId>azure-webapp-maven-plugin</artifactId>
