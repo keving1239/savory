@@ -26,10 +26,20 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
     
-    - script: |
-        cd $(System.DefaultWorkingDirectory)/SavorySpringAPI
-        ./mvnw clean compile package -Dmaven.test.skip=true
-      displayName: 'Build with Maven Wrapper'
+    - task: Maven@3
+      inputs:
+        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
+        goals: 'clean package'
+        options: '-Dmaven.test.skip'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.17'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
 
     - script: |
         java -jar $(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar
