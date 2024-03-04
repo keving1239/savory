@@ -21,6 +21,7 @@ import { Recipe, fetchRecipes, changePage, updateSort, changeSort } from '../../
 export default function Feed({ id }: { id?: number }) {
     // redux
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const sort = useSelector((state: RootState) => state.persistedReducer.recipesReducer.sort) || 'A';
     const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
@@ -39,7 +40,9 @@ export default function Feed({ id }: { id?: number }) {
     const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
     const [hasSortChanged, setHasSortChanged] = useState(false);
 
-
+    //ensure authentication
+    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
 
     // load recipes
     async function loadRecipes() {
@@ -220,7 +223,7 @@ export default function Feed({ id }: { id?: number }) {
                             .map((recipe) => {
                                 return (recipe.id > 0 && recipes[recipe.id]) ?
                                     <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
-                                    : null;
+                                    : <></>;
                             })
                         }
                     </Grid>
@@ -247,7 +250,7 @@ export default function Feed({ id }: { id?: number }) {
 const RecipeAvatar = ({ author }: { author: string }) => {
     return (
         <Tooltip title={author}>
-            <Link to={`/feed/${author}`}><IconButton>
+            <Link to={`/profile/${author}`}><IconButton>
                 <Avatar aria-label="recipe" src=''>
                     {author.charAt(0).toUpperCase()}
                 </Avatar></IconButton></Link>
