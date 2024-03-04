@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-    Box, Grid, Tooltip, Typography, Card,
+    Box, Grid, Tooltip, Typography, Card, FormControl, Select, InputLabel, MenuItem, SelectChangeEvent,
     CardMedia, Avatar, IconButton, Modal, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import React from 'react';
@@ -16,13 +16,14 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { Recipe, fetchRecipes, changePage } from '../../redux/Recipes/recipes-slice';
+import { Recipe, fetchRecipes, changePage, updateSort, changeSort } from '../../redux/Recipes/recipes-slice';
 
-export default function Feed({id}: {id?: number}) {
+export default function Feed({ id }: { id?: number }) {
     // redux
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const sort = useSelector((state: RootState) => state.persistedReducer.recipesReducer.sort) || 'A';
     const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     const page = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     // params
@@ -37,20 +38,23 @@ export default function Feed({id}: {id?: number}) {
     const [status, setStatus] = useState('Loading Recipes...');
     const [localPage, setLocalPage] = useState(1);
     const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
+    const [hasSortChanged, setHasSortChanged] = useState(false);
+
     //ensure authentication
     const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
+
     // load recipes
     async function loadRecipes() {
         console.log(localPage);
-        if(username) await loadProfile();
-        else if(interaction) await  loadBookmarks();
-        else if(query) await loadSearch();
+        if (username) await loadProfile();
+        else if (interaction) await loadBookmarks();
+        else if (query) await loadSearch();
         else await loadFeed();
     }
     async function loadFeed() {
-        if(hasFeedPageChanged) {
-            await dispatch(fetchRecipes({pageNumber: page}));
+        if (hasFeedPageChanged || hasSortChanged) {
+            await dispatch(fetchRecipes({ pageNumber: page }));
         } else setRecipes(feed);
     }
     async function loadProfile() {
@@ -63,32 +67,32 @@ export default function Feed({id}: {id?: number}) {
                 method: 'GET'
             }));
             const data = await response.json();
-            const recipeItems:Record<number, Recipe> = {};
+            const recipeItems: Record<number, Recipe> = {};
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
                     img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: username || '',
                 }
-             });
+            });
             setRecipes(recipeItems);
-        } catch(error) {console.error(error);}
+        } catch (error) { console.error(error); }
     }
     async function loadBookmarks() {
         try {
-            if(!user) return;
+            if (!user) return;
             const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${localPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
-            const recipeItems:Record<number, Recipe> = {};
+            const recipeItems: Record<number, Recipe> = {};
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
                     img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
                 }
-             });
+            });
             setRecipes(recipeItems);
-        } catch(error){console.error(error);}
+        } catch (error) { console.error(error); }
     }
     async function loadSearch() {
         try {
@@ -96,15 +100,15 @@ export default function Feed({id}: {id?: number}) {
                 method: 'GET',
             }));
             const data = await response.json();
-            const recipeItems:Record<number, Recipe> = {};
+            const recipeItems: Record<number, Recipe> = {};
             data.forEach((item: any) => {
                 recipeItems[item.postId] = {
                     tags: item.tags?.split(',') || [], id: item.postId, userId: item.userId, title: item.headline,
                     img: item.img, date: item.postdate?.substring(0, 10), ingredients: item.ingredients?.split(',') || [], recipe: item.recipe, author: item.username,
                 }
-             });
+            });
             setRecipes(recipeItems);
-        } catch(error) {console.error(error);}
+        } catch (error) { console.error(error); }
     }
     useEffect(() => {
         setLocalPage((username || interaction || query) ? 1 : page);
@@ -115,8 +119,14 @@ export default function Feed({id}: {id?: number}) {
     useEffect(() => {
         setRecipes({});
         setStatus('Loading Recipes...');
-        loadRecipes(); 
-    },[localPage]);
+        loadRecipes();
+    }, [localPage]);
+    useEffect(() => {
+        setRecipes({});
+        setStatus('Loading Recipes...');
+        loadRecipes();
+        setHasSortChanged(false);
+    }, [hasSortChanged]);
     useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
@@ -126,7 +136,7 @@ export default function Feed({id}: {id?: number}) {
     }, [recipes]);
     useEffect(() => {
         setRecipes(feed);
-    },[feed]);
+    }, [feed]);
 
     // Handlers
     const openHandler = (id: number) => {
@@ -138,54 +148,100 @@ export default function Feed({id}: {id?: number}) {
         setOpen(false);
     }
     const handleNextPage = () => {
-        setLocalPage((username || interaction || query) ? localPage+1 : page+1);
+        setLocalPage((username || interaction || query) ? localPage + 1 : page + 1);
         // if(username) return setProfilePage(profilePage+1);
         // else if(interaction) return setBookmarkPage(bookmarkPage+1);
         // else if(query) return setSearchPage(searchPage+1)
-        if(username || interaction || query) {
-            setLocalPage(localPage+1);
+        if (username || interaction || query) {
+            setLocalPage(localPage + 1);
         } else {
             setHasFeedPageChanged(true);
-            setLocalPage(page+1);
-            dispatch(changePage(page+1));    
+            setLocalPage(page + 1);
+            dispatch(changePage(page + 1));
         }
     };
     const handlePreviousPage = () => {
-        if(username || interaction || query) {
-            setLocalPage(localPage-1);
+        if (username || interaction || query) {
+            setLocalPage(localPage - 1);
         } else {
             setHasFeedPageChanged(true);
-            setLocalPage(page-1);
-            dispatch(changePage(page-1));    
+            setLocalPage(page - 1);
+            dispatch(changePage(page - 1));
         }
+    };
+
+    const handleSortUpdate = (sortBy: SelectChangeEvent) => {
+        const newSort = sortBy.target.value as string;
+        console.log("new: " + newSort)
+        dispatch(updateSort({ sortBy: newSort }));
+        dispatch(changeSort(newSort));
+        setLocalPage(1);
+        dispatch(changePage(1));
+        setHasSortChanged(true);
+    }
+
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setAge(event.target.value as string);
     };
 
     return (
         <Box>
-            { (Object.keys(recipes).length > 0) ? 
-            <><RecipePopup {...{ open, username: user?.username || '', recipe: recipes[currentPost], closeHandler }} />
-            <Grid container rowGap={5} justifyContent={'space-around'}>
-                {Object.values(recipes).map((recipe) => {
-                    return (recipe.id > 0 && recipes[recipe.id]) ?
-                        <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
-                        : <></>;
-                })}
-            </Grid>
-            <Box sx={{ marginTop: "50px" }}>
-                {(localPage > 1) ?
-                    <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
-                    : <></>
-                }
-                {(Object.keys(recipes).length < 12) ?
-                    <></> :
-                    <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
-                }
-            </Box></>
-            :
-            <Box>
-              <Typography margin='5vh 0' variant='h3'>{status}</Typography>
-              {status === 'Loading Recipes...' ? <CircularProgress /> : <></>}
+            <Box sx={{ minWidth: "100px", marginLeft: "78vw", marginRight: "8vw", marginBottom: "10px" }}>
+                <FormControl fullWidth>
+                    <InputLabel id="select-label">Sort</InputLabel>
+                    <Select
+                        labelId="select-label"
+                        id="select"
+                        value={sort}
+                        label="Sort"
+                        onChange={handleSortUpdate}
+                    >
+                        <MenuItem value={"A"}>Title (A to Z)</MenuItem>
+                        <MenuItem value={"Z"}>Title (Z to A)</MenuItem>
+                        <MenuItem value={"newest"}>Newest First</MenuItem>
+                        <MenuItem value={"oldest"}>Oldest First</MenuItem>
+                    </Select>
+                </FormControl>
             </Box>
+            {(Object.keys(recipes).length > 0) ?
+                <><RecipePopup {...{ open, username: user?.username || '', recipe: recipes[currentPost], closeHandler }} />
+                    <Grid container rowGap={5} justifyContent={'space-around'}>
+                        {Object.values(recipes)
+                            .sort((a, b) => {
+                                if (sort === "A") {
+                                    return a.title.localeCompare(b.title);
+                                } else if (sort === "Z") {
+                                    return b.title.localeCompare(a.title);
+                                } else if (sort === "oldest") {
+                                    return a.id - b.id;
+                                } else {
+                                    return b.id - a.id;
+                                }
+                            })
+                            .map((recipe) => {
+                                return (recipe.id > 0 && recipes[recipe.id]) ?
+                                    <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
+                                    : <></>;
+                            })
+                        }
+                    </Grid>
+                    <Box sx={{ marginTop: "50px" }}>
+                        {(localPage > 1) ?
+                            <Button sx={{ marginRight: "30px", width: "100px" }} variant='contained' color='primary' id="prevButton" onClick={handlePreviousPage}> Previous </Button>
+                            : <></>
+                        }
+                        {(Object.keys(recipes).length < 12) ?
+                            <></> :
+                            <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' id="nextButton" onClick={handleNextPage}> Next </Button>
+                        }
+                    </Box></>
+                :
+                <Box>
+                    <Typography margin='5vh 0' variant='h3'>{status}</Typography>
+                    {status === 'Loading Recipes...' ? <CircularProgress /> : <></>}
+                </Box>
             }
         </Box>
     );
@@ -218,7 +274,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
     const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[recipe.id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    
+
     // handlers
     const likeHandler = () => {
         if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: false }));
@@ -236,12 +292,12 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
             const feed = location.search('/feed');
             const url = feed > 0 ? location.substring(0, feed) + '/profile/' + recipe.author : location;
             await navigator.clipboard.writeText(url + '/' + recipe.id);
-        } catch (error) {console.error(error);}
-        if(!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
-        else if(!interaction.shared) dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
+        } catch (error) { console.error(error); }
+        if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
+        else if (!interaction.shared) dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true }));
     }
     const exploreHandler = () => {
-        if(!recipe) return;
+        if (!recipe) return;
         navigate(`/feed/search?query=${recipe.title + ' ' + recipe.tags?.join(' ')}`);
     }
     // Recipe Card
@@ -251,7 +307,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
                 <CardHeader
                     title={
                         <Grid container justifyContent='space-between' alignItems='center'>
-                            <Grid item><RecipeAvatar author={recipe.author}/></Grid>
+                            <Grid item><RecipeAvatar author={recipe.author} /></Grid>
                             <Grid item xs={8}><Typography variant='h5' noWrap>{recipe.title}</Typography></Grid>
                             <Grid item><RecipeExpandButton {...{ id: recipe.id, openHandler }} /></Grid>
                         </Grid>
@@ -274,7 +330,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
                                 <Assistant />
                             </IconButton></Grid>
                             <Grid item><IconButton onClick={shareHandler}>
-                                <LinkIcon/>
+                                <LinkIcon />
                             </IconButton></Grid>
                         </Grid></Grid>
                         <Grid item><IconButton onClick={bookmarkHandler}>
@@ -294,27 +350,27 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
             onClose={closeHandler}
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {recipe ? <div style={{ position: 'relative', outline: 'none', border: 'none' }}>
-                {username === recipe.author ? 
-                <Link to = {`/post/edit/${recipe.id}`}>
-                <Tooltip title='Edit' placement='right'>
-                    <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}><Edit /></IconButton>
-                </Tooltip>
-                </Link>
-                : <></>
+                {username === recipe.author ?
+                    <Link to={`/post/edit/${recipe.id}`}>
+                        <Tooltip title='Edit' placement='right'>
+                            <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, left: 5 }}><Edit /></IconButton>
+                        </Tooltip>
+                    </Link>
+                    : <></>
                 }
                 <IconButton onClick={closeHandler} style={{ position: 'absolute', top: 0, right: 5 }}>
                     <Close />
                 </IconButton>
                 <Post recipe={recipe} />
-                <div style={{ position: 'absolute' , bottom: 0}}>
-                    <PopupInteractions {...{id: recipe.id, author: recipe.author}}/>
+                <div style={{ position: 'absolute', bottom: 0 }}>
+                    <PopupInteractions {...{ id: recipe.id, author: recipe.author }} />
                 </div>
             </div> : <></>}
         </Modal>
     );
 }
 
-const PopupInteractions = ({id, author} :{id: number, author: string}) => {
+const PopupInteractions = ({ id, author }: { id: number, author: string }) => {
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
     const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
@@ -337,26 +393,26 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
             const feed = location.search('/feed');
             const url = feed > 0 ? location.substring(0, feed) + '/profile/' + author : location;
             await navigator.clipboard.writeText(url + '/' + id);
-        } catch (error) {console.error(error);}
-        if(!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
-        else if(!interaction.shared) dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true })); 
+        } catch (error) { console.error(error); }
+        if (!interaction) dispatch(postInteraction({ postId: id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
+        else if (!interaction.shared) dispatch(updateInteraction({ postId: id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true }));
     }
-    
-    const [metrics, setMetrics] = useState({likes: 0, shares: 0, bookmarks: 0});
+
+    const [metrics, setMetrics] = useState({ likes: 0, shares: 0, bookmarks: 0 });
     useEffect(() => {
         loadMetrics();
-    },[interaction]);
+    }, [interaction]);
     async function loadMetrics() {
-        const getLikes = await fetch(`http://localhost:8080/api/interaction/post/likes/${id}`,fetchOptions({method: 'GET'}));
-        const getShares = await fetch(`http://localhost:8080/api/interaction/post/shares/${id}`,fetchOptions({method: 'GET'}));
-        const getBookmarks = await fetch(`http://localhost:8080/api/interaction/post/bookmarks/${id}`,fetchOptions({method: 'GET'}));
+        const getLikes = await fetch(`http://localhost:8080/api/interaction/post/likes/${id}`, fetchOptions({ method: 'GET' }));
+        const getShares = await fetch(`http://localhost:8080/api/interaction/post/shares/${id}`, fetchOptions({ method: 'GET' }));
+        const getBookmarks = await fetch(`http://localhost:8080/api/interaction/post/bookmarks/${id}`, fetchOptions({ method: 'GET' }));
         const likeCount = await getLikes.json();
         const shareCount = await getShares.json();
         const bookmarkCount = await getBookmarks.json();
-        setMetrics({likes: likeCount, shares: shareCount, bookmarks: bookmarkCount});
+        setMetrics({ likes: likeCount, shares: shareCount, bookmarks: bookmarkCount });
     }
     return (
-        <Grid container justifyContent={'space-between'} sx={{width: '75vw', backgroundColor: 'white'}}>
+        <Grid container justifyContent={'space-between'} sx={{ width: '75vw', backgroundColor: 'white' }}>
             <Grid container item xs={5} md={4} lg={3} xl={2.5}>
                 <Grid container item alignItems='center' xs={4}>
                     <Grid><IconButton onClick={likeHandler}>
@@ -365,7 +421,7 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
                     <Grid item><Typography variant='h6' noWrap align='center'>{metrics.likes}</Typography></Grid>
                 </Grid>
                 <Grid container item alignItems='center' xs={4}>
-                    <Grid item><IconButton onClick={shareHandler}><LinkIcon/></IconButton></Grid>
+                    <Grid item><IconButton onClick={shareHandler}><LinkIcon /></IconButton></Grid>
                     <Grid item><Typography variant='h6' noWrap align='center'>{metrics.shares}</Typography></Grid>
                 </Grid>
                 <Grid container item alignItems='center' xs={4}>
@@ -377,15 +433,15 @@ const PopupInteractions = ({id, author} :{id: number, author: string}) => {
             </Grid>
             <Grid item>
                 <Tooltip title='Report' placement='left'>
-                <IconButton onClick={() => setOpen(true)}><Report/></IconButton>
+                    <IconButton onClick={() => setOpen(true)}><Report /></IconButton>
                 </Tooltip>
             </Grid>
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>{"Report this recipe?"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        You are about to report this recipe to Savory administrators. 
-                        Are you sure you want to report this recipe? 
+                        You are about to report this recipe to Savory administrators.
+                        Are you sure you want to report this recipe?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

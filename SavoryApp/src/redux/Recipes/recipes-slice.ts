@@ -17,13 +17,15 @@ export interface Recipe {
 }
 export interface LocalRecipesState {
     recipes: Record<number, Recipe>,
-    page: number;
+    page: number,
     error?: string,
+    sort: string
 }
  
 const initialState: LocalRecipesState = {
     recipes: {},
     page: 1,
+    sort: "byId"
 };
  
 const recipesSlice = createSlice({
@@ -35,6 +37,9 @@ const recipesSlice = createSlice({
         },
         changePage(state: LocalRecipesState, action: PayloadAction<number>) {
             state.page = action.payload;
+        },
+        changeSort(state: LocalRecipesState, action: PayloadAction<string>) {
+            state.sort = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -150,5 +155,14 @@ export const deleteRecipe = createAsyncThunk(
     }
 );
 
-export const { clearRecipes, changePage } = recipesSlice.actions;
+export const updateSort = createAsyncThunk(
+    'UPDATE-SORT',
+    async ({sortBy}: {sortBy: String}) => {
+        const response = await fetch(`http://localhost:8080/api/posts/updateSort?sorter=${sortBy}`, fetchOptions({
+            method: 'POST',
+        }));
+    }
+);
+
+export const { clearRecipes, changePage, changeSort } = recipesSlice.actions;
 export default recipesSlice.reducer;
