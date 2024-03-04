@@ -13,13 +13,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 const ResponsiveAppBar = () => {
   const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
   const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
-  const { loginWithRedirect, logout } = useAuth0();
+  const { logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
-  const loginHandler = async () => {
-    try {
-      await loginWithRedirect();
-    } catch(error) {console.error("Error logging out: ", error);}
-  }
   const logoutHandler = async () => {
     try {
       dispatch(clearUser());
@@ -57,7 +52,7 @@ const ResponsiveAppBar = () => {
             </Grid>
             <Grid item xs={1}>
               <ProfileButton {...{username, img, openProfileOptions}}/>
-              <ProfileOptions {...{username, userId, profileAnchor, closeProfileOptions, isAuthenticated: savoryAuth, logoutHandler, loginHandler}}/>
+              <ProfileOptions {...{username, userId, profileAnchor, closeProfileOptions, isAuthenticated: savoryAuth, logoutHandler}}/>
             </Grid>
           </Grid>
         </Grid>
@@ -116,9 +111,9 @@ const ProfileButton = ({username, img, openProfileOptions} :
   );
 }
 
-const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler, loginHandler} :
+const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, isAuthenticated, logoutHandler} :
    {username: string, userId: string, profileAnchor: HTMLElement | null, closeProfileOptions: () => void, isAuthenticated: boolean,
-     logoutHandler: () => void, loginHandler: () => void}) => {
+     logoutHandler: () => void}) => {
 
     const dropDownOptions = isAuthenticated ? 
     [
@@ -139,12 +134,12 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
                     </Button></Link>
               </MenuItem>
             ))}
-        <MenuItem onClick={isAuthenticated ? logoutHandler : loginHandler} sx={{p: 0, m: '.25vw'}}>
+        <MenuItem onClick={isAuthenticated ? logoutHandler : () => {}} sx={{p: 0, m: '.25vw'}}>
             {isAuthenticated ? <Button variant='text' fullWidth sx={{p: 0}}>
                 <Typography>Logout</Typography>
-            </Button> : <Button variant='text' fullWidth sx={{p: 0}}>
+            </Button> : <Link to='/login'><Button variant='text' fullWidth sx={{p: 0}}>
                 <Typography>Log in</Typography>
-            </Button>}
+            </Button></Link>}
           </MenuItem>    
       </Menu>
     );
