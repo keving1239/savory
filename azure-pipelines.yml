@@ -34,17 +34,17 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.17'
+        jdkVersionOption: '1.8'
         mavenVersionOption: 'Default'
         mavenOptions: '-Xmx3072m'
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
     
-    # - script: |
-    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
-    #   displayName: 'Run SB Application'
-    #   workingDirectory: $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
+    - script: |
+        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+      displayName: 'Run SB Application'
+      workingDirectory: $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
 
     - script: |
         npm install
