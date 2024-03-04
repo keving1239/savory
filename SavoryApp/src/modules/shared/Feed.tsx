@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-    Box, Grid, Tooltip, Typography, Card,
+    Box, Grid, Tooltip, Typography, Card, FormControl, Select, InputLabel, MenuItem, SelectChangeEvent,
     CardMedia, Avatar, IconButton, Modal, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
 import React from 'react';
@@ -22,7 +22,7 @@ export default function Feed({ id }: { id?: number }) {
     // redux
     const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const sort = useSelector((state: RootState) => state.persistedReducer.recipesReducer.sort);
+    const sort = useSelector((state: RootState) => state.persistedReducer.recipesReducer.sort) || 'A';
     const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
     const page = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
     // params
@@ -167,25 +167,53 @@ export default function Feed({ id }: { id?: number }) {
         }
     };
 
-    const handleSortUpdate = (sortBy: String) => {
-        const newSort = sortBy.toString()
-        dispatch(updateSort({ sortBy }));
-        dispatch(changeSort( newSort ));
+    const handleSortUpdate = (sortBy: SelectChangeEvent) => {
+        const newSort = sortBy.target.value as string;
+        console.log("new: " + newSort)
+        dispatch(updateSort({ sortBy: newSort }));
+        dispatch(changeSort(newSort));
+        setLocalPage(1);
+        dispatch(changePage(1));
         setHasSortChanged(true);
     }
 
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setAge(event.target.value as string);
+    };
+
     return (
         <Box>
-            <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' onClick={() => handleSortUpdate("postId")}></Button>
-            <Button sx={{ width: "100px", marginLeft: "30px" }} variant='contained' color='primary' onClick={() => handleSortUpdate("headline")}></Button>
+            <Box sx={{ minWidth: "100px", marginLeft: "78vw", marginRight: "8vw", marginBottom: "10px" }}>
+                <FormControl fullWidth>
+                    <InputLabel id="select-label">Sort</InputLabel>
+                    <Select
+                        labelId="select-label"
+                        id="select"
+                        value={sort}
+                        label="Sort"
+                        onChange={handleSortUpdate}
+                    >
+                        <MenuItem value={"A"}>Title (A to Z)</MenuItem>
+                        <MenuItem value={"Z"}>Title (Z to A)</MenuItem>
+                        <MenuItem value={"newest"}>Newest First</MenuItem>
+                        <MenuItem value={"oldest"}>Oldest First</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
             {(Object.keys(recipes).length > 0) ?
                 <><RecipePopup {...{ open, username: user?.username || '', recipe: recipes[currentPost], closeHandler }} />
                     <Grid container rowGap={5} justifyContent={'space-around'}>
                         {Object.values(recipes)
                             .sort((a, b) => {
-                                if (sort === "headline") {
+                                if (sort === "A") {
                                     return a.title.localeCompare(b.title);
-                                } else  {
+                                } else if (sort === "Z") {
+                                    return b.title.localeCompare(a.title);
+                                } else if (sort === "oldest") {
+                                    return a.id - b.id;
+                                } else {
                                     return b.id - a.id;
                                 }
                             })
