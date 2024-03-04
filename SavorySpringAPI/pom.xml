@@ -132,7 +132,7 @@
 					<source>17</source>
 					<target>17</target>
 	        	</configuration>
-		</plugin>
+			</plugin>
 		    <plugin>
 		        <groupId>com.microsoft.azure</groupId>
 		        <artifactId>azure-webapp-maven-plugin</artifactId>
@@ -143,11 +143,11 @@
 		            <appName>Savory</appName>
 		            <pricingTier>P1v2</pricingTier>
 		            <region>centralus</region>
-		            <runtime>
-		                <os>Windows</os>
-		                <javaVersion>Java 17</javaVersion>
-		                <webContainer>Java SE</webContainer>
-		            </runtime>
+					<runtime>
+						<os>Windows</os>
+						<javaVersion>17</javaVersion> <!-- Correct syntax -->
+						<webContainer>Java SE</webContainer>
+					</runtime>
 		            <deployment>
 		                <resources>
 		                    <resource>

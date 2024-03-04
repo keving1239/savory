@@ -40,7 +40,7 @@ const ProfileEdit = () => {
 
     return (
         <Grid container justifyContent='center' alignItems='stretch' >
-            <Grid container item xs={7} sx={{bgcolor: '#acb493'}} alignItems='center' justifyContent='space-around'>
+            <Grid container item xs={7} sx={{bgcolor: 'primary.light'}} alignItems='center' justifyContent='space-around'>
                 <Grid item xs={8}>
                     <Paper 
                     component='img'
@@ -55,7 +55,7 @@ const ProfileEdit = () => {
                     <Typography maxWidth='100%' maxHeight='37vh' overflow='hidden'>{blogBio}</Typography>
                 </Grid></Grid>
             </Grid>
-        <Grid item xs={5} sx={{bgcolor: '#acb493'}}>
+        <Grid item xs={5} sx={{bgcolor: 'primary.light'}}>
             <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: 50, marginBottom: 50, padding: 10 }}>
                 <CardContent>
                     <form onSubmit={(e) => handleProfileEdits(e)}>

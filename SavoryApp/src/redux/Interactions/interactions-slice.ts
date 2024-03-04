@@ -1,6 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchOptions } from "../store";
-import { BackdropProps } from "@mui/material";
 
 
 export interface RecipeInteraction {

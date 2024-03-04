@@ -34,6 +34,7 @@ const recipesSlice = createSlice({
     reducers: {
         clearRecipes(state: LocalRecipesState) {
             state.recipes = {};
+            state.page = 1;
         },
         changePage(state: LocalRecipesState, action: PayloadAction<number>) {
             state.page = action.payload;

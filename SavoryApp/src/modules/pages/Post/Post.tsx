@@ -1,14 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem, IconButton } from '@mui/material';
+import { Grid, Tooltip, Typography, Paper, Button, Menu, MenuItem } from '@mui/material';
 import { Recipe } from '../../../redux/Recipes/recipes-slice'
-import { RootState, fetchOptions } from '../../../redux/store';
-import { RecipeInteraction } from '../../../redux/Interactions/interactions-slice';
-import { Report, Bookmark, BookmarkBorder, Favorite, FavoriteBorder } from '@mui/icons-material';
-import LinkIcon from '@mui/icons-material/Link'
-import { useSelector } from 'react-redux';
-import { margin } from '@mui/system';
 
 const Post = ({ recipe }: { recipe: Recipe }) => {
     const chunkedIngredients = recipe.ingredients.reduce<string[][]>((chunkResult, ingredient, index) => {
@@ -33,7 +27,7 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
                     </Grid>
                     <Grid container item justifyContent='center' alignItems='center'>
                         <Grid item><Typography>Posted by</Typography></Grid>
-                        <Grid item><Link to={`/profile/${recipe.author}/${recipe.userId}`}>
+                        <Grid item><Link to={`/profile/${recipe.author}`}>
                             <Button variant='text' fullWidth>
                                 <Typography noWrap textTransform='none' maxWidth='50vw'>{recipe.author}</Typography>
                             </Button>
@@ -73,7 +67,7 @@ const Post = ({ recipe }: { recipe: Recipe }) => {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <Paper sx={{ p: '1.5vh 2vw' }} elevation={0}>
+                    <Paper sx={{ p: '1.5vh 2vw', mb: '5vh' }} elevation={0}>
                         <Typography variant='h5' align='center'>Recipe:</Typography>
                         <Typography>{recipe?.recipe}</Typography>
                     </Paper>
