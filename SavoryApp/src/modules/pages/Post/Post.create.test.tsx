@@ -12,6 +12,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { InteractionsState } from '../../../redux/Interactions/interactions-slice';
 import { UserState } from '../../../redux/User/user-slice';
 import { LocalRecipesState } from '../../../redux/Recipes/recipes-slice';
+import Feed from '../../shared/Feed';
 
 
 jest.mock('react-redux', () => ({
@@ -91,7 +92,65 @@ describe('PostCreate component', () => {
 
     // Check if the main elements are present in the document
     expect(screen.getByText('Share Your Recipe!')).toBeInTheDocument();
-    expect(screen.getByLabelText('Title')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Southwest Salad')).toBeInTheDocument();
+    expect(screen.getByText('Title')).toBeInTheDocument();
+
     // Add more checks for other elements as needed
   });
-});  
+});
+
+
+
+// Integration Test for Feed to see if Avacado Toast appears on the main feed page.
+// describe('Feed Component Integration Test', () => {
+//   it('renders the component with mocked data', async () => {
+//     // Define the initial state for the store
+//     const initialState = {
+//       persistedReducer: {
+//         userReducer: {
+//           user: { id: 1, username: 'testUser' },
+//           isAuthenticated: true,
+//         },
+//         recipesReducer: {
+//           sort: 'A',
+//           recipes: {
+//             1: {
+//               id: 1,
+//               title: 'Test Recipe 1',
+//               // Add other necessary properties
+//             },
+//             // Add more test recipes as needed
+//           },
+//           page: 1,
+//         },
+//         interactionsReducer: {
+//           interactions: {
+//             1: {
+//               postId: 1,
+//               userId: 1,
+//               liked: false,
+//               bookmarked: false,
+//               shared: false,
+//             },
+//             // Add more interactions as needed
+//           },
+//         },
+//       },
+//     };
+
+//     // Create a mocked Redux store with the initial state
+//     const store = mockStore(initialState);
+
+//     // Render the component with the mocked Redux store and Router
+//     render(
+//       <Provider store={store}>
+//         <BrowserRouter>
+//           <Feed />
+//         </BrowserRouter>
+//       </Provider>
+//     );
+
+//     const recipeTitleElement = screen.getByText('Test Recipe 1');
+//     expect(recipeTitleElement).toBeInTheDocument();
+//   });
+// });
