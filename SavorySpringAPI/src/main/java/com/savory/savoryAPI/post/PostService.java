@@ -1,5 +1,6 @@
 package com.savory.savoryAPI.post;
 
+import com.azure.core.annotation.Post;
 import com.savory.savoryAPI.post.dto.BuildPostRequest;
 import com.savory.savoryAPI.post.dto.PostsUsernameDto;
 import com.savory.savoryAPI.post.entity.PostsUsername;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
@@ -40,8 +43,10 @@ public class PostService
                 .collect(Collectors.toList());
     }
 
-    public List<PostsUsernameDto> findPostAndUsername(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
+
+    public List<PostsUsernameDto> findPostAndUsername(int pageNumber, int pageSize, Sort sortBy) {
+    //    Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by("postId").descending());
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sortBy);
         List<PostsUsername> posts = postsURepository.findPostAndUsername(pageable);
         return posts.stream()
                     .map(PostsUtil::buildPostUsernameDto)
