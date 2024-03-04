@@ -50,7 +50,12 @@ stages:
         npm run build
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
-
+    
+    - script: |
+        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+      displayName: 'Run SB Application'
+      workingDirectory: $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
+    
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
