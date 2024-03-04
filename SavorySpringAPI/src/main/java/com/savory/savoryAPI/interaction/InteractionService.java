@@ -74,6 +74,10 @@ public class InteractionService {
         return interactionRepository.getBookmarkCount(postId);
     }
 
+    public Integer getInteractionCount(int userId) {
+        return interactionRepository.getInteractionCount(userId);
+    }
+
     public boolean updateInteraction(BuildInteractionRequest interactionRequest) {
         var oldInteraction = interactionRepository.findByInputs(
                 interactionRequest.getUserId(), interactionRequest.getPostId()).orElse(null);

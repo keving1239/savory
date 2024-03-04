@@ -44,4 +44,6 @@ public interface InteractionRepository extends JpaRepository<Interaction, Intege
     Integer getBookmarkCount(int pid);
     @Query("SELECT COUNT(*) FROM Interaction i WHERE i.postId = :pid AND i.isShared = true")
     Integer getShareCount(int pid);
+    @Query("SELECT SUM(totals.likes + totals.shares + totals.bookmarks) AS metric FROM (SELECT SUM(CASE WHEN i.isLiked = TRUE THEN 1 ELSE 0 END) AS likes, SUM(CASE WHEN i.isShared = TRUE THEN 1 ELSE 0 END) as shares, SUM(CASE WHEN i.isBookmarked = TRUE THEN 1 ELSE 0 END) as bookmarks FROM Interaction i WHERE i.postId in (Select p.postId from Posts p where p.userId = :uid) GROUP BY i.postId) AS totals")
+    Integer getInteractionCount(int uid);
 }
