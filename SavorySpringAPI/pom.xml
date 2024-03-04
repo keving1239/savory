@@ -13,7 +13,7 @@
 	<name>savoryAPI</name>
 	<description>SpringApplication for Savory</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -145,7 +145,7 @@
 		            <region>centralus</region>
 		            <runtime>
 		                <os>Windows</os>
-		                <javaVersion>Java 21</javaVersion>
+		                <javaVersion>Java 17</javaVersion>
 		                <webContainer>Java SE</webContainer>
 		            </runtime>
 		            <deployment>
