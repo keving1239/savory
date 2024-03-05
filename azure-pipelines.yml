@@ -26,11 +26,11 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
   
-    - task: JavaToolInstaller@0
-      inputs:
-        versionSpec: '21'
-        jdkArchitectureOption: 'x64'
-        jdkSourceOption: PreInstalled
+    # - task: JavaToolInstaller@0
+    #   inputs:
+    #     versionSpec: '21'
+    #     jdkArchitectureOption: 'x64'
+    #     jdkSourceOption: PreInstalled
     
     - task: Maven@4
       inputs:
@@ -47,10 +47,10 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
     
-    - script: |
-        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
-      displayName: 'Run SB App'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target'
+    # - script: |
+    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+    #   displayName: 'Run SB App'
+    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target'
 
     
     - task: PublishBuildArtifacts@1
