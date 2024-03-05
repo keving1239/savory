@@ -1,5 +1,5 @@
 import React from 'react';
-import {screen } from '@testing-library/react';
+import {screen, waitFor } from '@testing-library/react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { MemoryRouter } from 'react-router-dom';
@@ -8,11 +8,13 @@ import { Provider } from 'react-redux';
 import Settings from '../Profile/Settings';
 import { useSelector } from 'react-redux';
 import configureStore from 'redux-mock-store'
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import { InteractionsState } from '../../../redux/Interactions/interactions-slice';
 import { UserState } from '../../../redux/User/user-slice';
 import { LocalRecipesState } from '../../../redux/Recipes/recipes-slice';
+import { RootState } from '../../../redux/store';
 import Feed from '../../shared/Feed';
+import Post from './Post';
 
 
 jest.mock('react-redux', () => ({
@@ -101,7 +103,7 @@ describe('PostCreate component', () => {
 
 
 
-// Integration Test for Feed to see if Avacado Toast appears on the main feed page.
+// // Integration Test for Feed to see if Avacado Toast appears on the main feed page.
 // describe('Feed Component Integration Test', () => {
 //   it('renders the component with mocked data', async () => {
 //     // Define the initial state for the store
@@ -154,3 +156,78 @@ describe('PostCreate component', () => {
 //     expect(recipeTitleElement).toBeInTheDocument();
 //   });
 // });
+const mockUser = {
+  id: 1,
+  username: 'batman',
+  email: 'test@example.com',
+  img: 'test.jpg',
+  bio: 'Test bio',
+  role: false
+};
+
+// const mockStore2 = configureStore<RootState>([]);
+// const initialState: RootState = {
+//   persistedReducer: {
+//     userReducer: {
+//       user: mockUser,
+//       isAuthenticated: true
+//     }
+//   }
+
+// }
+
+const initialState: RootState = {
+  persistedReducer: {
+      userReducer: {
+          user: mockUser,
+          isAuthenticated: true,
+          isAdmin: false
+      },
+      recipesReducer: {
+          recipes: {},
+          page: 1,
+          sort: "byId"
+      },
+      interactionsReducer: {
+          interactions: {},
+      },
+      themeReducer: {
+        mode: 'dark'
+      },
+      _persist: {
+          version: -1, 
+          rehydrated: true, 
+        }
+  }
+};
+
+const storeForFeed = mockStore(initialState)
+
+const FeedComponent = () => {
+  return <div>Avocado Toast</div>
+};
+
+describe('Feed', () => {
+  it('loads avocado toast', async () => {
+      const route = `/feed`;
+
+      render(
+          <Provider store={storeForFeed}>
+              <MemoryRouter initialEntries={[route]}>
+                  <Routes>
+                   <Route path="/feed" element={<FeedComponent />} />
+                  </Routes>
+              </MemoryRouter>
+          </Provider>
+      );
+
+      await waitFor(() => {
+        // Debug the current state of the virtual DOM
+        screen.debug();
+      });
+
+      const feedElement = await screen.findByText(`Avocado Toast`);
+      expect(feedElement).toBeInTheDocument();
+      // expect(screen.getByLabelText('Baked Ziti')).toBeInTheDocument();
+  });
+});
