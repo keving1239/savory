@@ -26,6 +26,15 @@ stages:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
         goals: 'clean install compile package'
         options: '-Dmaven.test.skip'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.17'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
 
     
     - task: PublishBuildArtifacts@1
