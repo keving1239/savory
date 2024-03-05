@@ -26,10 +26,10 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
     
-    - task: Maven@3
+    - task: Maven@4
       inputs:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean package'
+        goals: 'clean compile package'
         options: '-Dmaven.test.skip'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
@@ -40,10 +40,17 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish JAR'
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
+        ArtifactName: 'jarArtifact'
         
     # - script: |
-    #     java -jar $(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar
-    #   displayName: 'Run SB Application'
+    #     cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
+    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+    #   displayName: 'Run Spring Boot Application'
 
     - script: |
         npm install
@@ -67,10 +74,4 @@ stages:
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
-    
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish JAR'
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
-        ArtifactName: 'jarArtifact'
         
