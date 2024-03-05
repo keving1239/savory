@@ -30,7 +30,7 @@ stages:
       inputs:
         versionSpec: '17'
         jdkArchitectureOption: 'x64'
-        jdkSourceOption: LocalDirectory
+        jdkSourceOption: PreInstalled
     
     - task: Maven@4
       inputs:
