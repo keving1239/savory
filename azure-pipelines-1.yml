@@ -21,25 +21,16 @@ stages:
   - job: BuildJob
     steps:
     
-    - task: Maven@4
+    - task: Maven@3
       inputs:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean compile package'
+        goals: 'clean install compile package'
         options: '-Dmaven.test.skip'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.17'
-        mavenVersionOption: 'Default'
-        mavenOptions: '-Xmx3072m'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
 
     
     - task: PublishBuildArtifacts@1
       displayName: 'Publish JAR'
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/*.jar'
         ArtifactName: 'jarArtifact'
       
