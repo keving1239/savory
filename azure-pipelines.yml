@@ -47,10 +47,10 @@ stages:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
         ArtifactName: 'jarArtifact'
         
-    - script: |
-        cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
-        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
-      displayName: 'Run Spring Boot Application'
+    # - script: |
+    #     cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
+    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+    #   displayName: 'Run Spring Boot Application'
 
     - script: |
         npm install
