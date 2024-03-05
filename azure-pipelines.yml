@@ -55,7 +55,7 @@ stages:
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
-        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+        java -jar savoryAPI-0.0.1-SNAPSHOT.jar &
       displayName: 'Run Spring Boot Application'
 
     - script: |
