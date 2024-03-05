@@ -21,10 +21,10 @@ stages:
   jobs:
   - job: BuildJob
     steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '14.x'
-      displayName: 'Install Node.js'
+    # - task: NodeTool@0
+    #   inputs:
+    #     versionSpec: '14.x'
+    #   displayName: 'Install Node.js'
     
     - task: Maven@4
       inputs:
@@ -47,32 +47,31 @@ stages:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
         ArtifactName: 'jarArtifact'
 
-    - task: CmdLine@2
+    - script: |
+        cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
+        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
       displayName: 'Run Spring Boot Application'
-      inputs:
-        script: |
-          java -jar $(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar
 
-    - script: |
-        npm install
-      displayName: 'npm install'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+    # - script: |
+    #     npm install
+    #   displayName: 'npm install'
+    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
       
-    - script: |
-        npm run build
-      displayName: 'npm run build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+    # - script: |
+    #     npm run build
+    #   displayName: 'npm run build'
+    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
     
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    # - task: CopyFiles@2
+    #   inputs:
+    #     SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
+    #     Contents: '**'
+    #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
 
-    ## Publish the zip file
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
+    # ## Publish the zip file
+    # - task: PublishBuildArtifacts@1
+    #   inputs:
+    #     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    #     ArtifactName: 'drop'
         
