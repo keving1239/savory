@@ -47,12 +47,10 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
     
-    - task: CmdLine@2
-      displayName: 'Run Spring Boot Application'
-      inputs:
-        script: |
-          cd $(System.DefaultWorkingDirectory)/SavorySpringAPI/target
-          java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+    - script: |
+        java -jar savoryAPI-0.0.1-SNAPSHOT.jar
+      displayName: 'Run SB App'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target'
 
     
     - task: PublishBuildArtifacts@1
