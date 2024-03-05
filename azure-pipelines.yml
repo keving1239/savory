@@ -10,7 +10,6 @@ trigger:
   paths:
     include:
       - SavoryApp/*
-      - SavorySpringAPI/*
 
 pool:
   vmImage: windows-latest
@@ -25,39 +24,6 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
-  
-    # - task: JavaToolInstaller@0
-    #   inputs:
-    #     versionSpec: '21'
-    #     jdkArchitectureOption: 'x64'
-    #     jdkSourceOption: PreInstalled
-    
-    - task: Maven@4
-      inputs:
-        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean compile package'
-        options: '-Dmaven.test.skip'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.17'
-        mavenVersionOption: 'Default'
-        mavenOptions: '-Xmx3072m'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
-    
-    # - script: |
-    #     java -jar savoryAPI-0.0.1-SNAPSHOT.jar
-    #   displayName: 'Run SB App'
-    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target'
-
-    
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish JAR'
-      inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
-        ArtifactName: 'jarArtifact'
 
     - script: |
         npm install
