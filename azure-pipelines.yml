@@ -21,10 +21,10 @@ stages:
   jobs:
   - job: BuildJob
     steps:
-    # - task: NodeTool@0
-    #   inputs:
-    #     versionSpec: '14.x'
-    #   displayName: 'Install Node.js'
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+      displayName: 'Install Node.js'
   
     - task: JavaToolInstaller@0
       inputs:
