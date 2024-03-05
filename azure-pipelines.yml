@@ -26,10 +26,10 @@ stages:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
     
-    - task: Maven@4
+    - task: Maven@3
       inputs:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
-        goals: 'clean package'
+        goals: 'clean compile package'
         options: '-Dmaven.test.skip'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
