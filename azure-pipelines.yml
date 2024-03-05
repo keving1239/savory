@@ -58,26 +58,26 @@ stages:
         java -jar savoryAPI-0.0.1-SNAPSHOT.jar
       displayName: 'Run Spring Boot Application'
 
-    # - script: |
-    #     npm install
-    #   displayName: 'npm install'
-    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+    - script: |
+        npm install
+      displayName: 'npm install'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
       
-    # - script: |
-    #     npm run build
-    #   displayName: 'npm run build'
-    #   workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
+    - script: |
+        npm run build
+      displayName: 'npm run build'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
     
-    # - task: CopyFiles@2
-    #   inputs:
-    #     SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
 
-    # ## Publish the zip file
-    # - task: PublishBuildArtifacts@1
-    #   inputs:
-    #     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    #     ArtifactName: 'drop'
+    ## Publish the zip file
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
         
