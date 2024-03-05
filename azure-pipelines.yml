@@ -25,6 +25,12 @@ stages:
     #   inputs:
     #     versionSpec: '14.x'
     #   displayName: 'Install Node.js'
+  
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: LocalDirectory
     
     - task: Maven@4
       inputs:
