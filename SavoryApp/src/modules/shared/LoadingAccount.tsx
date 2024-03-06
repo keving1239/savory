@@ -12,7 +12,7 @@ import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 
 const LoadingAccount = () => {
     // redux state
-    const savoryUser = useSelector((state: RootState) => state.persistedReducer.userReducer);
+    const savoryUser = useSelector((state: RootState) => state.userReducer);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenWithPopup } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();
@@ -60,8 +60,6 @@ const LoadingAccount = () => {
     }
     async function loadRecipes() {
         const userId = savoryUser?.user?.id || -1;
-        // dispatch(changePage({pageNumber: 1}));
-        // dispatch(loadPage({loaded: true}))
         try {
             await dispatch(fetchRecipes({pageNumber: 1}));
         } catch(error){console.error("Error Fetching Recipes: ", error)}

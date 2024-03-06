@@ -9,8 +9,8 @@ import { createRecipe } from '../../../redux/Recipes/recipes-slice'
 const PostCreate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id);
-  const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+  const userId = useSelector((state: RootState) => state.userReducer.user?.id);
+  const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
   useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
   // form states
   const [title, setTitle] = useState('');

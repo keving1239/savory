@@ -20,6 +20,13 @@ const rootReducer = combineReducers({
   themeReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+export const setupStore = (preloadedState?: Partial<RootState>) => {
+  return configureStore({
+    reducer: persistedReducer,
+    preloadedState,
+    middleware,
+  })
+}
 
 export const fetchOptions = ({method, body}: {method: string, body?: string}) => {
   const cookies = document.cookie.split('; ');
@@ -38,7 +45,8 @@ export const fetchOptions = ({method, body}: {method: string, body?: string}) =>
   };
 }
 
-export const store = configureStore({reducer: {persistedReducer}, middleware});
+export const store = setupStore();
 export const persistor = persistStore(store);
-export type RootState = ReturnType<typeof store.getState>;
+export type AppStore =  ReturnType<typeof setupStore>;
+export type RootState = ReturnType<typeof persistedReducer>;
 export type AppDispatch = typeof store.dispatch;

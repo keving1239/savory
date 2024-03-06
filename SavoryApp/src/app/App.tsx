@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
  
 const App = () => {
-  const mode = useSelector((state: RootState) => state.persistedReducer.themeReducer.mode);
+  const mode = useSelector((state: RootState) => state.themeReducer.mode);
   return (
     <div style={{height: '100%', textAlign: 'center'}}>
       <ThemeProvider theme={createAppTheme(mode)}>

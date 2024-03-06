@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Grid, Tooltip, Typography, Card, FormControl, Select, InputLabel, MenuItem, SelectChangeEvent,
     CardMedia, Avatar, IconButton, Modal, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
@@ -22,18 +22,19 @@ export default function Feed() {
     // redux
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const sort = useSelector((state: RootState) => state.persistedReducer.recipesReducer.sort) || 'A';
-    const feed = useSelector((state: RootState) => state.persistedReducer.recipesReducer.recipes);
-    const page = useSelector((state: RootState) => state.persistedReducer.recipesReducer.page);
+    const user = useSelector((state: RootState) => state.userReducer.user);
+    const sort = useSelector((state: RootState) => state.recipesReducer.sort) || 'A';
+    const feed = useSelector((state: RootState) => state.recipesReducer.recipes);
+    const page = useSelector((state: RootState) => state.recipesReducer.page);
     // params
     const { username } = useParams();
     const { post } = useParams();
     const { query } = useParams();
     const { interaction } = useParams();
+    const location = useLocation();
     // state
-    const [open, setOpen] = useState(Boolean(post));
     const [currentPost, setcurrentPost] = useState(Number(post) || -1);
+    const [open, setOpen] = useState(currentPost > 0);
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
     const [localPage, setLocalPage] = useState(1);
@@ -41,9 +42,8 @@ export default function Feed() {
     const [hasSortChanged, setHasSortChanged] = useState(false);
 
     //ensure authentication
-    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
-
     // load recipes
     async function loadRecipes() {
         if(username) await loadProfile();
@@ -129,13 +129,21 @@ export default function Feed() {
     useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
-            if (Object.keys(recipes).length === 0) setStatus('Nothing Here...');
+            if (Object.keys(recipes).length === 0) {
+                if(interaction || query) navigate('/feed');
+                else setStatus('Nothing Here...');
+            }
         }, 10000);
         return () => clearTimeout(timer);
     }, [recipes]);
     useEffect(() => {
         setRecipes(feed);
     }, [feed]);
+    useEffect(() => {
+        const current = Number(post) || -1;
+        setcurrentPost(current);
+        setOpen(current > 0);
+    }, [location]);
 
     // Handlers
     const openHandler = (id: number) => {
@@ -143,14 +151,11 @@ export default function Feed() {
         setOpen(true);
     }
     const closeHandler = () => {
-        setcurrentPost(0);
+        setcurrentPost(-1);
         setOpen(false);
     }
     const handleNextPage = () => {
         setLocalPage((username || interaction || query) ? localPage + 1 : page + 1);
-        // if(username) return setProfilePage(profilePage+1);
-        // else if(interaction) return setBookmarkPage(bookmarkPage+1);
-        // else if(query) return setSearchPage(searchPage+1)
         if (username || interaction || query) {
             setLocalPage(localPage + 1);
         } else {
@@ -171,7 +176,6 @@ export default function Feed() {
 
     const handleSortUpdate = (sortBy: SelectChangeEvent) => {
         const newSort = sortBy.target.value as string;
-        console.log("new: " + newSort)
         dispatch(updateSort({ sortBy: newSort }));
         dispatch(changeSort(newSort));
         setLocalPage(1);
@@ -269,8 +273,8 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
 
 const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id: number) => void }) => {
     // state
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[recipe.id]);
+    const user = useSelector((state: RootState) => state.userReducer.user);
+    const interaction = useSelector((state: RootState) => state.interactionsReducer.interactions[recipe.id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
@@ -297,7 +301,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
     }
     const exploreHandler = () => {
         if(!recipe) return;
-        navigate(`/feed/search/${recipe.title + ' ' + recipe.tags?.join(' ')}`);
+        navigate(`/feed/search/${(recipe.title + ' ' + recipe.tags?.join(' ')).toLowerCase()}`);
     }
     // Recipe Card
     return (
@@ -370,9 +374,9 @@ const RecipePopup = ({ open, username, recipe, closeHandler }: { open: boolean, 
 }
 
 const PopupInteractions = ({ id, author }: { id: number, author: string }) => {
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const isAdmin = useSelector((state: RootState) => state.persistedReducer.userReducer.isAdmin); 
-    const interaction = useSelector((state: RootState) => state.persistedReducer.interactionsReducer.interactions[id]);
+    const user = useSelector((state: RootState) => state.userReducer.user);
+    const isAdmin = useSelector((state: RootState) => state.userReducer.isAdmin); 
+    const interaction = useSelector((state: RootState) => state.interactionsReducer.interactions[id]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);

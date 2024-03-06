@@ -21,6 +21,11 @@ declare module '@mui/material/styles' {
         cream: true;
     }
 }
+declare module '@mui/material/Typography' {
+    interface TypographyPropsColorOverrides {
+        cream: true;
+    }
+}
 
 const getPaletteColors = (mode: PaletteMode) => ({
     palette: {
