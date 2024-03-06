@@ -230,7 +230,7 @@ describe('Feed Component', () => {
       // For example, if your API returns an array of posts, you might use `await waitFor(() => screen.getAllByText(/.*/));`
       await waitFor(() => screen.getByText('Avocado Toast'));
   
-      expect(screen.getByText('Avocado Toast')).toBeInTheDocument();
+      expect(screen.getByText('Avocado Tost')).toBeInTheDocument();
     });
   });
 
