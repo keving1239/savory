@@ -9,8 +9,8 @@ import { updateUser } from '../../../redux/User/user-slice';
 const ProfileEdit = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const user = useSelector((state: RootState) => state.userReducer.user);
+    const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     const [blogUsername, setBlogUsername] = useState(user?.username || '');
     const [blogImg, setBlogImg] = useState(user?.img || '');
@@ -35,7 +35,7 @@ const ProfileEdit = () => {
         }
         await dispatch(updateUser({id: user.id, username: user.username || blogUsername, 
             email: user.email, img: blogImg, bio: blogBio}));
-        navigate(`/profile/${user.username}`);
+        navigate(`/profile/${user.username || blogUsername}`);
     }
 
     return (

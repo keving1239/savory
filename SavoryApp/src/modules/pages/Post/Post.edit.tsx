@@ -9,13 +9,13 @@ import { updateRecipe, Recipe, deleteRecipe } from '../../../redux/Recipes/recip
 const PostEdit = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();  
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
+    const user = useSelector((state: RootState) => state.userReducer.user);
     const { id } = useParams();
     const [post, setPost] = useState<Recipe | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
     //ensure authentication
-    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     // form states
     const [title, setTitle] = useState(post?.title || '');

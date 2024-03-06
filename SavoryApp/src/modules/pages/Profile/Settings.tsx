@@ -15,9 +15,9 @@ const Settings = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const { logout } = useAuth0();
-    const mode = useSelector((state: RootState) => state.persistedReducer.themeReducer.mode) as string;
-    const userId = useSelector((state: RootState) => state.persistedReducer.userReducer.user?.id);
-    const isAuthenticated = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const mode = useSelector((state: RootState) => state.themeReducer.mode) as string;
+    const userId = useSelector((state: RootState) => state.userReducer.user?.id);
+    const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
     // dialog state
     const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);

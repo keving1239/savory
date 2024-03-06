@@ -10,8 +10,8 @@ import Feed from '../../shared/Feed';
 const Profile = () => {
     const navigate = useNavigate();
     const {username} = useParams();
-    const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-    const isAdmin = useSelector((state: RootState) => state.persistedReducer.userReducer.isAdmin); 
+    const user = useSelector((state: RootState) => state.userReducer.user);
+    const isAdmin = useSelector((state: RootState) => state.userReducer.isAdmin); 
     const isOwner = user?.username === username;
     const [profile, setProfile] = useState(user ? user : {id: 0, username: 'savory', img: '', bio: 'Welcome to Savory!'});
     const [metrics, setMetrics] = useState(0);

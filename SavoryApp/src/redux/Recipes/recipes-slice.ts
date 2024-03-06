@@ -1,8 +1,5 @@
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchOptions } from "../store";
-import { RootState } from "../store";
-
-export const selectRecipes = (state: RootState) => state.persistedReducer.recipesReducer;
  
 export interface Recipe {
     id: number,

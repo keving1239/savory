@@ -11,7 +11,7 @@ const teamMembers = [
     {username: 'Sanjit Muthineni', img: '/img/sanjit.jpg', bio: 'TS Consultant | Atlanta'}];
 
 const SplashPage = () => {
-    const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+    const savoryAuth = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     return (
         <Grid container direction='column' justifyContent='space-evenly' alignItems='center' rowSpacing={2}>
         <Grid item>

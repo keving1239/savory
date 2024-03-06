@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { persistor, store } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import App from './app/App';
-import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 import './index.css';
 import React from 'react';
@@ -27,5 +26,3 @@ root.render(
       </PersistGate>
     </Provider>
 );
-
-// reportWebVitals();
