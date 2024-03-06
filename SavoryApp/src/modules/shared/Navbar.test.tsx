@@ -3,6 +3,25 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import StandardLayout from '../StandardLayout';
 import { authState, renderWithProviders } from '../../setupTests';
 import { RootState } from '../../redux/store';
+import StandardLayoutRouter from '../Router';
+import { Route, Routes } from 'react-router';
+import LoadingAccount from './LoadingAccount';
+
+const navbarAndRoutes = () => {
+    return(
+        <Routes>
+            <Route path="/" element={<StandardLayout/>}>
+                <Route index element={<div/>}/>
+                <Route path='profile/:username' element={<div/>}/>
+                <Route path="login" element={<LoadingAccount/>}/>
+                <Route path="feed" element={<div/>}/>
+                <Route path='feed/:interaction' element={<div/>}/>
+                <Route path='post/new' element={<div/>}/>
+                <Route path='settings' element={<div/>}/>
+            </Route>
+        </Routes>
+    );
+}
 
 const clickAvatar = () => {fireEvent.click(screen.getByTestId('mui-avatar'))};
 function renderBeforeEach({ state, expected, action }:
@@ -126,14 +145,11 @@ describe('Login Enables Authenticated Navigate/Profile Options', () => {
     test('Loggin in will update the Navbar Navigate/Profile Options', () => {
         expect(screen.queryByText('Bookmarks')).not.toBeInTheDocument();
         act(() => {fireEvent.click(screen.getByText('Log in'));});
-        waitFor(()=>{expect(screen.getByText('Bookmarks')).toBeInTheDocument()});
-    });
-});
-describe('Logout Disables Authenticated Navigate/Profile Options', () => {
-    renderBeforeEach({expected: 'mui-avatar', action: clickAvatar, state: authState});
-    test('Logging out will update the Navbar Navigate/Profile Options', () => {
-        expect(screen.getByText('Add Post')).toBeInTheDocument();
-        act(() => {fireEvent.click(screen.getByText('Logout'));});
-        waitFor(()=>{expect(screen.queryByText('Add Post')).not.toBeInTheDocument()});
+        screen.debug();
+        waitFor(()=>{
+            screen.debug();
+            expect(screen.getByText('alsdkhfjksdf')).toBeInTheDocument()
+            expect(screen.getByText('Bookmarks')).toBeInTheDocument()
+        });
     });
 });

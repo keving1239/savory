@@ -12,6 +12,7 @@ import { UserState } from './redux/User/user-slice';
 import { LocalRecipesState } from './redux/Recipes/recipes-slice';
 import { InteractionsState } from './redux/Interactions/interactions-slice';
 import createAppTheme from './app/App.theme';
+import StandardLayoutRouter from './modules/Router';
 
 // MOCK WINDOW
 Object.defineProperty(window, 'location', {
@@ -65,12 +66,12 @@ export const authState = {
     userReducer: {
         ...testState.userReducer,
         user: {
-            id: 131,
+            id: 105,
             username: 'savory.taste.tester',
             // password: @iHV2LId!1EqDAeQ
             email: 'taste.tester@savory.com',
             img: '',
-            bio: '',
+            bio: 'Hi, I am a tester for Savory!',
         },
         isAuthenticated: true,   
     }
@@ -99,9 +100,11 @@ export function renderWithProviders(
                 redirect_uri: `${window.location.origin}/login`,
                 scope: 'openid profile email'
             }}>
-            <ThemeProvider theme={createAppTheme('light')}><BrowserRouter>
+            <ThemeProvider theme={createAppTheme('light')}>
+                <BrowserRouter>
                 {children}
-            </BrowserRouter></ThemeProvider>
+                </BrowserRouter>
+            </ThemeProvider>
             </Auth0Provider>
             </PersistGate>
         </Provider>);

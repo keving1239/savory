@@ -90,7 +90,7 @@ const LoadingAccount = () => {
     // display
     return(
       <Box>
-        <Typography variant='h2' mt='5vh'>Welcome</Typography>
+        <Typography variant='h2' mt='5vh'>WelcomeL</Typography>
         <Typography mb='5vh'>{status}</Typography>
         <CircularProgress />
       </Box>
