@@ -25,7 +25,7 @@ export interface LocalRecipesState {
 const initialState: LocalRecipesState = {
     recipes: {},
     page: 1,
-    sort: "byId"
+    sort: "A"
 };
  
 const recipesSlice = createSlice({
