@@ -133,33 +133,6 @@
 					<target>17</target>
 	        	</configuration>
 			</plugin>
-		    <plugin>
-		        <groupId>com.microsoft.azure</groupId>
-		        <artifactId>azure-webapp-maven-plugin</artifactId>
-		        <version>2.11.0</version>
-		        <configuration>
-		            <schemaVersion>v2</schemaVersion>
-		            <resourceGroup>VisualStudioOnline-1C8BE2DDAF0C4F0EB94A395FE9652748</resourceGroup>
-		            <appName>Savory</appName>
-		            <pricingTier>P1v2</pricingTier>
-		            <region>centralus</region>
-					<runtime>
-						<os>Windows</os>
-						<javaVersion>17</javaVersion> <!-- Correct syntax -->
-						<webContainer>Java SE</webContainer>
-					</runtime>
-		            <deployment>
-		                <resources>
-		                    <resource>
-		                        <directory>${project.basedir}/target</directory>
-		                        <includes>
-		                            <include>*.jar</include>
-		                        </includes>
-		                    </resource>
-		                </resources>
-		            </deployment>
-		        </configuration>
-		    </plugin>
 		</plugins>
 	</build>
 
