@@ -43,11 +43,4 @@ stages:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
         ArtifactName: 'jarArtifact'
     
-    - task: AzureWebApp@1
-      inputs:
-        azureSubscription: 'azure-omc-das-crd581-TechTrainingSandboxGroup1Jan262024-dev (a2a7e659-bf8a-4db4-ba05-257f41192110)'
-        appType: 'webApp'
-        appName: 'savoryAPI'
-        package: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
-        deploymentMethod: 'auto'
           
