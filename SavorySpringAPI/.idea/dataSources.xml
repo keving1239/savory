@@ -14,7 +14,7 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="test" uuid="95f6b6e7-b162-4c6b-ba6b-646f9938d625">
+    <data-source source="LOCAL" name="local" uuid="95f6b6e7-b162-4c6b-ba6b-646f9938d625">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
