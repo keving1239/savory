@@ -78,7 +78,7 @@ const PostCreate = () => {
     <Card elevation={10} sx={{maxWidth: '60vw'}}>
       <CardContent>
         <Typography variant='h4'>Share Your Recipe!</Typography>
-        <form onSubmit={(e) => handlePostCreate(e)}>
+        <form onSubmit={(e) => handlePostCreate(e)} data-testid='recipe-form'>
           <Grid container justifyContent='space-between' alignItems='center'>
             {fields.map((field, index) => (
               <Grid item xs={field.size} key={index}><Tooltip title={field.tip} placement='top-start'>
@@ -86,7 +86,7 @@ const PostCreate = () => {
               </Tooltip></Grid>
             ))}
           </Grid>
-          <Button variant='contained' sx={{mt: '1vh'}} type='submit' size='large'>
+          <Button variant='contained' sx={{mt: '1vh'}} type='submit' size='large' data-testid='recipe-submit'>
               <Typography>Submit</Typography>
           </Button>
         </form>
