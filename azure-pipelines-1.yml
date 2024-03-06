@@ -1,0 +1,45 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - SavorySpringAPI/*
+
+pool:
+  vmImage: windows-latest
+  
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    steps:
+    
+    - task: Maven@3
+      inputs:
+        mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
+        goals: 'clean install compile package'
+        options: '-Dmaven.test.skip'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.17'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish JAR'
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/target/savoryAPI-0.0.1-SNAPSHOT.jar'
+        ArtifactName: 'jarArtifact'
+      
