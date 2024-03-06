@@ -39,6 +39,8 @@ describe('Profile', () => {
             }
         });
     });
+
+    //integration test
     it('loads the correct username', () => {
         const bio = authState.userReducer?.user?.bio || '';
         const username = authState.userReducer?.user?.username || '';
@@ -49,4 +51,17 @@ describe('Profile', () => {
         {preloadedState: authState});
         waitFor(() => {expect(screen.findByText(bio)).toBeInTheDocument();});
     });
+
+    //unit test
+    it('loads the sort', () => {
+        const bio = authState.userReducer?.user?.bio || '';
+        const username = authState.userReducer?.user?.username || '';
+        renderWithProviders(
+            <Routes>
+                <Route path={`/profile/username${username}`} element={<Profile />} /> 
+            </Routes>,
+        {preloadedState: authState});
+        waitFor(() => {expect(screen.findByText('Sort')).toBeInTheDocument();});
+    }
+    )
 });
