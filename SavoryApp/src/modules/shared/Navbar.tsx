@@ -11,8 +11,8 @@ import { clearInteractions } from '../../redux/Interactions/interactions-slice';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const ResponsiveAppBar = () => {
-  const user = useSelector((state: RootState) => state.persistedReducer.userReducer.user);
-  const savoryAuth = useSelector((state: RootState) => state.persistedReducer.userReducer.isAuthenticated);
+  const user = useSelector((state: RootState) => state.userReducer.user);
+  const savoryAuth = useSelector((state: RootState) => state.userReducer.isAuthenticated);
   const { logout } = useAuth0();
   const dispatch = useDispatch<AppDispatch>();
   const logoutHandler = async () => {
@@ -20,7 +20,7 @@ const ResponsiveAppBar = () => {
       dispatch(clearUser());
       dispatch(clearRecipes());
       dispatch(clearInteractions());
-      await logout({ logoutParams: { returnTo: window.location.origin } });
+      await logout({logoutParams: {to: window.location.origin}});
     } catch(error) {console.error("Error logging out: ", error);}
   }
 
@@ -66,11 +66,11 @@ const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
     <>
     {
       savoryAuth ?
-      <Link to='/feed'><Button sx={{p: 0}}>
+      <Link to='/feed'><Button sx={{p: 0}} data-testid='savory-home-button'>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
       </Button></Link> :
-      <Button sx={{p: 0}}>
+      <Button sx={{p: 0}} data-testid='savory-home-button'>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
         <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
       </Button>
@@ -105,7 +105,9 @@ const ProfileButton = ({username, img, openProfileOptions} :
   return(
     <Tooltip title='Profile Options'>
       <IconButton onClick={openProfileOptions}>
-        <Avatar alt={username} src={img}>{!img ? username.toUpperCase().charAt(0) : ''}</Avatar>
+        <Avatar alt={username} src={img} data-testid="mui-avatar">
+          {!img ? username.toUpperCase().charAt(0) : ''}
+        </Avatar>
       </IconButton>
     </Tooltip>
   );
@@ -149,15 +151,16 @@ const SearchBar = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   function handleSearch() {
-    navigate(`/feed/search/${query}`);
+    navigate(`/feed/search/${query.toLowerCase()}`);
   }
 
   return (
     <Box>
-        <form onSubmit={handleSearch}>
+        <form onSubmit={handleSearch} data-testid='savory-search-bar'>
           <Grid container alignItems='center'>
             <Grid item xs={10}>
               <TextField
+              data-testid="savory-search-text"
               id="search-bar"
               variant="outlined"
               placeholder="Search"
