@@ -12,7 +12,7 @@ trigger:
       - SavorySpringAPI/*
 
 pool:
-  vmImage: windows-latest
+  vmImage: ubuntu-latest
   
 stages:
 - stage: Build
