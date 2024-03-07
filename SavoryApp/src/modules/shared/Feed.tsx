@@ -58,11 +58,11 @@ export default function Feed() {
     }
     async function loadProfile() {
         try {
-            const findProfile = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
+            const findProfile = await fetch(`https://savory-backend.azurewebsites.net/api/person/byUsername/${username}`, fetchOptions({
                 method: 'GET'
             }));
             const profile = await findProfile.json();
-            const response = await fetch(`http://localhost:8080/api/posts/byUserId/${profile.id}?pageNumber=${localPage}`, fetchOptions({
+            const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/byUserId/${profile.id}?pageNumber=${localPage}`, fetchOptions({
                 method: 'GET'
             }));
             const data = await response.json();
@@ -79,7 +79,7 @@ export default function Feed() {
     async function loadBookmarks() {
         try {
             if (!user) return;
-            const response = await fetch(`http://localhost:8080/api/posts/bookmarked/${user.id}?pageNumber=${localPage}`, fetchOptions({
+            const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/bookmarked/${user.id}?pageNumber=${localPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -95,7 +95,7 @@ export default function Feed() {
     }
     async function loadSearch() {
         try {
-            const response = await fetch(`http://localhost:8080/api/posts/search?query=${query}&pageNumber=${localPage}`, fetchOptions({
+            const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/search?query=${query}&pageNumber=${localPage}`, fetchOptions({
                 method: 'GET',
             }));
             const data = await response.json();
@@ -407,9 +407,9 @@ const PopupInteractions = ({ id, author }: { id: number, author: string }) => {
         loadMetrics();
     }, [interaction]);
     async function loadMetrics() {
-        const getLikes = await fetch(`http://localhost:8080/api/interaction/post/likes/${id}`, fetchOptions({ method: 'GET' }));
-        const getShares = await fetch(`http://localhost:8080/api/interaction/post/shares/${id}`, fetchOptions({ method: 'GET' }));
-        const getBookmarks = await fetch(`http://localhost:8080/api/interaction/post/bookmarks/${id}`, fetchOptions({ method: 'GET' }));
+        const getLikes = await fetch(`https://savory-backend.azurewebsites.net/api/interaction/post/likes/${id}`, fetchOptions({ method: 'GET' }));
+        const getShares = await fetch(`https://savory-backend.azurewebsites.net/api/interaction/post/shares/${id}`, fetchOptions({ method: 'GET' }));
+        const getBookmarks = await fetch(`https://savory-backend.azurewebsites.net/api/interaction/post/bookmarks/${id}`, fetchOptions({ method: 'GET' }));
         const likeCount = await getLikes.json();
         const shareCount = await getShares.json();
         const bookmarkCount = await getBookmarks.json();
