@@ -51,7 +51,7 @@ const LoadingAccount = () => {
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            const response = await fetch('http://localhost:8080/api/auth/isAdmin', fetchOptions({
+            const response = await fetch('https://savory-backend.azurewebsites.net/api/auth/isAdmin', fetchOptions({
                 method: 'GET',
             }));
             const isAdmin = await response.json();
@@ -90,7 +90,7 @@ const LoadingAccount = () => {
     // display
     return(
       <Box>
-        <Typography variant='h2' mt='5vh'>WelcomeL</Typography>
+        <Typography variant='h2' mt='5vh'>Welcome</Typography>
         <Typography mb='5vh'>{status}</Typography>
         <CircularProgress />
       </Box>
