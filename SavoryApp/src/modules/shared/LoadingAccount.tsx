@@ -51,7 +51,7 @@ const LoadingAccount = () => {
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
         try {
-            const response = await fetch('https://savory-backend.azurewebsites.net/api/auth/isAdmin', fetchOptions({
+            const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/auth/isAdmin`, fetchOptions({
                 method: 'GET',
             }));
             const isAdmin = await response.json();

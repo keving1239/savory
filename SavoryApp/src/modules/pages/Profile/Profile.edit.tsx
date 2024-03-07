@@ -23,7 +23,7 @@ const ProfileEdit = () => {
         // ensure username is unique
         if(!user.username) {
             try {
-                const checkUsername = await fetch(`https://savory-backend.azurewebsites.net/api/person/usernameExists/${blogUsername}`, fetchOptions({
+                const checkUsername = await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/usernameExists/${blogUsername}`, fetchOptions({
                     method: 'GET',
                 }));
                 const exists = await checkUsername.json();

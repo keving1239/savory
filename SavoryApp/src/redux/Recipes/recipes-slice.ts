@@ -94,7 +94,7 @@ export const fetchRecipes = createAsyncThunk(
     'FETCH-RECIPES',
     async ({ userId, pageNumber }: {userId?: number; pageNumber: number}) => {
         // for now fetch all in paginated style
-        const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/allWithUsername?pageNumber=${pageNumber}`, fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/allWithUsername?pageNumber=${pageNumber}`, fetchOptions({
             method: 'GET',
         }));
          const data = await response.json();
@@ -119,7 +119,7 @@ export const createRecipe = createAsyncThunk(
     'CREATE-RECIPE',
     async ({userId, headline, ingredients, recipe, img, tags}: 
         {userId: number, headline: string, ingredients: string, recipe: string, img: string, tags: string}) => {
-        const response = await fetch('https://savory-backend.azurewebsites.net/api/posts/new', fetchOptions({
+        const response = await fetch('${process.env.REACT_APP_URL_KEY}/api/posts/new', fetchOptions({
             method: 'POST', 
             body: JSON.stringify({userId: userId, headline: headline, ingredients: ingredients, recipe: recipe, img: img, tags: tags}),
         }));
@@ -133,7 +133,7 @@ export const updateRecipe = createAsyncThunk(
     'UPDATE-RECIPE',
     async ({postId, userId, headline, ingredients, recipe, img, tags}: 
         {postId: number, userId: number, headline: string, ingredients: string, recipe: string, img: string, tags: string}) => {
-        const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/edit/${postId}`, fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/edit/${postId}`, fetchOptions({
             method: 'PUT',
             body: JSON.stringify({userId: userId, headline: headline, ingredients: ingredients, recipe: recipe, img: img, tags: tags}),
         }));
@@ -145,7 +145,7 @@ export const updateRecipe = createAsyncThunk(
 export const deleteRecipe = createAsyncThunk(
     'DELETE-RECIPE',
     async ({postId}: {postId: number}) => {
-        const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/delete/${postId}`, fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/delete/${postId}`, fetchOptions({
             method: 'DELETE',
         }));
         if(!response.ok) throw new Error(`Unable to delete post ${postId}`); 
@@ -156,7 +156,7 @@ export const deleteRecipe = createAsyncThunk(
 export const updateSort = createAsyncThunk(
     'UPDATE-SORT',
     async ({sortBy}: {sortBy: String}) => {
-        const response = await fetch(`https://savory-backend.azurewebsites.net/api/posts/updateSort?sorter=${sortBy}`, fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/updateSort?sorter=${sortBy}`, fetchOptions({
             method: 'POST',
         }));
     }

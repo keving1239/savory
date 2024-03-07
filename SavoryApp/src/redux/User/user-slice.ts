@@ -78,14 +78,14 @@ export const fetchUser = createAsyncThunk(
     async ({ email, isAuthenticated, isAdmin }: 
         { email: string; isAuthenticated: boolean, isAdmin: boolean }) => {
         if(!isAuthenticated || !email) throw new Error('Auth0 Login Failed...');
-        const search = await fetch(`https://savory-backend.azurewebsites.net/api/person/emailExists/${email}`, fetchOptions({
+        const search = await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/emailExists/${email}`, fetchOptions({
             method: 'GET',
         }));
         const exists = await search.json();
-        const response = exists ? await fetch(`https://savory-backend.azurewebsites.net/api/person/byEmail/${email}`, fetchOptions({
+        const response = exists ? await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/byEmail/${email}`, fetchOptions({
                 method: 'GET',    
             }))
-            : await fetch('https://savory-backend.azurewebsites.net/api/person/new', fetchOptions({
+            : await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/new`, fetchOptions({
                 method: 'POST', body: JSON.stringify({username: '', email: email, img: '', bio: ''}),
             }));
         const data = await response.json();
@@ -96,7 +96,7 @@ export const fetchUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
     'UPDATE-USER',
     async ({id, username, email, img, bio}: {id: number, username: string, email: string, img: string, bio: string}) => {
-        const response = await fetch(`https://savory-backend.azurewebsites.net/api/person/edit/${id}`, fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/edit/${id}`, fetchOptions({
             method: 'PUT', body: JSON.stringify({username: username, email: email, img: img, bio: bio}),
         }));
         const data = await response.json();
@@ -107,7 +107,7 @@ export const updateUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
     'DELETE-USER',
     async ({id}: {id: number}) => {
-        await fetch(`https://savory-backend.azurewebsites.net/api/person/delete/${id}`, fetchOptions({
+        await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/delete/${id}`, fetchOptions({
             method: 'DELETE',
         }));
     }
