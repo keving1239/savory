@@ -48,7 +48,7 @@ public class SecurityConfig {
             .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
                 config.addAllowedOrigin("http://localhost:3000");
-                config.addAllowedOrigin("https://savory.azurewebsites.net");
+                config.addAllowedOrigin("https://savory-frontend.azurewebsites.net");
                 config.addAllowedMethod("*");
                 config.addAllowedHeader("*");
                 return config;
