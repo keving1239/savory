@@ -119,7 +119,7 @@ export const createRecipe = createAsyncThunk(
     'CREATE-RECIPE',
     async ({userId, headline, ingredients, recipe, img, tags}: 
         {userId: number, headline: string, ingredients: string, recipe: string, img: string, tags: string}) => {
-        const response = await fetch('${process.env.REACT_APP_URL_KEY}/api/posts/new', fetchOptions({
+        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/new`, fetchOptions({
             method: 'POST', 
             body: JSON.stringify({userId: userId, headline: headline, ingredients: ingredients, recipe: recipe, img: img, tags: tags}),
         }));
