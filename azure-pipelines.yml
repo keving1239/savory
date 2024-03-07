@@ -13,6 +13,9 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
+
+variables:
+  REACT_APP_URL_KEY: 'https://savory-backend.azurewebsites.net'
   
 stages:
 - stage: Build
