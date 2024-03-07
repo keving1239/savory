@@ -50,7 +50,7 @@ const PostEdit = () => {
 
     async function loadRecipe() {
         try {
-            const findRecipe = await fetch(`http://localhost:8080/api/posts/byPostID/${id}`, fetchOptions({
+            const findRecipe = await fetch(`https://savory-backend.azurewebsites.net/api/posts/byPostID/${id}`, fetchOptions({
                 method: 'GET'
             }));
             const postData = await findRecipe.json();

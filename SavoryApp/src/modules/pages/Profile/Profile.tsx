@@ -19,7 +19,7 @@ const Profile = () => {
     // viewed profile retrieval
     async function retrieveUser() {
         try {
-            const response = await fetch(`http://localhost:8080/api/person/byUsername/${username}`, fetchOptions({
+            const response = await fetch(`https://savory-backend.azurewebsites.net/api/person/byUsername/${username}`, fetchOptions({
                 method: 'GET'
             }));
             const data = await response.json();
@@ -27,7 +27,7 @@ const Profile = () => {
         } catch(error) {console.error(error);}
     }
     async function retrieveMetrics() {
-        const fetchMetrics = await fetch(`http://localhost:8080/api/interaction/profile/interactions/${profile.id}`, 
+        const fetchMetrics = await fetch(`https://savory-backend.azurewebsites.net/api/interaction/profile/interactions/${profile.id}`, 
             fetchOptions({method:'GET'}));
         const total = await fetchMetrics.json() || 0;
         setMetrics(total);
