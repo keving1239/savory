@@ -97,7 +97,7 @@ export const postInteraction = createAsyncThunk(
     'post-interaction',
     async ({ postId, userId, liked, shared, bookmarked }: 
         { postId: number; userId: number, liked: boolean, shared:boolean, bookmarked: boolean }) => {
-        await fetch('${process.env.REACT_APP_URL_KEY}/api/interaction/postInteraction', fetchOptions({
+        await fetch(`${process.env.REACT_APP_URL_KEY}/api/interaction/postInteraction`, fetchOptions({
             method: 'POST', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked, isShared: shared }),
         }));
         return {recipeId: postId, bookmarked, liked, shared} as RecipeInteraction;
@@ -108,7 +108,7 @@ export const updateInteraction = createAsyncThunk(
     'update-interaction',
     async ({ postId, userId, liked, bookmarked, shared }: 
         { postId: number; userId: number, liked: boolean, shared:boolean, bookmarked: boolean }) => {
-        await fetch('${process.env.REACT_APP_URL_KEY}/api/interaction/update', fetchOptions({
+        await fetch(`${process.env.REACT_APP_URL_KEY}/api/interaction/update`, fetchOptions({
             method: 'PUT', body: JSON.stringify({postId: postId, userId: userId, isBookmarked: bookmarked, isLiked: liked, isShared: shared }),
         }));
         return {recipeId: postId, bookmarked, liked, shared} as RecipeInteraction;
