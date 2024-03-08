@@ -103,7 +103,7 @@ const PostEdit = () => {
                   <Grid item>
                     <Typography variant='h4' sx={{mt: '16px'}} noWrap maxWidth='34vw'>{title}</Typography>
                   </Grid>
-                  <Paper
+                  <Paper data-testid='recipe-image'
                     component='img'
                     alt={post.title}
                     src={post.img}
@@ -132,7 +132,7 @@ const PostEdit = () => {
                 <Grid item xs={12} md={6}>
                   <CardContent>
                     <Typography>{user?.username}</Typography>
-                    <form onSubmit={(e) => handlePostEdit(e)}>
+                    <form onSubmit={(e) => handlePostEdit(e)} data-testid='recipe-form'>
                     <TextField
                       type='text'
                       label='Title'
