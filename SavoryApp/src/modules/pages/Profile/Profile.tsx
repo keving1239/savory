@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Typography, Grid, Paper, Box, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
-import {Report, Link, Edit, Star, RemoveCircle} from '@mui/icons-material';
+import {Report, Link, Edit, Star, Block} from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState, fetchOptions } from '../../../redux/store';
 import Feed from '../../shared/Feed';
@@ -44,7 +44,7 @@ const Profile = () => {
 
     function handleProfileAction() {
         if(isOwner) return navigate(`/profile/edit`);
-        if(isAdmin) return navigate(`/admin/ban/${username}`);
+        if(isAdmin) return navigate(`/report/${username}`);
         setReportDialogOpen(true);
     }
 
@@ -67,7 +67,7 @@ const Profile = () => {
                     </Grid></Grid>
                     <Grid item xs={0.5}><Grid container direction={'column'} justifyContent={'space-between'}>
                         <Grid item>
-                            <Tooltip title='Total Interactions' placement='right'>
+                            <Tooltip title='Social Reach' placement='right'>
                             <IconButton><Star/></IconButton>
                             </Tooltip>
                             <Typography variant='h6' noWrap>{metrics}</Typography>
@@ -87,7 +87,7 @@ const Profile = () => {
                                 </Tooltip>
                                 : isAdmin ? 
                                 <Tooltip title='Remove' placement='left'>
-                                    <RemoveCircle/>
+                                    <Block/>
                                 </Tooltip>  
                                 : <Tooltip title='Report' placement='right'>
                                     <Report/>

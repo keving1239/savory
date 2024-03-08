@@ -10,6 +10,7 @@ import Settings from './pages/Profile/Settings';
 import Error404 from './shared/Error404';
 import LoadingAccount from './shared/LoadingAccount';
 import PostEdit from './pages/Post/Post.edit';
+import ReportPage from './pages/Report';
 
 const StandardLayoutRouter = () => (
     <BrowserRouter>
@@ -26,6 +27,7 @@ const StandardLayoutRouter = () => (
                 <Route path='post/new' element={<PostCreate/>}/>
                 <Route path='post/edit/:id' element={<PostEdit/>}/>
                 <Route path='settings' element={<Settings/>}/>
+                <Route path='report/:resource' element={<ReportPage/>}/>
                 <Route path='*' element={<Error404/>}/>
             </Route>
         </Routes>
