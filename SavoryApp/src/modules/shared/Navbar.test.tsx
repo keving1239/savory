@@ -34,30 +34,30 @@ function renderBeforeEach({ state, expected, action }:
         });
         jest.spyOn(global, 'fetch').mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
             const url = typeof input === 'string' ? input : (input as Request).url;
-            if (url === `http://localhost:8080/api/auth/isAdmin`) {
+            if (url === `${process.env.REACT_APP_URL_KEY}/api/auth/isAdmin`) {
                 return Promise.resolve({json: () => Promise.resolve(false)} as Response);
-            }  else if (url === `http://localhost:8080/api/person/byEmail/${user.email}`) {
+            }  else if (url === `${process.env.REACT_APP_URL_KEY}/api/person/byEmail/${user.email}`) {
                 return Promise.resolve({
                     status: 200,
                     json: () => Promise.resolve({id: 105, username: "savory.taste.tester", 
                         email: "taste.tester@savory.com", img: '', bio: 'Hi, I am a tester for Savory!'})
                 } as Response);
-            } else if (url === `http://localhost:8080/api/posts/byUserId/105?pageNumber=1`) {
+            } else if (url === `${process.env.REACT_APP_URL_KEY}/api/posts/byUserId/105?pageNumber=1`) {
                 return Promise.resolve({
                     status: 200,
                     json: () => Promise.resolve([])
                 } as Response);
-            } else if (url === `http://localhost:8080/api/interaction/users/105`) {
+            } else if (url === `${process.env.REACT_APP_URL_KEY}/api/interaction/users/105`) {
                 return Promise.resolve({
                     status: 200,
                     json: () => Promise.resolve([])
                 } as Response);
-            } else if (url === `http://localhost:8080/api/person/emailExists/${user.email}`) {
+            } else if (url === `${process.env.REACT_APP_URL_KEY}/api/person/emailExists/${user.email}`) {
                 return Promise.resolve({
                     status: 200,
                     json: () => Promise.resolve(true)
                 } as Response);
-            } else return Promise.resolve(new Error('Bad URL'));
+            } else return Promise.reject(new Error('Bad URL'));
         });
         act(() => {renderWithProviders([{path: 'login', elem: <LoadingAccount/> },], '/', {preloadedState: state})});
         await waitFor(() => {expect(screen.getByTestId(expected)).toBeInTheDocument()});
