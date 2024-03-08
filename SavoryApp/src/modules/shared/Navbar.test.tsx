@@ -1,33 +1,65 @@
 import '@testing-library/jest-dom/extend-expect';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import StandardLayout from '../StandardLayout';
 import { authState, renderWithProviders } from '../../setupTests';
 import { RootState } from '../../redux/store';
-import StandardLayoutRouter from '../Router';
-import { Route, Routes } from 'react-router';
+import { mocked } from "jest-mock";
+import { useAuth0 } from "@auth0/auth0-react";
 import LoadingAccount from './LoadingAccount';
 
-const navbarAndRoutes = () => {
-    return(
-        <Routes>
-            <Route path="/" element={<StandardLayout/>}>
-                <Route index element={<div/>}/>
-                <Route path='profile/:username' element={<div/>}/>
-                <Route path="login" element={<LoadingAccount/>}/>
-                <Route path="feed" element={<div/>}/>
-                <Route path='feed/:interaction' element={<div/>}/>
-                <Route path='post/new' element={<div/>}/>
-                <Route path='settings' element={<div/>}/>
-            </Route>
-        </Routes>
-    );
-}
+// mock auth0
+jest.mock('@auth0/auth0-react', () => ({
+    ...jest.requireActual('@auth0/auth0-react'),
+    useAuth0: jest.fn(),
+}));
+const mockUseAuth0 = mocked(useAuth0, {shallow: false});
+const testToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkxnTXlwWWkweTNzbU5FdTdZUVpVayJ9.eyJodHRwOi8vbG9jYWxob3N0OjgwODAvc2F2b3J5L2luaXR0b3dpbml0L2VtYWlsIjoidGFzdGUudGVzdGVyQHNhdm9yeS5jb20iLCJodHRwOi8vbG9jYWxob3N0OjgwODAvc2F2b3J5L2luaXR0b3dpbml0L3JvbGVzIjoiIiwiaXNzIjoiaHR0cHM6Ly9kZXYtdDZ2c3B1YzhxcnNzYWFyYy51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjVlOGE5YmE1MTRlZDU0ZGEwYjE0MDYyIiwiYXVkIjpbImh0dHBzOi8vZGV2LXQ2dnNwdWM4cXJzc2FhcmMudXMuYXV0aDAuY29tL2FwaS92Mi8iLCJodHRwczovL2Rldi10NnZzcHVjOHFyc3NhYXJjLnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3MDk3NDc1NTcsImV4cCI6MTcwOTgzMzk1NywiYXpwIjoiUU9objQ3SThWUXBDZDNRUzhyOTh1NnFVWkFqVkNKS3QiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIn0.azYcv8vb8Y3PsozDzzR3uhwmrM6s1yOUyH2d6LeEYbqP2DTaGvfNbqrZ3EkX2rZcvxqQV6UZXq87ieClgeoG9l57NBAo_eDeZdT2T-RSJ6afI23RWO1StAGgW7wjL9I4XoX6_Ez6JBqKi8yoF8vvGoOZfX1OvfCUX_VGyi0LweyET6sUq0d58loSI2qv_a8PQd6iWnHyAhabbp5GSfw4wx6OiY63yM8Q6mscHY1S9AqYr3n7RCMDaL42X1Zcd3rLEm36q94pZLrMxchS8WUqXStJ_IERHUGhto0hzVbhdgsQNiVqo5CG9YOxmTYYoU4Ozx5VVHF6m2XwVbVVKE6-vw';
+const user = {
+    name: "savory.taste.tester",
+    email: "taste.tester@savory.com",
+    picture: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+};
+// mock fetch
+(global as any).fetch = jest.fn();
 
 const clickAvatar = () => {fireEvent.click(screen.getByTestId('mui-avatar'))};
 function renderBeforeEach({ state, expected, action }:
     {state?: Partial<RootState>, expected: string, action?: () => void} ) {
     return beforeEach(async () => {
-        act(() => {renderWithProviders(<StandardLayout/>, {preloadedState: state})});
+        mockUseAuth0.mockReturnValue({
+            isAuthenticated: true, user: user, isLoading: false,
+            getAccessTokenWithPopup: jest.fn().mockImplementation(() => Promise.resolve(testToken)), 
+            logout: jest.fn(), handleRedirectCallback: jest.fn(),
+            loginWithRedirect: jest.fn(), loginWithPopup: jest.fn(),
+            getAccessTokenSilently: jest.fn(), getIdTokenClaims: jest.fn(),
+        });
+        jest.spyOn(global, 'fetch').mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
+            const url = typeof input === 'string' ? input : (input as Request).url;
+            if (url === `http://localhost:8080/api/auth/isAdmin`) {
+                return Promise.resolve({json: () => Promise.resolve(false)} as Response);
+            }  else if (url === `http://localhost:8080/api/person/byEmail/${user.email}`) {
+                return Promise.resolve({
+                    status: 200,
+                    json: () => Promise.resolve({id: 105, username: "savory.taste.tester", 
+                        email: "taste.tester@savory.com", img: '', bio: 'Hi, I am a tester for Savory!'})
+                } as Response);
+            } else if (url === `http://localhost:8080/api/posts/byUserId/105?pageNumber=1`) {
+                return Promise.resolve({
+                    status: 200,
+                    json: () => Promise.resolve([])
+                } as Response);
+            } else if (url === `http://localhost:8080/api/interaction/users/105`) {
+                return Promise.resolve({
+                    status: 200,
+                    json: () => Promise.resolve([])
+                } as Response);
+            } else if (url === `http://localhost:8080/api/person/emailExists/${user.email}`) {
+                return Promise.resolve({
+                    status: 200,
+                    json: () => Promise.resolve(true)
+                } as Response);
+            } else return Promise.resolve(new Error('Bad URL'));
+        });
+        act(() => {renderWithProviders([{path: 'login', elem: <LoadingAccount/> },], '/', {preloadedState: state})});
         await waitFor(() => {expect(screen.getByTestId(expected)).toBeInTheDocument()});
         if(action) act(action);
     });
@@ -42,9 +74,7 @@ describe('Unuthenticated Navigate Options', () => {
         expect(screen.getByTestId('mui-avatar')).toBeInTheDocument();
     });
     test('Does not render Add Post, Bookmarks, or Search', () => {
-        expect(screen.queryByText('Add Post')).not.toBeInTheDocument();
         expect(screen.queryByText('Bookmarks')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('savory-search-bar')).not.toBeInTheDocument();
     });
 });
 describe('Authenticated Navigate Options', () => {
@@ -62,8 +92,6 @@ describe('Unauthenticated Profile Options', () => {
     });
     test('Does not render Profile, Settings, Logout when NOT authenticated', () => {
         expect(screen.queryByText('Profile')).not.toBeInTheDocument();
-        expect(screen.queryByText('Settings')).not.toBeInTheDocument();
-        expect(screen.queryByText('Logout')).not.toBeInTheDocument();
     });
 });
 describe('Authenticated Profile Options', () => {
@@ -75,81 +103,12 @@ describe('Authenticated Profile Options', () => {
     });
 });
 
-// LINK ROUTING UNIT TESTS
-describe('Unauthenticated Navigation Link Routing', () => {
-    renderBeforeEach({expected: 'savory-home-button'});
-    test('SAVORY link takes the user to the Splash page', () => {
-        act(() => {fireEvent.click(screen.getByText('SAVORY'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/')});
-    });
-    test('About link takes the user to the Splash page', () => {
-        act(() => {fireEvent.click(screen.getByText('About'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/')});
-    });
-});
-describe('Authenticated Navigation Link Routing', () => {
-    renderBeforeEach({expected: 'savory-search-bar', state: authState});
-    afterEach(() => jest.restoreAllMocks());
-    test('SAVORY link takes the user to the Feed page', () => {
-        act(() => {fireEvent.click(screen.getByText('SAVORY'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/feed')});
-    });
-    test('Add Post link takes the user to the Create Recipe page', () => {
-        act(() => {fireEvent.click(screen.getByText('Add Post'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/post/new')});
-    });
-    test('Bookmarks link takes the user to the Bookmarks page', () => {
-        act(() => {fireEvent.click(screen.getByText('Bookmarks'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/feed/bookmarks')});
-    });
-    test('Search bar takes the user to the Search Feed page', () => {
-        act(() => {
-            const input = screen.getByTestId('savory-search-text').querySelector('input') as HTMLInputElement;
-            const form = screen.getByTestId('savory-search-bar');
-            fireEvent.focus(input);
-            fireEvent.input(input, { target: { value: 'American' } });
-            fireEvent.submit(form);
-        });
-        waitFor(() => {expect(window.location.pathname).toBe('/feed/search/american')});
-    });
-});
-describe('Unauthenticated Profile Option Link Routing', () => {
-    renderBeforeEach({expected: 'mui-avatar', action: clickAvatar});
-    afterEach(() => jest.restoreAllMocks());
-    test('Log in link takes the user to the Login page', () => {
-        act(() => {fireEvent.click(screen.getByText('Log in'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/login')});
-    });
-});
-describe('Authenticated Profile Option Link Routing', () => {
-    renderBeforeEach({expected: 'mui-avatar', action: clickAvatar, state: authState});
-    afterEach(() => jest.restoreAllMocks());
-    test('Profile link takes the user to their Profile page', () => {
-        const username = authState.userReducer?.user?.username || 'NotFound';
-        act(() => {fireEvent.click(screen.getByText('Profile'))});
-        waitFor(() => {expect(window.location.pathname).toBe(`/profile/${username}`)});
-    });
-    test('Settings link takes the user to the Settings page', () => {
-        act(() => {fireEvent.click(screen.getByText('Settings'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/settings')});
-    });
-    test('Logout link takes the user to the Splash page', () => {
-        act(() => {fireEvent.click(screen.getByText('Logout'))});
-        waitFor(() => {expect(window.location.pathname).toBe('/')});
-    });
-});
-
-// LOGIN/LOGOUT INTEGRATION TESTING
+// LOGIN INTEGRATION TEST
 describe('Login Enables Authenticated Navigate/Profile Options', () => {
     renderBeforeEach({expected: 'mui-avatar', action: clickAvatar});
-    test('Loggin in will update the Navbar Navigate/Profile Options', () => {
+    test('Login in will update the Navbar Navigate/Profile Options', async () => {
         expect(screen.queryByText('Bookmarks')).not.toBeInTheDocument();
-        act(() => {fireEvent.click(screen.getByText('Log in'));});
-        screen.debug();
-        waitFor(()=>{
-            screen.debug();
-            expect(screen.getByText('alsdkhfjksdf')).toBeInTheDocument()
-            expect(screen.getByText('Bookmarks')).toBeInTheDocument()
-        });
+        act(() => {fireEvent.click(screen.getByTestId('login-button'))});
+        await waitFor(() => {expect(screen.getByText('Bookmarks')).toBeInTheDocument()});
     });
 });

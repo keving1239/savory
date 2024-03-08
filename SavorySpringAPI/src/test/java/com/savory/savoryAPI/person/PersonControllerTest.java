@@ -3,6 +3,7 @@ package com.savory.savoryAPI.person;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class PersonControllerTest {
     void getPersonIfIDIsInSet() {
         //Arrange
         int userId = 2;
-        PersonDto personDtoOne = createExpectedPersonDto(userId, "sanjit.muthineni", "sanjit.muthineni@credera.com", null, "this is my bio", false);
+        PersonDto personDtoOne = createExpectedPersonDto(userId, "sanjit.muthineni", "sanjit.muthineni@credera.com", null, "this is my bio");
         // Mock behavior of personService
         when(personService.getPerson(eq(userId))).thenReturn(personDtoOne);
         //Act
@@ -39,7 +40,7 @@ class PersonControllerTest {
     @Test
     void getPersonByEmail() {
         String userEmail = "sanjit.muthineni@credera.com";
-        PersonDto personDtoOne = createExpectedPersonDto(1, "test.user", "test.user@gmail.com", null, "the bio of test user", false);
+        PersonDto personDtoOne = createExpectedPersonDto(1, "test.user", "test.user@gmail.com", "", "the bio of test user");
         // Mock behavior of personService
         when(personService.getPersonByEmail(eq(userEmail))).thenReturn(personDtoOne);
         //Act
@@ -51,9 +52,23 @@ class PersonControllerTest {
     }
 
     @Test
+    void getPersonByUsername() {
+        String username = "kevinfromsavory";
+        PersonDto personDtoOne = createExpectedPersonDto(1, "test.user", "test.user@gmail.com", "", "the bio of test user");
+        // Mock behavior of personService
+        when(personService.getPersonByUsername(eq(username))).thenReturn(personDtoOne);
+        //Act
+        PersonDto actualPersons = personController.getPersonByUsername(username);
+        //Assert
+        assertEquals(personDtoOne, actualPersons); // Verify that actualPersons matches expectedPersons
+        // Verify that the getPersonByEmail method of personService is called with the correct argument
+        verify(personService, times(1)).getPersonByUsername(eq(username));
+    }
+
+    @Test
     void getNoPersonIfNotExist() {
         int testUserId = 3;
-        PersonDto expectedPerson = createExpectedPersonDto(1, "test1.user", "test1.user@gmail.com", null, "the bio of test user", false);
+        PersonDto expectedPerson = createExpectedPersonDto(1, "test1.user", "test1.user@gmail.com", "", "the bio of test user");
         //Mock
         when(personService.getPerson(testUserId)).thenReturn(expectedPerson);
         //Act
@@ -65,12 +80,12 @@ class PersonControllerTest {
 
     }
 
-    private PersonDto createExpectedPersonDto(int id, String username, String email, String img, String bio, boolean isAdmin) {
+    private PersonDto createExpectedPersonDto(int id, String username, String email, String img, String bio) {
         return PersonDto.builder()
                 .id(id)
                 .username(username)
                 .email(email)
-                .img("")
+                .img(img)
                 .bio(bio)
                 .build();
     }
