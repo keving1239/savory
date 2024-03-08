@@ -25,13 +25,6 @@ const clickAvatar = () => {fireEvent.click(screen.getByTestId('mui-avatar'))};
 function renderBeforeEach({ state, expected, action }:
     {state?: Partial<RootState>, expected: string, action?: () => void} ) {
     return beforeEach(async () => {
-        mockUseAuth0.mockReturnValue({
-            isAuthenticated: true, user: user, isLoading: false,
-            getAccessTokenWithPopup: jest.fn().mockImplementation(() => Promise.resolve(testToken)), 
-            logout: jest.fn(), handleRedirectCallback: jest.fn(),
-            loginWithRedirect: jest.fn(), loginWithPopup: jest.fn(),
-            getAccessTokenSilently: jest.fn(), getIdTokenClaims: jest.fn(),
-        });
         jest.spyOn(global, 'fetch').mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
             const url = typeof input === 'string' ? input : (input as Request).url;
             if (url === `${process.env.REACT_APP_URL_KEY}/api/auth/isAdmin`) {
@@ -58,6 +51,13 @@ function renderBeforeEach({ state, expected, action }:
                     json: () => Promise.resolve(true)
                 } as Response);
             } else return Promise.reject(new Error('Bad URL'));
+        });
+        mockUseAuth0.mockReturnValue({
+            isAuthenticated: true, user: user, isLoading: false,
+            getAccessTokenWithPopup: jest.fn().mockImplementation(() => Promise.resolve(testToken)), 
+            logout: jest.fn(), handleRedirectCallback: jest.fn(),
+            loginWithRedirect: jest.fn(), loginWithPopup: jest.fn(),
+            getAccessTokenSilently: jest.fn(), getIdTokenClaims: jest.fn(),
         });
         act(() => {renderWithProviders([{path: 'login', elem: <LoadingAccount/> },], '/', {preloadedState: state})});
         await waitFor(() => {expect(screen.getByTestId(expected)).toBeInTheDocument()});
