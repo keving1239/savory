@@ -14,6 +14,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+# env variable
 variables:
   REACT_APP_URL_KEY: 'https://savory-backend.azurewebsites.net'
   
@@ -38,6 +39,7 @@ stages:
       displayName: 'npm run build'
       workingDirectory: '$(System.DefaultWorkingDirectory)/SavoryApp'
     
+    # Copy files from build directory to the staging directory
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)/SavoryApp/build'
@@ -45,7 +47,7 @@ stages:
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         
 
-    ## Publish the zip file
+    ## Publish the drop
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
