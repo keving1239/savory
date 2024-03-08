@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 import {
-    CropFree, Bookmark, BookmarkBorder, Report, RemoveCircle,
+    CropFree, Bookmark, BookmarkBorder, Report, Delete,
     Favorite, Assistant, FavoriteBorder, Close, Edit
 } from '@mui/icons-material';
 import LinkIcon from '@mui/icons-material/Link';
@@ -336,12 +336,16 @@ const RecipeItem = ({ recipe, openHandler, updateBookmarks }:
                             <Grid item><IconButton onClick={likeHandler}>
                                 {interaction && interaction.liked ? <Favorite color='error' /> : <FavoriteBorder />}
                             </IconButton></Grid>
-                            <Grid item><IconButton onClick={exploreHandler}>
+                            <Grid item>
+                                <Tooltip title='More Like This' placement='top'><IconButton onClick={exploreHandler}>
                                 <Assistant />
-                            </IconButton></Grid>
-                            <Grid item><IconButton onClick={shareHandler}>
+                                </IconButton></Tooltip>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title='Copy Link' placement='top'><IconButton onClick={shareHandler}>
                                 <LinkIcon />
-                            </IconButton></Grid>
+                                </IconButton></Tooltip>
+                            </Grid>
                         </Grid></Grid>
                         <Grid item><IconButton onClick={bookmarkHandler}>
                             {interaction && interaction.bookmarked ? <Bookmark color='secondary' /> : <BookmarkBorder />}
@@ -432,7 +436,9 @@ const PopupInteractions = ({ id, author }: { id: number, author: string }) => {
                     <Grid item><Typography variant='h6' noWrap align='center'>{metrics.likes}</Typography></Grid>
                 </Grid>
                 <Grid container item alignItems='center' xs={4}>
-                    <Grid item><IconButton onClick={shareHandler}><LinkIcon /></IconButton></Grid>
+                    <Grid item>
+                        <IconButton onClick={shareHandler}><LinkIcon/></IconButton>
+                    </Grid>
                     <Grid item><Typography variant='h6' noWrap align='center'>{metrics.shares}</Typography></Grid>
                 </Grid>
                 <Grid container item alignItems='center' xs={4}>
@@ -445,7 +451,7 @@ const PopupInteractions = ({ id, author }: { id: number, author: string }) => {
             <Grid item>
                 {isAdmin ?
                 <Tooltip title='Remove' placement='left'>
-                    <IconButton onClick={() => navigate(`/admin/delete/${id}`)}><RemoveCircle/></IconButton>
+                    <IconButton onClick={() => navigate(`/report/${id}`)}><Delete/></IconButton>
                 </Tooltip> 
                 : <Tooltip title='Report' placement='left'>
                     <IconButton onClick={() => setOpen(true)}><Report/></IconButton>
