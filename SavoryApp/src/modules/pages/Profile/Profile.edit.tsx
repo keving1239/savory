@@ -5,6 +5,7 @@ import { Grid, Button, TextField, Card, CardContent, Paper, Typography } from '@
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../../redux/store';
 import { updateUser } from '../../../redux/User/user-slice';
+import { height } from '@mui/system';
 
 const ProfileEdit = () => {
     const navigate = useNavigate();
@@ -40,23 +41,28 @@ const ProfileEdit = () => {
 
     return (
         <Grid container justifyContent='center' alignItems='stretch' >
-            <Grid container item xs={7} sx={{bgcolor: 'primary.light'}} alignItems='center' justifyContent='space-around'>
+            <Grid item xs={12}>
+                <Typography variant='h4' sx={{mb: '1vh'}}>
+                    {user?.username ? 'Update your Profile' : 'Create your Profile'}
+                </Typography>
+            </Grid>
+            <Grid container item md={12} lg={7} sx={{bgcolor: 'primary.light'}} alignItems='center' justifyContent='space-around'>
                 <Grid item xs={8}>
                     <Paper 
                     component='img'
                     alt={blogUsername}
                     src={user?.img}
-                    sx={{minHeight: '37vh', minWidth: '34vw', 
-                    maxHeight: '37vh', maxWidth: '34vw', objectFit: 'cover'}}/>
+                    sx={{minHeight: '40vh', minWidth: '34vw', margin: '2vh 0',
+                    maxHeight: '40vh', maxWidth: '34vw', objectFit: 'cover'}}/>
                 </Grid>
                 <Grid item xs={4}><Grid container direction={'column'} justifyContent={'space-between'}>
                     <Typography maxWidth='100%' variant='h4' noWrap>{blogUsername}</Typography>
                     <br></br>
-                    <Typography maxWidth='100%' maxHeight='37vh' overflow='hidden'>{blogBio}</Typography>
+                    <Typography maxWidth='100%' maxHeight='40vh' overflow='hidden'>{blogBio}</Typography>
                 </Grid></Grid>
             </Grid>
-        <Grid item xs={5} sx={{bgcolor: 'primary.light'}}>
-            <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: 50, marginBottom: 50, padding: 10 }}>
+        <Grid container item md={12} lg={5} sx={{bgcolor: 'primary.light'}}>
+            <Card style={{ maxWidth: '85%', margin: '0 auto', marginTop: 50, marginBottom: 50, padding: 10 }}>
                 <CardContent>
                     <form onSubmit={(e) => handleProfileEdits(e)}>
                     {!user?.username ? <TextField
@@ -90,7 +96,8 @@ const ProfileEdit = () => {
                         maxRows={5}
                         margin="normal"
                         value={blogBio}
-                        onChange={(e) => {setBlogBio(e.target.value)}}/>    
+                        onChange={(e) => {setBlogBio(e.target.value)}}/>
+                    <span></span>
                     <Button type="submit" variant="contained" color="primary">Update</Button>
                     </form>
                 </CardContent>

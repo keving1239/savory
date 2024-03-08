@@ -92,11 +92,11 @@ const Settings = () => {
     ];
     return(
         <>
-            <Typography variant='h3'>Settings Page</Typography>
+            <Typography variant='h4'>Settings</Typography>
             <Grid container justifyContent='space-around' alignItems='stretch' sx={{height: '75vh', mt: '5vh'}}>
                 <Grid container item direction='column' xs={5}>
                     <Grid item md={1.75} lg={1.5} xl={1.25}>
-                        <Typography variant='h4' textAlign='center'>Options</Typography>
+                        <Typography variant='h5' textAlign='center'>Options</Typography>
                     </Grid>
                     {switches.map((swich, index) => (
                         <Grid container item justifyContent={'center'} md={1.5} lg={1.25} xl={1} key={index}>
@@ -117,7 +117,7 @@ const Settings = () => {
                 </Grid>
                 <Grid container item direction='column' xs={5}>
                     <Grid item md={1.75} lg={1.5} xl={1.25}>
-                        <Typography variant='h4' textAlign='center'>Useful Links</Typography>
+                        <Typography variant='h5' textAlign='center'>Useful Links</Typography>
                     </Grid>
                     {links.map((link, index) =>(
                         <Grid container item justifyContent={'center'} md={1.75} lg={1.5} xl={1.25} key={index}>

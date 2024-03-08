@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {Menu, Typography, IconButton, AppBar, Toolbar, Box,
-  Avatar, Button, Tooltip, MenuItem, TextField, Grid } from '@mui/material';
+import Hidden from '@mui/material/Hidden';
+import {Menu, Typography, IconButton, AppBar, Toolbar, Box, Theme,
+  Avatar, Button, Tooltip, MenuItem, TextField, Grid, useMediaQuery } from '@mui/material';
 import {LocalDining, Search } from '@mui/icons-material'
+import MenuIcon from '@mui/icons-material/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import { clearUser } from '../../redux/User/user-slice';
@@ -40,14 +42,14 @@ const ResponsiveAppBar = () => {
     <AppBar position='sticky'>
       <Toolbar>
         <Grid container justifyContent='space-between' alignItems='center' p='0 1vw'>
-          <Grid container item justifyContent='flex-start' alignItems='center' sm={10} md={9} lg={8} xl={7}>
-            <Grid item xs={2}><LogoButton {...{savoryAuth}}/></Grid>
-            <Grid container item  alignItems='center' xs={6}>
+          <Grid container item justifyContent='flex-start' alignItems='center' xs={5} sm={9} md={8} lg={7} spacing={.5}>
+            <Grid item xs={8} sm={3.5} md={2.5}><LogoButton {...{savoryAuth}}/></Grid>
+            <Grid container item  alignItems='center' xs={3} sm={8}>
               <NavigationButtons {...{isAuthenticated: savoryAuth}}/>
             </Grid>
           </Grid>
-          <Grid container item justifyContent='flex-end' alignItems='center' sm={2} md={3} lg={4} xl={5}>
-            <Grid container item justifyContent='flex-end' alignItems='center' xs={7}>
+          <Grid container item justifyContent='flex-end' alignItems='center' xs={5} sm={3} md={4} lg={5}>
+            <Grid container item justifyContent='flex-end' alignItems='center' xs={10}>
               {savoryAuth ?  <SearchBar/> : <></>}
             </Grid>
             <Grid item xs={1}>
@@ -68,7 +70,7 @@ const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
       savoryAuth ?
       <Link to='/feed'><Button sx={{p: 0}} data-testid='savory-home-button'>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
-        <Typography style={{color: '#fefae0'}}>SAVORY</Typography>
+        <Typography style={{color: '#fefae0'}} display='block'>SAVORY</Typography>
       </Button></Link> :
       <Button sx={{p: 0}} data-testid='savory-home-button'>
         <LocalDining style={{fill: '#fefae0', height: '5.5vh', width: '5.5vh'}}/>
@@ -80,22 +82,45 @@ const LogoButton = ({savoryAuth}: {savoryAuth: boolean}) => {
 }
 
 const NavigationButtons = ({isAuthenticated}: {isAuthenticated: boolean}) => {
+  const isSm = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const navMenuOptions =  isAuthenticated ? 
   [
     { to: '/', text: 'About' },
     { to: '/post/new', text: 'Add Post' },
     { to: '/feed/bookmarks', text: 'Bookmarks' },
-  ] : 
-  [
-    { to: '/', text: 'About' },
-  ];
+  ] : [{ to: '/', text: 'About' },];
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {setAnchorEl(event.currentTarget);};
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   return (
-    <>
-      {navMenuOptions.map((option) => (
+    <> {!isSm ? 
+      navMenuOptions.map((option) => (
         <Grid item key={option.text}><Link to={option.to}>
-          <Button color='cream' sx={{p: '0 .75vw'}}><Typography maxWidth='11vw'>{option.text}</Typography></Button>
+          <Button color='cream' sx={{p: '0 .75vw'}}><Typography maxWidth='15vw'>{option.text}</Typography></Button>
         </Link></Grid>
-      ))}
+      ))
+    : <>
+      <IconButton onClick={handleMenuOpen}>
+        <MenuIcon color='cream'/>
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+        slotProps={{paper: {style: {maxHeight: '25vh'}}}}
+      >
+        {navMenuOptions.map((option, index) => (
+          <MenuItem key={index} onClick={handleMenuClose}>
+            <Link to={option.to}><Button variant='text' fullWidth sx={{p: 0}}>
+              <Typography>{option.text}</Typography>
+            </Button></Link>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>}
     </>
   );
 }
@@ -127,7 +152,7 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
         anchorEl={profileAnchor}
         open={Boolean(profileAnchor)}
         onClose={closeProfileOptions}
-        slotProps={{paper: {style: {maxHeight: '20vh'}}}}
+        slotProps={{paper: {style: {maxHeight: '25vh'}}}}
       >  
         {dropDownOptions.map((option, index) => (
               <MenuItem key={index} onClick={closeProfileOptions} sx={{p: 0, m: '.25vw'}}>
@@ -158,35 +183,49 @@ const SearchBar = () => {
     <Box>
         <form onSubmit={handleSearch} data-testid='savory-search-bar'>
           <Grid container alignItems='center'>
-            <Grid item xs={10}>
+            <Grid item sm={12} md={10}>
               <TextField
               data-testid="savory-search-text"
               id="search-bar"
               variant="outlined"
               placeholder="Search"
               size="small"
+              focused
               value={query}
               color='cream'
               onChange={(e) => setQuery(e.target.value)}
               InputProps={{
                 sx: {
-                  ".css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
-                    border: "2px solid #fefae0",
-                  },
-                  "&:hover": {
-                    ".css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
-                      border: "2px solid #fefae0",
-                    },
-                  },
                   input: {
                     color: '#fefae0'
                   },
                 }}}
+              sx={{root: {
+                '& label.Mui-focused': {
+                  color: '#fefae0',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottomColor: '#fefae0',
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#fefae0',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#fefae0',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#fefae0',
+                  },
+                },
+              },}}
               />
-          </Grid>  
-          <Grid item xs={2}><IconButton type="submit" aria-label="search">
-            <Search style={{ fill: "#fefae0", height: '3.5vh', width: '3.5vh'}} />
-          </IconButton></Grid>  
+          </Grid>
+            <Grid item sx={{display: {xs: 'none', sm: 'none', md: 'block'}}} md={2}>
+              <IconButton type="submit" aria-label="search">
+                <Search style={{ fill: "#fefae0", height: '3.5vh', width: '3.5vh'}} />
+              </IconButton>
+            </Grid>  
           </Grid>  
         </form>
     </Box>

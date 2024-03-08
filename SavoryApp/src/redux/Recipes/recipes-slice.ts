@@ -22,7 +22,7 @@ export interface LocalRecipesState {
 const initialState: LocalRecipesState = {
     recipes: {},
     page: 1,
-    sort: "A"
+    sort: "newest"
 };
  
 const recipesSlice = createSlice({
@@ -36,9 +36,6 @@ const recipesSlice = createSlice({
         changePage(state: LocalRecipesState, action: PayloadAction<number>) {
             state.page = action.payload;
         },
-        changeSort(state: LocalRecipesState, action: PayloadAction<string>) {
-            state.sort = action.payload;
-        }
     },
     extraReducers: (builder) => {
         builder
@@ -83,6 +80,18 @@ const recipesSlice = createSlice({
             deleteRecipe.rejected, (state: LocalRecipesState, action) => {
                 state.error = action.error.message;
                 console.error('Error Deleting Recipe: ', state.error);
+            }
+        );
+        builder
+        .addCase(
+            updateSort.fulfilled, (state: LocalRecipesState, action: PayloadAction<string>) => {
+                state.page = 1;
+                state.sort = action.payload;
+            }
+        ).addCase(
+            updateSort.rejected, (state: LocalRecipesState, action) => {
+                state.error = action.error.message;
+                console.error('Error Updating Sort: ', state.error);
             }
         );
     },
@@ -155,12 +164,13 @@ export const deleteRecipe = createAsyncThunk(
 
 export const updateSort = createAsyncThunk(
     'UPDATE-SORT',
-    async ({sortBy}: {sortBy: String}) => {
-        const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/updateSort?sorter=${sortBy}`, fetchOptions({
+    async ({sortBy}: {sortBy: string}) => {
+        await fetch(`${process.env.REACT_APP_URL_KEY}/api/posts/updateSort?sorter=${sortBy}`, fetchOptions({
             method: 'POST',
         }));
+        return sortBy;
     }
 );
 
-export const { clearRecipes, changePage, changeSort } = recipesSlice.actions;
+export const { clearRecipes, changePage } = recipesSlice.actions;
 export default recipesSlice.reducer;

@@ -14,7 +14,7 @@ const Error404 = () => {
   },[]);
   return(
     <Box>
-      <Typography variant='h2' mt='10vh'>Nothing Here</Typography>
+      <Typography variant='h3' mt='10vh'>Nothing Here</Typography>
       <Typography mb='10vh'>Navigating home...</Typography>
       <CircularProgress />
     </Box>

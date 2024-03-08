@@ -78,22 +78,23 @@ const PostEdit = () => {
         postId: +(id || "-1")
       }
       ));
-      navigate('/feed');
+      navigate(`/profile/${user?.username}`);
     }
 
     const handleDelete = async () => {
         await dispatch(deleteRecipe({postId: +(id || "-1")}));
         setDeleteDialogOpen(false);
-        navigate('/feed');
+        navigate(`/profile/${user?.username}`);
     }
     const handleArchive = async () => {
       // await dispatch();
       setArchiveDialogOpen(false);
-      navigate('/feed');
+      navigate(`/profile/${user?.username}`);
     }
 
     return ( 
         post ? (    
+          <><Typography variant='h4' sx={{mb: '1vh'}}>Edit your Recipe</Typography>
             <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>
             <Card elevation={10} sx={{ maxWidth: '85vw' }}>
               <Grid container>
@@ -108,9 +109,9 @@ const PostEdit = () => {
                     src={post.img}
                     sx={{
                       margin: 'auto',
-                      minHeight: '37vh',
+                      minHeight: '40vh',
                       minWidth: '34vw',
-                      maxHeight: '37vh',
+                      maxHeight: '40vh',
                       maxWidth: '34vw',
                       objectFit: 'cover'
                     }}
@@ -140,7 +141,7 @@ const PostEdit = () => {
                       required
                       {...titleError}
                       value={title}
-                      margin='normal'
+                      margin='dense'
                       onChange={(e) => {setTitle(e.target.value)}}
                     />
                     <TextField
@@ -150,7 +151,7 @@ const PostEdit = () => {
                       fullWidth
                       required
                       value={ingredients}
-                      margin='normal'
+                      margin='dense'
                       multiline
                       {...ingredientsError}
                       minRows={3}
@@ -164,10 +165,10 @@ const PostEdit = () => {
                       fullWidth
                       required
                       value={recipe}
-                      margin='normal'
+                      margin='dense'
                       multiline
-                      minRows={7}
-                      maxRows={7}
+                      minRows={4}
+                      maxRows={4}
                       onChange={(e) => {setRecipe(e.target.value)}}
                     />
                     <TextField
@@ -178,7 +179,7 @@ const PostEdit = () => {
                       required
                       {...tagsError}
                       value={tags}
-                      margin='normal'
+                      margin='dense'
                       onChange={(e) => {setTags(e.target.value)}}
                     />
                     <TextField
@@ -188,7 +189,7 @@ const PostEdit = () => {
                       fullWidth
                       required
                       value={img}
-                      margin='normal'
+                      margin='dense'
                       onChange={(e) => {setImg(e.target.value)}}
                     />
                     <Button variant='contained' sx={{mb: '1.5vh', mt: '1vh'}} type='submit' size='large'>
@@ -241,7 +242,7 @@ const PostEdit = () => {
                 </Button>
                 </DialogActions>
             </Dialog>
-          </Box>
+          </Box></>
         ) : (
             <div>Loading...</div>
         )

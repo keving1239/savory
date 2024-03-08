@@ -13,6 +13,7 @@ import { fetchInteractions } from '../../redux/Interactions/interactions-slice';
 const LoadingAccount = () => {
     // redux state
     const savoryUser = useSelector((state: RootState) => state.userReducer);
+    const loggedIn = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     // auth0 state
     const { isAuthenticated, user, getAccessTokenWithPopup } = useAuth0();
     const dispatch = useDispatch<AppDispatch>();
@@ -50,6 +51,7 @@ const LoadingAccount = () => {
     // loading functions
     async function loadUser() {
         const email = (user ? user?.email : '') as string;
+        console.log(`${process.env.REACT_APP_URL_KEY}/api/auth/isAdmin`)
         try {
             const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/auth/isAdmin`, fetchOptions({
                 method: 'GET',
@@ -72,6 +74,7 @@ const LoadingAccount = () => {
     }
     // effect
     useEffect(() => {
+        if(loggedIn) return setStatus('Loading Complete...');
         login();
     }, []);
     useEffect(() => {
@@ -85,12 +88,17 @@ const LoadingAccount = () => {
     useEffect(() => {
         if(status != 'Loading Complete...') return;
         const page = savoryUser.user?.username ? '/feed' : '/profile/edit'
-        navigate(`${page}`);
+        const timeout = setTimeout(() => {
+            navigate(`${page}`);
+        }, 1000);
+        return () => clearTimeout(timeout);
     },[status]);
     // display
     return(
       <Box>
-        <Typography variant='h2' mt='5vh'>Welcome</Typography>
+        <Typography variant='h2' mt='5vh' noWrap>
+            {savoryUser?.user?.username ? `Welcome Back ${savoryUser.user.username}!` : 'Welcome to Savory!' }
+        </Typography>
         <Typography mb='5vh'>{status}</Typography>
         <CircularProgress />
       </Box>

@@ -16,16 +16,17 @@ import Post from '../pages/Post/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, fetchOptions } from '../../redux/store';
 import { postInteraction, updateInteraction, deleteInteraction } from '../../redux/Interactions/interactions-slice';
-import { Recipe, fetchRecipes, changePage, updateSort, changeSort } from '../../redux/Recipes/recipes-slice';
+import { Recipe, fetchRecipes, changePage, updateSort } from '../../redux/Recipes/recipes-slice';
 
 export default function Feed() {
     // redux
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.userReducer.user);
-    const sort = useSelector((state: RootState) => state.recipesReducer.sort) || 'A';
+    const sort = useSelector((state: RootState) => state.recipesReducer.sort) || 'newest';
     const feed = useSelector((state: RootState) => state.recipesReducer.recipes);
     const page = useSelector((state: RootState) => state.recipesReducer.page);
+    const userInteractions = useSelector((state: RootState) => state.interactionsReducer.interactions);
     // params
     const { username } = useParams();
     const { post } = useParams();
@@ -38,9 +39,12 @@ export default function Feed() {
     const [recipes, setRecipes] = useState<Record<number, Recipe>>({});
     const [status, setStatus] = useState('Loading Recipes...');
     const [localPage, setLocalPage] = useState(1);
+    const [bookmarkChange, setBookmarkChange] = useState(false);
     const [hasFeedPageChanged, setHasFeedPageChanged] = useState(false);
     const [hasSortChanged, setHasSortChanged] = useState(false);
-
+    const feedType = username ? '' : 
+    (query ? 'Search Results' : 
+    interaction ? 'Your Bookmarks' : 'Savory Home');
     //ensure authentication
     const isAuthenticated = useSelector((state: RootState) => state.userReducer.isAuthenticated);
     useEffect(() => {if(!isAuthenticated) navigate('/');}, [isAuthenticated]);
@@ -119,13 +123,14 @@ export default function Feed() {
         setRecipes({});
         setStatus('Loading Recipes...');
         loadRecipes();
-    }, [localPage]);
+    }, [localPage, sort]);
     useEffect(() => {
+        if(!bookmarkChange || !interaction) return;
         setRecipes({});
         setStatus('Loading Recipes...');
         loadRecipes();
-        setHasSortChanged(false);
-    }, [hasSortChanged]);
+        if(bookmarkChange) setBookmarkChange(false);
+    }, [userInteractions]);
     useEffect(() => {
         // Check if the object is still empty after 10 seconds
         const timer = setTimeout(() => {
@@ -177,22 +182,19 @@ export default function Feed() {
     const handleSortUpdate = (sortBy: SelectChangeEvent) => {
         const newSort = sortBy.target.value as string;
         dispatch(updateSort({ sortBy: newSort }));
-        dispatch(changeSort(newSort));
-        setLocalPage(1);
-        dispatch(changePage(1));
         setHasSortChanged(true);
+        setLocalPage(1);
     }
-
-    const [age, setAge] = React.useState('');
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
-    };
 
     return (
         <Box>
-            <Box sx={{ minWidth: "100px", marginLeft: "78vw", marginRight: "8vw", marginBottom: "10px" }}>
-                <FormControl fullWidth>
+            <Grid container justifyContent='space-between' padding='2vh 5vw'>
+                <Grid item xs={6} md={4} lg={3}>
+                    <Typography variant='h4'>{feedType}</Typography>
+                </Grid>
+                <Grid item xs={4} md={3} lg={2}>
+                <Box>
+                <FormControl fullWidth size='small'>
                     <InputLabel id="select-label">Sort</InputLabel>
                     <Select
                         labelId="select-label"
@@ -201,13 +203,15 @@ export default function Feed() {
                         label="Sort"
                         onChange={handleSortUpdate}
                     >
-                        <MenuItem value={"A"}>Title (A to Z)</MenuItem>
-                        <MenuItem value={"Z"}>Title (Z to A)</MenuItem>
                         <MenuItem value={"newest"}>Newest First</MenuItem>
                         <MenuItem value={"oldest"}>Oldest First</MenuItem>
+                        <MenuItem value={"A"}>Title (A to Z)</MenuItem>
+                        <MenuItem value={"Z"}>Title (Z to A)</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
+                </Grid>
+            </Grid>
             {(Object.keys(recipes).length > 0) ?
                 <><RecipePopup {...{ open, username: user?.username || '', recipe: recipes[currentPost], closeHandler }} />
                     <Grid container rowGap={5} justifyContent={'space-around'}>
@@ -225,7 +229,8 @@ export default function Feed() {
                             })
                             .map((recipe) => {
                                 return (recipe.id > 0 && recipes[recipe.id]) ?
-                                    <RecipeItem {...{ recipe, key: recipe.id, openHandler }} />
+                                    <RecipeItem {...{ recipe, key: recipe.id, 
+                                        openHandler, updateBookmarks: () => setBookmarkChange(true) }} />
                                     : <></>;
                             })
                         }
@@ -271,7 +276,8 @@ const RecipeExpandButton = ({ id, openHandler }: { id: number, openHandler: (id:
     );
 }
 
-const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id: number) => void }) => {
+const RecipeItem = ({ recipe, openHandler, updateBookmarks }: 
+    { recipe: Recipe, openHandler: (id: number) => void, updateBookmarks: () => void }) => {
     // state
     const user = useSelector((state: RootState) => state.userReducer.user);
     const interaction = useSelector((state: RootState) => state.interactionsReducer.interactions[recipe.id]);
@@ -285,6 +291,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
         else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: !interaction.liked, bookmarked: interaction.bookmarked, shared: interaction.shared }));
     }
     const bookmarkHandler = () => {
+        if(interaction?.bookmarked) updateBookmarks();
         if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: false, bookmarked: true, shared: false }));
         else if (!interaction.liked && interaction.bookmarked && !interaction.shared) dispatch(deleteInteraction({ postId: recipe.id, userId: user ? user.id : -1 }));
         else dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: !interaction.bookmarked, shared: interaction.shared }));
@@ -296,7 +303,7 @@ const RecipeItem = ({ recipe, openHandler }: { recipe: Recipe, openHandler: (id:
             const url = feed > 0 ? location.substring(0, feed) + '/profile/' + recipe.author : location;
             await navigator.clipboard.writeText(url + '/' + recipe.id);
         } catch (error) { console.error(error); }
-        if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: true, bookmarked: false, shared: true }));
+        if (!interaction) dispatch(postInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: false, bookmarked: false, shared: true }));
         else if (!interaction.shared) dispatch(updateInteraction({ postId: recipe.id, userId: user ? user.id : -1, liked: interaction.liked, bookmarked: interaction.bookmarked, shared: true }));
     }
     const exploreHandler = () => {

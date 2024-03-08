@@ -13,8 +13,8 @@ describe('Settings component', () => {
     await waitFor(() => {expect(screen.getByTestId('mui-avatar')).toBeInTheDocument()});
   });
   test('renders Settings Page with authenticated user', () => {
-    // Check if 'Settings Page' text is present in the document
-    expect(screen.getByText('Settings Page')).toBeInTheDocument();
+    // Check if 'Settings' text is present in the document
+    expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 });
   
