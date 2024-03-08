@@ -13,11 +13,12 @@ const Profile = () => {
     const user = useSelector((state: RootState) => state.userReducer.user);
     const isAdmin = useSelector((state: RootState) => state.userReducer.isAdmin); 
     const isOwner = user?.username === username;
-    const [profile, setProfile] = useState(user ? user : {id: 0, username: 'savory', img: '', bio: 'Welcome to Savory!'});
+    const [profile, setProfile] = useState({id: 105, username: '', img: '', bio: ''});
     const [metrics, setMetrics] = useState(0);
     const [reportDialogOpen, setReportDialogOpen] = useState(false);
     // viewed profile retrieval
     async function retrieveUser() {
+        if(user && username === user?.username) return setProfile({...user});
         try {
             const response = await fetch(`${process.env.REACT_APP_URL_KEY}/api/person/byUsername/${username}`, fetchOptions({
                 method: 'GET'
@@ -34,7 +35,7 @@ const Profile = () => {
     }
     useEffect(() => {
         if(username === profile.username) return;
-        setProfile({id: 0, username: 'savory', img: '', bio: 'Welcome to Savory!'});
+        setProfile({id: 0, username: '', img: '', bio: ''});
         retrieveUser();
     }, [username]);
     useEffect(() => {
@@ -49,20 +50,20 @@ const Profile = () => {
 
     return(
         <Box>
-            <Paper sx={{p: '1.5vh', margin: '4vh auto', maxWidth: '70vw', backgroundColor: 'primary.light'}}>
+            <Paper sx={{p: '1.5vh', margin: '3vh auto 1vh auto', maxWidth: '75vw', backgroundColor: 'primary.light'}}>
                 <Grid container direction={'row'} justifyContent={'space-around'} alignItems={'flex-start'}>
                     <Grid item xs={6}>
                     <Paper 
                             component='img'
                             alt={profile?.username}
                             src={profile?.img}
-                            sx={{minHeight: '37vh', minWidth: '34vw', 
-                            maxHeight: '37vh', maxWidth: '34vw', objectFit: 'cover'}}/>
+                            sx={{minHeight: '40vh', minWidth: '34vw', 
+                            maxHeight: '40vh', maxWidth: '34vw', objectFit: 'cover'}}/>
                     </Grid>
-                    <Grid item xs={5.5}><Grid container direction={'column'} justifyContent={'space-between'}>
+                    <Grid item xs={5}><Grid container direction={'column'} justifyContent={'space-between'}>
                         <Typography maxWidth='100%' variant='h4' noWrap>{profile?.username}</Typography>
                         <br></br>
-                        <Typography maxWidth='100%' maxHeight='37vh' overflow='hidden'>{profile?.bio}</Typography>
+                        <Typography maxWidth='100%' maxHeight='40vh' overflow='hidden'>{profile?.bio}</Typography>
                     </Grid></Grid>
                     <Grid item xs={0.5}><Grid container direction={'column'} justifyContent={'space-between'}>
                         <Grid item>
@@ -96,9 +97,9 @@ const Profile = () => {
                     </Grid></Grid>
                 </Grid>
             </Paper>                      
-            <Feed/>
+            {profile?.username ? <Feed/> : <></>}
             <Dialog open={reportDialogOpen} onClose={() => setReportDialogOpen(false)}>
-                <DialogTitle>{"Report this recipe?"}</DialogTitle>
+                <DialogTitle>{"Report this account?"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         You are about to report this account to Savory administrators. 

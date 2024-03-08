@@ -27,17 +27,17 @@ const PostCreate = () => {
   const validateFields = () => {
     const titleRegex = /^[\w /\(\)\-\.]{3,100}$/.test(title);
     setTitleError((!titleRegex) ? 
-      {error: true, helperText: 'Must be 3-100 characters & only contain letters, numbers, space, _-./()'}
+      {error: true, helperText: 'Must be 3-100 characters. Only use letters, numbers, space, _-./()'}
       : {error: false, helperText: ''}
     );
     const ingredientsRegex = /^(([\w /\(\)\-\.]){1,63}(\n|,|$)){1,63}$/.test(ingredients);
     setIngredientsError((!ingredientsRegex) ? 
-      {error: true, helperText: 'Must follow the format in ingredients tool tip only contain letters, numbers, space, _-./()'}
+      {error: true, helperText: 'List each ingredient seperated by new line or commas. Only use letters, numbers, space, _-./()'}
       : {error: false, helperText: ''}
     );
     const tagsRegex = /^((#([a-zA-Z0-9\-]){1,31}),{0,1}){1,63}$/.test(tags);
     setTagsError((tags && !tagsRegex) ?  
-      {error: true, helperText: 'Must follow the format in tags tool tip & contain only letters, numbers, -'}
+      {error: true, helperText: 'One word hashtags seperated by commas. Only use letters, numbers, -'}
       : {error: false, helperText: ''}
     );
     return (tags && tagsRegex) && ingredientsRegex && titleRegex && recipe;
@@ -71,7 +71,7 @@ const PostCreate = () => {
       required: true, multiline: true, minRows: 4, maxRows: 4, variant: 'outlined', margin: 'dense', fullWidth: true}},
     {tip: 'One word hashtags seperated by commas', size: 12,
       fieldProps: {value: tags, type: 'text', onChange: (e) => setTags(e.target.value), error: tagsError.error, helperText: tagsError.helperText,
-      label: 'Tags', placeholder: '#TexMex, #Refreshing, #Healthy', variant: 'outlined', margin: 'dense', fullWidth: true}},
+      label: 'Tags', placeholder: '#TexMex,#Refreshing,#Healthy', variant: 'outlined', margin: 'dense', fullWidth: true}},
   ];
   return (      
     <Box display='flex' justifyContent='center' alignItems='center' minHeight='70vh'>

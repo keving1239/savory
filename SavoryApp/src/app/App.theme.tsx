@@ -26,6 +26,11 @@ declare module '@mui/material/Typography' {
         cream: true;
     }
 }
+declare module '@mui/material/SvgIcon' {
+    interface SvgIconPropsColorOverrides {
+        cream: true;
+    }
+}
 
 const getPaletteColors = (mode: PaletteMode) => ({
     palette: {
