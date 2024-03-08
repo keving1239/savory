@@ -21,11 +21,7 @@ stages:
   - job: BuildJob
     steps:
     
-    # - task: JavaToolInstaller@0
-    #   inputs:
-    #     versionSpec: '17'  # Specify the version of Java you want to install, e.g., '11', '8.0', '14.0.2', etc.
-    #     jdkArchitectureOption: 'x64'  # Choose the architecture of JDK to install, 'x64' or 'x86'
-    #     jdkSourceOption: 'PreInstalled'
+    #Build process for a Java project located at this directory
     - task: Maven@4
       inputs:
         mavenPomFile: '$(System.DefaultWorkingDirectory)/SavorySpringAPI/pom.xml'
@@ -41,7 +37,7 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-    
+    #Publish the jar artifact
     - task: PublishBuildArtifacts@1
       displayName: 'Publish JAR'
       inputs:
