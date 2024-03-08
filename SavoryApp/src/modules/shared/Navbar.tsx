@@ -139,7 +139,7 @@ const ProfileOptions = ({username, userId, profileAnchor, closeProfileOptions, i
         <MenuItem onClick={isAuthenticated ? logoutHandler : () => {}} sx={{p: 0, m: '.25vw'}}>
             {isAuthenticated ? <Button variant='text' fullWidth sx={{p: 0}}>
                 <Typography>Logout</Typography>
-            </Button> : <Link to='/login'><Button variant='text' fullWidth sx={{p: 0}}>
+            </Button> : <Link to='/login' data-testid='login-button'><Button variant='text' fullWidth sx={{p: 0}}>
                 <Typography>Log in</Typography>
             </Button></Link>}
           </MenuItem>    
