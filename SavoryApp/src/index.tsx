@@ -14,8 +14,8 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Auth0Provider
-          domain="dev-t6vspuc8qrssaarc.us.auth0.com"
-          clientId="QOhn47I8VQpCd3QS8r98u6qUZAjVCJKt"
+          domain="auth0domain"
+          clientId="clientid"
           authorizationParams={{
             redirect_uri: `${window.location.origin}/login`,
             scope: 'openid profile email'
